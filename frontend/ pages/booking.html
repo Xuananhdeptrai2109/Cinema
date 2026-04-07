@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đặt vé – CineMax</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="../css/home.css" />
+    <link rel="stylesheet" href="../css/booking.css" />
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="header">
+    <div class="container">
+        <div class="header-inner">
+            <a href="home.html" class="logo">
+                <div class="logo-icon">🎬</div>
+                <div class="logo-text">CINE<span>MAX</span></div>
+            </a>
+            <nav class="nav">
+                <a href="home.html">Trang chủ</a>
+                <a href="movies.html?tab=now" class="active">Đang chiếu</a>
+                <a href="movies.html?tab=coming">Sắp chiếu</a>
+                <a href="home.html#cinemas">Rạp chiếu</a>
+                <a href="home.html#promotions">Khuyến mãi</a>
+            </nav>
+            <div class="search-wrap">
+                <input type="text" placeholder="Tìm kiếm phim..." />
+                <i class="fas fa-search icon"></i>
+            </div>
+            <div class="auth-btns">
+                <button class="btn-outline">Đăng nhập</button>
+                <button class="btn-red">Đăng ký</button>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+    <div class="mobile-nav" id="mobile-nav">
+        <a href="home.html">Trang chủ</a>
+        <a href="movies.html?tab=now">Phim đang chiếu</a>
+        <a href="movies.html?tab=coming">Phim sắp chiếu</a>
+        <a href="home.html#cinemas">Rạp chiếu</a>
+        <a href="home.html#promotions">Khuyến mãi</a>
+        <div class="m-auth">
+            <button class="btn-outline" style="flex:1">Đăng nhập</button>
+            <button class="btn-red" style="flex:1">Đăng ký</button>
+        </div>
+    </div>
+</header>
+
+<!-- PAGE HERO -->
+<div class="bk-hero">
+    <div class="bk-hero-bg"></div>
+    <div class="container bk-hero-inner">
+        <nav class="bk-breadcrumb">
+            <a href="home.html"><i class="fas fa-home"></i> Trang chủ</a>
+            <i class="fas fa-chevron-right sep"></i>
+            <span>Đặt vé</span>
+        </nav>
+    </div>
+</div>
+
+<main class="bk-main">
+    <div class="container">
+
+        <!-- ══════ DATE PICKER ══════ -->
+        <section class="bk-section">
+            <div class="section-label"><i class="fas fa-calendar-alt"></i> Chọn ngày</div>
+            <div class="date-strip-wrap">
+                <button class="date-arrow" id="date-prev" aria-label="Trước">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="date-strip" id="date-strip"></div>
+                <button class="date-arrow" id="date-next" aria-label="Sau">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- ══════ CITY + CINEMA ══════ -->
+        <section class="bk-section">
+            <div class="section-label"><i class="fas fa-map-marker-alt"></i> Chọn thành phố & rạp</div>
+            <div class="cc-layout">
+
+                <!-- City list -->
+                <div class="city-panel">
+                    <div class="panel-head">Thành phố</div>
+                    <ul class="city-list" id="city-list">
+                        <!-- injected by JS -->
+                    </ul>
+                </div>
+
+                <!-- Cinema list -->
+                <div class="cinema-panel">
+                    <div class="panel-head">Rạp chiếu phim</div>
+                    <ul class="cinema-list" id="cinema-list">
+                        <li class="cinema-placeholder">
+                            <i class="fas fa-arrow-left"></i> Chọn thành phố để xem danh sách rạp
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ══════ MOVIE SHOWTIMES ══════ -->
+        <section class="bk-section" id="showtime-section" style="display:none">
+            <div class="section-label"><i class="fas fa-film"></i> Lịch chiếu phim</div>
+            <div class="showtime-info-bar" id="showtime-info-bar"></div>
+            <div id="showtime-list">
+                <!-- injected by JS -->
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <a href="home.html" class="logo f-logo">
+                    <div class="logo-text" style="font-size:22px">CINE<span>MAX</span></div>
+                </a>
+                <p>Hệ thống rạp chiếu phim hiện đại hàng đầu Việt Nam.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Liên kết nhanh</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Phim đang chiếu</a></li>
+                    <li><a href="#">Phim sắp chiếu</a></li>
+                    <li><a href="#">Khuyến mãi</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Hỗ trợ</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Điều khoản sử dụng</a></li>
+                    <li><a href="#">Chính sách bảo mật</a></li>
+                    <li><a href="#">Liên hệ</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Mạng xã hội</h4>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i> Facebook</a>
+                    <a href="#" class="social-link"><i class="fab fa-youtube"></i> YouTube</a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i> Instagram</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 CineMax. Tất cả quyền được bảo lưu.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Điều khoản</a>
+                <a href="#">Bảo mật</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<button id="back-top" aria-label="Về đầu trang"><i class="fas fa-arrow-up"></i></button>
+
+<script type="module" src="../js/main/home.js"></script>
+<script type="module" src="../js/main/booking.js"></script>
+</body>
+</html>
