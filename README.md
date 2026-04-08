@@ -2,7 +2,7 @@
 
 Hệ thống quản lý rạp chiếu phim — đặt vé, quản lý lịch chiếu, sơ đồ ghế.
 
-
+---
 
 ## Tech Stack
 
@@ -209,3 +209,4 @@ UI chạy tại: `http://localhost:5173`
 - File `.env` chứa thông tin nhạy cảm, đã được thêm vào `.gitignore` và **không được commit lên git**.
 - `spring.jpa.hibernate.ddl-auto=none` — Hibernate không tự tạo/xóa bảng, schema quản lý bằng `cinema.sql`.
 - Ghế bị giữ quá 10 phút sẽ tự động được giải phóng thông qua `sp_release_expired_holds` chạy định kỳ.
+
