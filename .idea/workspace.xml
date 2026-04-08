@@ -5,147 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="53247214-d6fa-4b18-996f-e56af6044b7c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/controller/BookingController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/dto/BookingRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/repository/BookingRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/response/BookingResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/service/BookingService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/cinema/controller/CinemaController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/cinema/controller/ProvinceController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/cinema/dto/CinemaRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/cinema/entity/Cinema.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/cinema/entity/ProvinceCity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/cinema/repository/CinemaRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/cinema/repository/ProvinceRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/cinema/response/CinemaResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/cinema/response/ProvinceResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/cinema/service/CinemaService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/cinema/service/CinemaServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/cinema/service/ProvinceService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/cinema/service/ProvinceServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/controller/DiscountController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/dto/DiscountRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/entity/Discount.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/repository/DiscountRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/response/DiscountResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/service/DiscountService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/service/DiscountServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/home/controller/HomeController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/home/dto/CinemaLocationDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/home/dto/HomeResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/home/dto/SearchCriteriaDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/home/service/HomeService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/home/service/HomeServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/controller/GenreController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/controller/MovieController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/dto/MovieRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/repository/GenreRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/repository/MovieRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/response/MovieResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/service/MovieService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/service/MovieServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/room/controller/RoomComtroller.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/room/dto/RoomRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/room/entity/ScreeningFormat.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/room/repository/RoomRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/room/response/RoomResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/room/response/ScreeningFormatResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/room/service/RoomService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/room/service/RoomServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/seat/controller/SeatController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/seat/dto/SeatRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/seat/repository/SeatRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/seat/response/SeatResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/seat/service/SeatService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/showtime/controller/ShowtimeController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/showtime/dto/ShowtimeRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/showtime/repository/ShowtimeRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/showtime/response/ShowtimeResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/showtime/service/ShowtimeService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/showtime/service/ShowtimeServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/user/controller/UserController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/user/dto/UserRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/user/response/UserResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/user/service/UserService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/ pages/booking.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/ pages/home.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/ pages/login.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/ pages/movie.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/ pages/movies.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/ pages/register.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/css/home.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/css/login.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/css/movie.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/css/movies.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/css/register.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/js/api/auth.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/js/api/booking.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/js/api/cinema.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/js/api/discount.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/js/api/home.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/js/api/movie.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/js/api/room.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/js/api/seat.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/js/api/showtime.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/js/api/user.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/js/main/booking.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/js/main/home.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/js/main/login.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/js/main/movie.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/js/main/movies.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/js/main/register.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/config/CorsConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/config/CorsConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/auth/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/auth/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/auth/dto/RegisterRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/auth/dto/RegisterRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/auth/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/auth/service/AuthService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/entity/Genre.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/entity/Genre.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/entity/Movie.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/entity/Movie.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/entity/Performer.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/entity/Performer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/room/entity/Cinema.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/room/entity/Room.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/room/entity/Room.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/seat/entity/Seat.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/seat/entity/Seat.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/mvnw" beforeDir="false" afterPath="$PROJECT_DIR$/backend/mvnw" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/CinemaBackendApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/CinemaBackendApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/config/AppConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/config/AppConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/config/CorsConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/config/CorsConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/config/SecurityConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/config/SwaggerConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/config/SwaggerConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/auth/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/auth/controller/AuthController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/auth/dto/ForgotPasswordRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/auth/dto/ForgotPasswordRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/auth/dto/LoginRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/auth/dto/LoginRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/auth/dto/RegisterRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/auth/dto/RegisterRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/auth/repository/UserRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/auth/repository/UserRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/auth/response/AuthResponse.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/auth/response/AuthResponse.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/auth/service/AuthService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/auth/service/AuthService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/booking/entity/BookingSeat.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/booking/entity/BookingSeat.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/booking/entity/Invoice.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/booking/entity/Invoice.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/movie/entity/Director.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/movie/entity/Director.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/movie/entity/Genre.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/movie/entity/Genre.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/movie/entity/Movie.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/movie/entity/Movie.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/movie/entity/Performer.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/movie/entity/Performer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/room/entity/Cinema.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/room/entity/Room.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/room/entity/Room.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/seat/entity/Seat.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/seat/entity/Seat.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/seat/entity/SeatType.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/seat/entity/SeatType.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/showtime/entity/Showtime.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/showtime/entity/Showtime.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/user/entity/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/user/entity/User.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/user/repository/UserRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/modules/user/repository/UserRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/security/CustomUserDetailsService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/security/CustomUserDetailsService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/security/JwtFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/security/JwtFilter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/cinema/security/JwtUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/cinema/security/JwtUtil.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/index2.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/css/booking.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/style.css" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -170,12 +33,12 @@
     &quot;assignee&quot;: &quot;Xuananhdeptrai2109&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Xuananhdeptrai2109/Cinema.git&quot;,
-    &quot;accountId&quot;: &quot;1f6dd94e-7163-4317-a2e7-0800e2851b9b&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Xuananhdeptrai2109/Cinema",
+    "accountId": "d5fc89e9-c7ce-43a4-86dd-a0270f68eae9"
   }
-}</component>
+}]]></component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
@@ -203,41 +66,41 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.CinemaBackendApplication.executor&quot;: &quot;Run&quot;,
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;Spring Boot.CinemaBackendApplication.executor&quot;: &quot;Run&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Merging main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Admin/Documents/WEB/Cinema&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.CinemaBackendApplication.executor": "Run",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "Spring Boot.CinemaBackendApplication.executor": "Run",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Admin/Documents/WEB/Cinema",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Admin\Documents\WEB\Cinema\backend\src\main\java\com\cinema\modules\cinema" />
@@ -281,7 +144,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.31033.145" />
+        <option value="bundled-jdk-30f59d01ecdd-26cb7f24e5b0-intellij.indexing.shared.core-IU-253.29346.240" />
       </set>
     </attachedChunks>
   </component>
