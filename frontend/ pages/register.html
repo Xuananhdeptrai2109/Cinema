@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng ký – CineMax</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/register.css" />
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <!-- ========== LEFT — cinematic background ========== -->
+    <div class="left-panel">
+        <div class="left-bg"
+             style="background-image:url('https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=1200&q=80')">
+        </div>
+        <div class="left-overlay"></div>
+
+        <!-- Logo -->
+        <a href="index.html" class="brand">
+            <div class="brand-icon">🎬</div>
+            <div class="brand-name">CINE<span>MAX</span></div>
+        </a>
+
+        <!-- Slogan -->
+        <div class="left-content">
+            <div class="slogan-label">
+                <i class="fas fa-film"></i> Nền tảng đặt vé #1 Việt Nam
+            </div>
+            <h1 class="slogan">
+                Tham gia ngay –<br />Trải nghiệm<br />điện ảnh tuyệt vời
+            </h1>
+            <p class="slogan-sub">
+                Hơn 2 triệu khán giả đã tin tưởng CineMax để đặt vé, nhận ưu đãi và không bao giờ bỏ lỡ bộ phim yêu thích.
+            </p>
+
+            <div class="trust-badges">
+                <div class="badge"><i class="fas fa-ticket-alt"></i><span>500K+ vé/tháng</span></div>
+                <div class="badge"><i class="fas fa-store"></i><span>50+ rạp toàn quốc</span></div>
+                <div class="badge"><i class="fas fa-star"></i><span>Đánh giá 4.9★</span></div>
+            </div>
+        </div>
+
+        <!-- Decorative film strip -->
+        <div class="film-strip">
+            <div class="film-hole"></div><div class="film-hole"></div>
+            <div class="film-hole"></div><div class="film-hole"></div>
+            <div class="film-hole"></div><div class="film-hole"></div>
+            <div class="film-hole"></div><div class="film-hole"></div>
+        </div>
+    </div>
+
+    <!-- ========== RIGHT — register form ========== -->
+    <div class="right-panel">
+
+        <!-- Mobile logo -->
+        <a href="index.html" class="brand brand-mobile">
+            <div class="brand-icon">🎬</div>
+            <div class="brand-name">CINE<span>MAX</span></div>
+        </a>
+
+        <div class="form-card" id="form-card">
+
+            <div class="form-head">
+                <h2 class="form-title">Tạo tài khoản mới</h2>
+                <p class="form-subtitle">Đăng ký để đặt vé nhanh chóng</p>
+            </div>
+
+            <!-- Success overlay -->
+            <div class="success-overlay" id="success-overlay">
+                <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+                <h3>Đăng ký thành công!</h3>
+                <p>Tài khoản của bạn đã được tạo. Đang chuyển hướng...</p>
+                <div class="success-bar"><div class="success-bar-fill" id="success-bar-fill"></div></div>
+            </div>
+
+            <form id="register-form" novalidate>
+
+                <!-- Username -->
+                <div class="field-group" id="fg-username">
+                    <label class="field-label" for="username">Username</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-user input-icon"></i>
+                        <input
+                                type="text" id="username" name="username"
+                                class="field-input"
+                                placeholder="Nhập username"
+                                autocomplete="username"
+                        />
+                    </div>
+                    <span class="field-error" id="err-username"></span>
+                </div>
+
+                <!-- Gmail -->
+                <div class="field-group" id="fg-gmail">
+                    <label class="field-label" for="gmail">Gmail</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input
+                                type="email" id="gmail" name="gmail"
+                                class="field-input"
+                                placeholder="Nhập gmail"
+                                autocomplete="email"
+                        />
+                    </div>
+                    <span class="field-error" id="err-gmail"></span>
+                </div>
+
+                <!-- Password -->
+                <div class="field-group" id="fg-password">
+                    <label class="field-label" for="password">Mật khẩu</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input
+                                type="password" id="password" name="password"
+                                class="field-input"
+                                placeholder="Nhập mật khẩu"
+                                autocomplete="new-password"
+                        />
+                        <button type="button" class="toggle-pw" data-target="password" aria-label="Hiện mật khẩu">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="strength-wrap" id="strength-wrap">
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="strength-fill"></div>
+                        </div>
+                        <span class="strength-label" id="strength-label"></span>
+                    </div>
+                    <span class="field-error" id="err-password"></span>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="field-group" id="fg-confirm">
+                    <label class="field-label" for="confirm">Xác nhận mật khẩu</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input
+                                type="password" id="confirm" name="confirm"
+                                class="field-input"
+                                placeholder="Nhập lại mật khẩu"
+                                autocomplete="new-password"
+                        />
+                        <button type="button" class="toggle-pw" data-target="confirm" aria-label="Hiện mật khẩu">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <span class="field-error" id="err-confirm"></span>
+                </div>
+
+                <!-- Terms -->
+                <div class="terms-row" id="fg-terms">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="terms" name="terms" />
+                        <span class="custom-check"><i class="fas fa-check"></i></span>
+                        <span>Tôi đồng ý với <a href="#">điều khoản sử dụng</a></span>
+                    </label>
+                    <span class="field-error" id="err-terms"></span>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="btn-submit" id="btn-submit">
+                    <span class="btn-text">Đăng ký</span>
+                    <span class="btn-spinner" id="btn-spinner">
+              <i class="fas fa-circle-notch fa-spin"></i> Đang tạo tài khoản...
+            </span>
+                </button>
+
+                <!-- Login link -->
+                <p class="login-link">
+                    Đã có tài khoản?
+                    <a href="login.html">Đăng nhập</a>
+                </p>
+
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <footer class="form-footer">
+            © 2026 CineMax &nbsp;·&nbsp; All rights reserved.
+        </footer>
+
+    </div><!-- /.right-panel -->
+</div><!-- /.page-wrapper -->
+
+<!-- JavaScript -->
+<script src="../js/main/register.js"></script>
+</body>
+</html>

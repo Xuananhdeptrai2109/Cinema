@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chọn ghế – CineMax</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="../css/home.css" />
+    <link rel="stylesheet" href="../css/seat.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════════════ -->
+<header id="header">
+    <div class="container">
+        <div class="header-inner">
+            <a href="home.html" class="logo">
+                <div class="logo-icon">🎬</div>
+                <div class="logo-text">CINE<span>MAX</span></div>
+            </a>
+            <nav class="nav">
+                <a href="home.html">Trang chủ</a>
+                <a href="movies.html?tab=now" class="active">Đang chiếu</a>
+                <a href="movies.html?tab=coming">Sắp chiếu</a>
+                <a href="home.html#cinemas">Rạp chiếu</a>
+                <a href="home.html#promotions">Khuyến mãi</a>
+            </nav>
+            <div class="search-wrap">
+                <input type="text" placeholder="Tìm kiếm phim..." />
+                <i class="fas fa-search icon"></i>
+            </div>
+            <div class="auth-btns">
+                <button class="btn-outline">Đăng nhập</button>
+                <button class="btn-red">Đăng ký</button>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+    <div class="mobile-nav" id="mobile-nav">
+        <a href="home.html">Trang chủ</a>
+        <a href="movies.html?tab=now">Phim đang chiếu</a>
+        <a href="movies.html?tab=coming">Phim sắp chiếu</a>
+        <div class="m-auth">
+            <button class="btn-outline" style="flex:1">Đăng nhập</button>
+            <button class="btn-red" style="flex:1">Đăng ký</button>
+        </div>
+    </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE LAYOUT: LEFT (seat map) + RIGHT (summary)
+══════════════════════════════════════════════════════ -->
+<main class="seat-main">
+    <div class="container seat-container">
+
+        <!-- ── LEFT PANEL ── -->
+        <div class="seat-left">
+
+            <!-- Breadcrumb -->
+            <nav class="seat-breadcrumb">
+                <a href="home.html"><i class="fas fa-home"></i> Trang chủ</a>
+                <i class="fas fa-chevron-right sep"></i>
+                <a href="booking.html">Chọn suất chiếu</a>
+                <i class="fas fa-chevron-right sep"></i>
+                <span>Chọn ghế</span>
+            </nav>
+            <div class="pay-steps" style="margin-bottom:20px">
+                <div class="step done"><i class="fas fa-calendar-alt"></i><span>Chọn suất chiếu</span></div>
+                <div class="step-line done"></div>
+                <div class="step active"><i class="fas fa-chair"></i><span>Chọn ghế</span></div>
+                <div class="step-line"></div>
+                <div class="step"><i class="fas fa-credit-card"></i><span>Thanh toán</span></div>
+            </div>
+            <!-- Movie info bar -->
+            <div class="movie-info-bar" id="movie-info-bar">
+                <div class="mib-poster">
+                    <img src="" alt="poster" id="mib-img"
+                         onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=120&q=80'" />
+                </div>
+                <div class="mib-info">
+                    <div class="mib-title" id="mib-title">Đang tải...</div>
+                    <div class="mib-meta">
+                        <span><i class="fas fa-store"></i> <span id="mib-cinema">Đang tải...</span></span>
+                        <span><i class="fas fa-film"></i> <span id="mib-room">Đang tải...</span></span>
+                    </div>
+                    <div class="mib-meta">
+                        <span><i class="fas fa-calendar"></i> <span id="mib-date">--/--/----</span></span>
+                        <span><i class="fas fa-clock"></i> <span id="mib-time">--:--</span></span>
+                    </div>
+                    <div class="mib-badges" id="mib-badges">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen -->
+            <div class="screen-wrap">
+                <div class="screen">
+                    <span>MÀN HÌNH</span>
+                </div>
+                <div class="screen-glow"></div>
+            </div>
+
+            <!-- Column numbers -->
+            <div class="col-numbers-wrap">
+                <div class="col-numbers" id="col-numbers"></div>
+                <div class="col-numbers-spacer"></div>
+            </div>
+
+            <!-- Seat grid -->
+            <div class="seat-grid-wrap">
+                <div class="seat-grid" id="seat-grid"></div>
+                <div class="row-labels" id="row-labels"></div>
+            </div>
+
+            <!-- Legend -->
+            <div class="legend-wrap">
+                <div class="legend-row">
+                    <div class="legend-item">
+                        <div class="legend-icon state-empty"></div><span>Ghế trống</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon state-selected"></div><span>Đã chọn</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon state-sold"></div><span>Đã mua</span>
+                    </div>
+                </div>
+                <div class="legend-row">
+                    <div class="legend-item">
+                        <div class="legend-icon type-normal"></div><span>Thường</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon type-vip"></div><span>VIP</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon type-sweetbox"></div><span>Sweetbox</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon type-couple"></div><span>Couple</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon type-premium"></div><span>Cao cấp</span>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /.seat-left -->
+
+        <!-- ── RIGHT PANEL (summary) ── -->
+        <aside class="seat-right">
+
+            <!-- Price table -->
+            <div class="price-card">
+                <div class="price-card-head">
+                    <i class="fas fa-tag"></i> Bảng giá vé
+                </div>
+                <div class="price-list" id="price-list-db">
+                    <p style="padding: 10px; font-size: 0.9rem; color: #888;">Đang tải bảng giá...</p>
+                </div>
+            </div>
+
+            <!-- Selected info -->
+            <div class="summary-card" id="summary-card">
+                <div class="summary-head">
+                    <i class="fas fa-chair"></i> Ghế đã chọn
+                    <span class="seat-count-badge" id="seat-count-badge">0</span>
+                </div>
+
+                <!-- Empty state -->
+                <div class="summary-empty" id="summary-empty">
+                    <i class="fas fa-couch"></i>
+                    <p>Chưa chọn ghế nào</p>
+                </div>
+
+                <!-- Seat chips -->
+                <div class="seat-chips" id="seat-chips" style="display:none"></div>
+
+                <!-- Price breakdown -->
+                <div class="price-breakdown" id="price-breakdown" style="display:none">
+                    <div id="breakdown-rows"></div>
+                    <div class="total-row">
+                        <span>Tổng cộng</span>
+                        <span class="total-val" id="total-val">0đ</span>
+                    </div>
+                </div>
+
+                <!-- Warning -->
+                <p class="checkout-warn" id="checkout-warn"></p>
+
+                <!-- Checkout button -->
+                <button class="btn-checkout" id="btn-checkout">
+                    <i class="fas fa-credit-card"></i> Tiếp tục thanh toán
+                </button>
+            </div>
+
+        </aside>
+    </div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container">
+        <div class="footer-bottom" style="border-top:none;padding-top:24px">
+            <p>© 2025 CineMax. Tất cả quyền được bảo lưu.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Điều khoản</a>
+                <a href="#">Bảo mật</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<button id="back-top" aria-label="Về đầu trang"><i class="fas fa-arrow-up"></i></button>
+
+<script type="module" src="../js/main/home.js"></script>
+<script type="module" src="../js/main/seat.js"></script>
+</body>
+</html>

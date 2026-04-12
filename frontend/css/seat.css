@@ -1,0 +1,369 @@
+/* ============================================================
+   seat.css — CineMax Seat Selection Page
+============================================================ */
+
+/* ── MAIN LAYOUT ─────────────────────────────────────────── */
+.seat-main {
+    background: var(--bg);
+    padding-top: 72px; /* header height */
+    min-height: 100vh;
+}
+
+.seat-container {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 24px;
+    padding: 24px 24px 60px;
+    align-items: flex-start;
+}
+
+/* ── BREADCRUMB ──────────────────────────────────────────── */
+.seat-breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: .78rem; color: rgba(255,255,255,.4);
+    margin-bottom: 16px;
+}
+.seat-breadcrumb a { transition: color var(--transition); }
+.seat-breadcrumb a:hover { color: var(--red); }
+.seat-breadcrumb .sep { font-size: .6rem; }
+.seat-breadcrumb span { color: rgba(255,255,255,.75); }
+
+/* ── MOVIE INFO BAR ──────────────────────────────────────── */
+.movie-info-bar {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 14px 16px; border-radius: var(--radius);
+    background: var(--surface); border: 1px solid var(--border);
+    margin-bottom: 28px;
+}
+.mib-poster {
+    width: 56px; height: 78px; border-radius: 8px; overflow: hidden; flex-shrink: 0;
+    border: 1px solid var(--border);
+}
+.mib-poster img { width: 100%; height: 100%; object-fit: cover; }
+.mib-info { flex: 1; min-width: 0; }
+.mib-title { font-weight: 700; font-size: 1rem; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mib-meta { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 4px; }
+.mib-meta span { font-size: .75rem; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+.mib-meta i { color: var(--red); font-size: .68rem; }
+.mib-badges { display: flex; gap: 6px; margin-top: 6px; }
+.mib-badge {
+    font-size: .65rem; font-weight: 700; letter-spacing: .5px;
+    padding: 2px 8px; border-radius: 4px; text-transform: uppercase;
+}
+.mib-badge.type { background: rgba(0,150,255,.15); color: #4db8ff; border: 1px solid rgba(0,150,255,.3); }
+.mib-badge.age  { background: rgba(229,9,20,.15);  color: var(--red); border: 1px solid rgba(229,9,20,.3); }
+
+/* ── SCREEN ──────────────────────────────────────────────── */
+.screen-wrap {
+    display: flex; flex-direction: column; align-items: center;
+    margin-bottom: 8px;
+}
+.screen {
+    width: 75%; max-width: 480px;
+    padding: 10px 24px;
+    background: linear-gradient(180deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,.06) 100%);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 0 0 50% 50% / 0 0 20px 20px;
+    text-align: center;
+    font-size: .7rem; font-weight: 700; letter-spacing: 3px;
+    color: rgba(255,255,255,.5); text-transform: uppercase;
+    box-shadow: 0 6px 32px rgba(255,255,255,.05);
+}
+.screen-glow {
+    width: 60%; height: 20px; margin-top: -2px;
+    background: radial-gradient(ellipse, rgba(255,255,255,.08) 0%, transparent 70%);
+}
+
+/* ── COLUMN NUMBERS ──────────────────────────────────────── */
+.col-numbers-wrap {
+    display: flex; justify-content: center;
+    margin: 16px auto 4px;
+    max-width: 620px;
+}
+
+.col-numbers {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr) 28px;
+    gap: 6px;
+    width: 100%;
+}
+.col-num {
+    text-align: center; font-size: .7rem;
+    color: rgba(255,255,255,.3); font-weight: 600;
+}
+/* ô trống tương ứng với cột row-label */
+.col-num-empty { display: block; }
+
+/* ── SEAT GRID ───────────────────────────────────────────── */
+.seat-grid-wrap {
+    display: flex; align-items: flex-start; justify-content: center;
+    margin-bottom: 6px;
+}
+
+.seat-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr) 28px;
+    gap: 6px;
+    max-width: 620px; width: 100%;
+}
+
+/* row-label nằm trong grid, cột 11 */
+.row-label {
+    display: flex; align-items: center; justify-content: center;
+    font-size: .72rem; font-weight: 700;
+    color: rgba(255,255,255,.35);
+    /* tự khớp chiều cao với ghế trong cùng hàng */
+}
+
+/* ── SEAT ────────────────────────────────────────────────── */
+.seat {
+    width: 100%; aspect-ratio: 1;
+    border-radius: 6px 6px 4px 4px;
+    cursor: pointer;
+    position: relative;
+    transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .55rem; font-weight: 700; color: rgba(255,255,255,.5);
+    user-select: none;
+}
+
+/* Seat back detail */
+.seat::before {
+    content: '';
+    position: absolute; top: 0; left: 15%; right: 15%;
+    height: 35%;
+    background: rgba(255,255,255,.12);
+    border-radius: 3px 3px 0 0;
+}
+
+.seat:hover:not(.sold) {
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 6px 16px rgba(0,0,0,.5);
+    z-index: 2;
+}
+.seat:active:not(.sold) { transform: scale(.95); }
+
+/* State: empty (chưa xác định loại — xám nhạt, viền đứt) */
+.seat.empty    { background: #2a2a2a; border: 1.5px dashed #444; }
+.seat.empty:hover { background: #363636; border-color: #666; }
+
+/* State: selected — xanh lá */
+.seat.selected {
+    background: #16a34a; border: 1.5px solid #22c55e;
+    color: #fff;
+    box-shadow: 0 0 14px rgba(34,197,94,.5);
+    animation: seat-pop .2s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes seat-pop {
+    0% { transform: scale(.8); }
+    100% { transform: scale(1); }
+}
+
+/* State: sold */
+.seat.sold {
+    background: #1e1e1e; border: 1.5px solid #2a2a2a;
+    cursor: not-allowed; opacity: .55;
+}
+.seat.sold::after {
+    content: '✕';
+    position: absolute; font-size: .6rem; color: rgba(255,255,255,.2);
+}
+
+/* ── SEAT TYPES ──────────────────────────────────────────── */
+/* Ghế thường — xám xanh, viền liền để phân biệt với ghế trống */
+.seat.normal  { background: #3a4a5c; border: 1.5px solid #5a7a9a; }
+.seat.normal:hover:not(.sold):not(.selected) { background: #4a5e74; border-color: #7aa0c0; }
+
+.seat.vip     { background: rgba(255,215,0,.2);  border-color: #FFD700; }
+.seat.vip:hover:not(.sold):not(.selected)     { background: rgba(255,215,0,.35); }
+
+.seat.sweetbox { background: rgba(0,191,255,.15); border-color: #00BFFF; }
+.seat.sweetbox:hover:not(.sold):not(.selected) { background: rgba(0,191,255,.28); }
+
+.seat.couple  { background: rgba(255,105,180,.15); border-color: #FF69B4; }
+.seat.couple:hover:not(.sold):not(.selected)  { background: rgba(255,105,180,.28); }
+
+.seat.premium { background: rgba(138,43,226,.2); border-color: #8A2BE2; }
+.seat.premium:hover:not(.sold):not(.selected) { background: rgba(138,43,226,.35); }
+
+/* Selected variants — tất cả dùng xanh lá */
+.seat.vip.selected,
+.seat.sweetbox.selected,
+.seat.couple.selected,
+.seat.premium.selected,
+.seat.normal.selected {
+    background: #16a34a;
+    border-color: #22c55e;
+    box-shadow: 0 0 14px rgba(34,197,94,.5);
+}
+
+/* ── LEGEND ──────────────────────────────────────────────── */
+.legend-wrap {
+    max-width: 560px; margin: 20px auto 0;
+    padding: 16px; border-radius: var(--radius);
+    background: var(--surface); border: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 10px;
+}
+.legend-row { display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-evenly; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: .75rem; color: rgba(255,255,255,.65); }
+
+.legend-icon {
+    width: 20px; height: 20px; border-radius: 4px;
+    border: 1.5px solid transparent;
+    flex-shrink: 0;
+}
+/* State icons */
+.state-empty    { background: #2a2a2a; border: 1.5px dashed #444; }
+.state-selected { background: #16a34a; border-color: #22c55e; }
+.state-sold     { background: #1e1e1e; border-color: #2a2a2a; opacity: .55; }
+
+/* Type icons */
+.type-normal  { background: #3a4a5c; border-color: #5a7a9a; }
+.type-vip     { background: rgba(255,215,0,.2);  border-color: #FFD700; }
+.type-sweetbox{ background: rgba(0,191,255,.15); border-color: #00BFFF; }
+.type-couple  { background: rgba(255,105,180,.15); border-color: #FF69B4; }
+.type-premium { background: rgba(138,43,226,.2); border-color: #8A2BE2; }
+
+/* ── RIGHT PANEL ─────────────────────────────────────────── */
+.seat-right { position: sticky; top: 88px; display: flex; flex-direction: column; gap: 14px; }
+
+/* Price card */
+.price-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+}
+.price-card-head {
+    padding: 12px 16px;
+    font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--muted); background: rgba(255,255,255,.03);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 7px;
+}
+.price-card-head i { color: var(--red); }
+.price-list { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.price-row { display: flex; align-items: center; gap: 8px; font-size: .82rem; }
+.pr-dot {
+    width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0;
+    border: 1.5px solid transparent;
+}
+.pr-name { flex: 1; color: rgba(255,255,255,.7); }
+.pr-val  { font-weight: 700; color: #fff; font-size: .8rem; }
+
+/* Summary card */
+.summary-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+}
+.summary-head {
+    padding: 12px 16px;
+    font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--muted); background: rgba(255,255,255,.03);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 7px;
+}
+.summary-head i { color: var(--red); }
+.seat-count-badge {
+    margin-left: auto;
+    min-width: 22px; height: 22px; border-radius: 50%;
+    background: var(--red); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .72rem; font-weight: 700;
+}
+
+.summary-empty {
+    padding: 28px 16px; text-align: center;
+    color: var(--muted); font-size: .83rem;
+}
+.summary-empty i { font-size: 1.8rem; display: block; margin-bottom: 8px; opacity: .3; }
+
+.seat-chips {
+    padding: 12px 12px 0; display: flex; flex-wrap: wrap; gap: 6px;
+}
+.seat-chip {
+    display: flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 50px;
+    font-size: .75rem; font-weight: 700; color: #fff;
+    background: #16a34a; border: 1px solid rgba(255,255,255,.15);
+    animation: chip-in .2s ease;
+}
+@keyframes chip-in { from{opacity:0;transform:scale(.8)} to{opacity:1;transform:scale(1)} }
+.seat-chip .chip-x {
+    cursor: pointer; opacity: .7; margin-left: 2px;
+    font-size: .65rem; transition: opacity var(--transition);
+}
+.seat-chip .chip-x:hover { opacity: 1; }
+
+/* Breakdown */
+.price-breakdown { padding: 10px 14px; }
+.breakdown-row {
+    display: flex; align-items: center; gap: 6px;
+    font-size: .78rem; color: rgba(255,255,255,.6);
+    padding: 4px 0;
+}
+.breakdown-row span:last-child { margin-left: auto; font-weight: 600; color: #fff; }
+.total-row {
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid var(--border); padding-top: 10px; margin-top: 6px;
+    font-size: .9rem; font-weight: 700;
+}
+.total-val { color: var(--red); font-size: 1.1rem; }
+
+/* Warning */
+.checkout-warn {
+    margin: 6px 14px 0;
+    font-size: .75rem; color: #ff5555; min-height: 18px;
+    display: flex; align-items: center; gap: 5px;
+}
+
+/* Checkout button */
+.btn-checkout {
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    width: calc(100% - 28px); margin: 10px 14px 14px;
+    padding: 13px; border-radius: 11px;
+    background: var(--red); color: #fff;
+    font-weight: 700; font-size: .92rem;
+    box-shadow: 0 6px 24px rgba(229,9,20,.35);
+    transition: all var(--transition);
+}
+.btn-checkout:hover { background: #ff1a27; transform: translateY(-2px); box-shadow: 0 10px 32px rgba(229,9,20,.5); }
+.btn-checkout:active { transform: translateY(0); }
+
+/* ── TOOLTIP ─────────────────────────────────────────────── */
+.seat-tooltip {
+    position: fixed; z-index: 9999; pointer-events: none;
+    padding: 6px 10px; border-radius: 8px;
+    background: rgba(10,10,10,.95); border: 1px solid var(--border);
+    font-size: .72rem; font-weight: 600; color: #fff;
+    white-space: nowrap;
+    transform: translate(-50%, -120%);
+    transition: opacity .15s ease;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .seat-container { grid-template-columns: 1fr 280px; }
+}
+@media (max-width: 768px) {
+    .seat-container { grid-template-columns: 1fr; padding: 16px; }
+    .seat-right { position: static; }
+    .seat-grid { gap: 4px; }
+    .col-numbers { gap: 4px; }
+}
+@media (max-width: 480px) {
+    .seat-grid { gap: 3px; }
+    .seat { border-radius: 4px 4px 2px 2px; }
+}
+/* ── PROGRESS STEPS (shared with payment) ─────────────── */
+.pay-steps {
+    display: flex; align-items: center;
+    flex-wrap: wrap; gap: 4px;
+}
+.step {
+    display: flex; align-items: center; gap: 8px;
+    font-size: .8rem; color: var(--muted); padding: 6px 14px;
+    border-radius: 50px; border: 1px solid var(--border);
+}
+.step.done   { color: #22c55e; border-color: rgba(34,197,94,.3); background: rgba(34,197,94,.08); }
+.step.active { color: var(--red); border-color: rgba(229,9,20,.3); background: rgba(229,9,20,.08); font-weight: 600; }
+.step-line { flex: 1; height: 1px; background: var(--border); min-width: 20px; max-width: 40px; }
+.step-line.done { background: rgba(34,197,94,.4); }

@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Avengers: Secret Wars – CineMax</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <!-- Shared homepage CSS (header, buttons, layout…) -->
+    <link rel="stylesheet" href="../css/home.css" />
+
+    <!-- Movie-page specific CSS -->
+    <link rel="stylesheet" href="../css/movie.css" />
+</head>
+<body>
+<!-- ============================================================
+   HEADER — giữ nguyên từ trang HOME
+============================================================ -->
+<header id="header">
+    <div class="container">
+        <div class="header-inner">
+            <a href="home.html" class="logo">
+                <div class="logo-icon">🎬</div>
+                <div class="logo-text">CINE<span>MAX</span></div>
+            </a>
+
+            <nav class="nav">
+                <a href="home.html">Trang chủ</a>
+                <a href="movies.html?tab=now" class="active">Đang chiếu</a>
+                <a href="movies.html?tab=coming">Sắp chiếu</a>
+                <a href="home.html#cinemas">Rạp chiếu</a>
+                <a href="home.html#promotions">Khuyến mãi</a>
+            </nav>
+
+            <div class="search-wrap">
+                <input type="text" placeholder="Tìm kiếm phim..." />
+                <i class="fas fa-search icon"></i>
+            </div>
+
+            <div class="auth-btns">
+                <button class="btn-outline">Đăng nhập</button>
+                <button class="btn-red">Đăng ký</button>
+            </div>
+
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+
+    <div class="mobile-nav" id="mobile-nav">
+        <a href="home.html">Trang chủ</a>
+        <a href="movies.html?tab=now">Phim đang chiếu</a>
+        <a href="movies.html?tab=coming">Phim sắp chiếu</a>
+        <a href="home.html#cinemas">Rạp chiếu</a>
+        <a href="home.html#promotions">Khuyến mãi</a>
+        <div class="m-auth">
+            <button class="btn-outline" style="flex: 1">Đăng nhập</button>
+            <button class="btn-red" style="flex: 1">Đăng ký</button>
+        </div>
+    </div>
+</header>
+
+<!-- ============================================================
+   HERO BACKDROP
+============================================================ -->
+<div class="movie-backdrop" id="movie-backdrop">
+    <div class="backdrop-overlay"></div>
+</div>
+
+<!-- ============================================================
+   BREADCRUMB
+============================================================ -->
+<div class="breadcrumb-bar">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="home.html"><i class="fas fa-home"></i> Trang chủ</a>
+            <i class="fas fa-chevron-right sep"></i>
+            <a href="home.html#now-showing">Phim đang chiếu</a>
+            <i class="fas fa-chevron-right sep"></i>
+            <span id="breadcrumb-movie-title">Đang tải...</span>
+        </nav>
+    </div>
+</div>
+
+<!-- ============================================================
+   MOVIE INFORMATION SECTION
+============================================================ -->
+<section class="movie-info-section">
+    <div class="container">
+        <div class="movie-info-layout">
+            <!-- LEFT: Poster -->
+            <div class="poster-col fade-in">
+                <div class="movie-poster-wrap">
+                    <img src="" alt="" id="movie-poster" />
+                    <div class="poster-shine"></div>
+                    <div class="poster-badge" id="movie-status">...</div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Info -->
+            <div class="info-col fade-in fade-in-delay-1">
+                <!-- Genre tags -->
+                <div class="genre-tags" id="movie-genres"></div>
+                <h1 class="movie-title" id="movie-title">Đang tải...</h1>
+
+                <!-- Average rating display -->
+                <div class="avg-rating">
+                    <div class="avg-stars" id="avg-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <span class="avg-score">4.5</span>
+                    <span class="avg-count"
+                    >(<span id="review-count">0</span> đánh giá)</span
+                    >
+                </div>
+
+                <!-- Meta grid -->
+                <div class="meta-grid">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div>
+                            <span class="meta-label">Ngày phát hành</span>
+                            <span class="meta-val" id="movie-date">...</span>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <span class="meta-label">Thời lượng</span>
+                            <span class="meta-val" id="movie-duration">...</span>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-language"></i>
+                        <div>
+                            <span class="meta-label">Ngôn ngữ</span>
+                            <span class="meta-val" id="movie-language">...</span>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-user-shield"></i>
+                        <div>
+                            <span class="meta-label">Độ tuổi</span>
+                            <span class="meta-val age-chip" id="movie-age">...</span>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-video"></i>
+                        <div>
+                            <span class="meta-label">Đạo diễn</span>
+                            <span class="meta-val" id="movie-director">...</span>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-users"></i>
+                        <div>
+                            <span class="meta-label">Diễn viên</span>
+                            <span class="meta-val" id="movie-actors">...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="movie-actions">
+                    <button class="btn-trailer-main" id="open-trailer">
+                        <i class="fas fa-play"></i> Xem Trailer
+                    </button>
+                    <button class="btn-ticket-main" onclick="window.location.href='booking.html?id=${movie.id}'">
+                        <i class="fas fa-ticket-alt"></i> Đặt vé ngay
+                    </button>
+                    <button
+                            class="btn-wishlist"
+                            id="btn-wishlist"
+                            aria-label="Yêu thích"
+                    >
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+
+                <!-- Description -->
+                <div class="description-wrap">
+                    <h3 class="desc-title">Nội dung phim</h3>
+                    <div class="desc-text" id="movie-description">
+                    </div>
+                    <button class="read-more-btn" id="read-more-btn">
+                        <span>Xem thêm</span> <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+   TRAILER MODAL
+============================================================ -->
+<div
+        class="modal-overlay"
+        id="trailer-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Trailer phim"
+>
+    <div class="modal-box">
+        <button class="modal-close" id="close-trailer" aria-label="Đóng">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="modal-title">
+            <i class="fas fa-film"></i> <span id="modal-movie-name">Đang tải...</span> — Official Trailer
+        </div>
+        <div class="video-container">
+            <iframe
+                    id="trailer-iframe"
+                    src=""
+                    data-src=""
+                    frameborder="0"
+                    allow="autoplay; encrypted-media"
+                    allowfullscreen
+                    title="Trailer"
+            ></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================
+   RATING & REVIEW SECTION
+============================================================ -->
+<section class="review-section">
+    <div class="container">
+        <div class="review-layout">
+            <!-- LEFT: Write review -->
+            <div class="write-review-col fade-in">
+                <div class="review-card">
+                    <h2 class="section-heading">
+                        <i class="fas fa-star"></i> Đánh giá & Xếp hạng
+                    </h2>
+
+                    <!-- Star picker -->
+                    <div class="star-picker-wrap">
+                        <p class="star-label">Chọn số sao của bạn:</p>
+                        <div
+                                class="star-picker"
+                                id="star-picker"
+                                role="group"
+                                aria-label="Đánh giá sao"
+                        >
+                            <button class="sp-star" data-val="1" aria-label="1 sao">
+                                <i class="fas fa-star"></i>
+                            </button>
+                            <button class="sp-star" data-val="2" aria-label="2 sao">
+                                <i class="fas fa-star"></i>
+                            </button>
+                            <button class="sp-star" data-val="3" aria-label="3 sao">
+                                <i class="fas fa-star"></i>
+                            </button>
+                            <button class="sp-star" data-val="4" aria-label="4 sao">
+                                <i class="fas fa-star"></i>
+                            </button>
+                            <button class="sp-star" data-val="5" aria-label="5 sao">
+                                <i class="fas fa-star"></i>
+                            </button>
+                        </div>
+                        <span class="star-hint" id="star-hint">Chưa chọn</span>
+                    </div>
+
+                    <!-- Textarea -->
+                    <div class="field-group">
+                        <label class="field-label" for="review-text"
+                        >Nội dung đánh giá</label
+                        >
+                        <textarea
+                                id="review-text"
+                                class="review-textarea"
+                                placeholder="Hãy chia sẻ cảm nhận về bộ phim..."
+                                maxlength="500"
+                        ></textarea>
+                        <span class="char-count"><span id="char-cur">0</span>/500</span>
+                    </div>
+
+                    <!-- Upload -->
+                    <div class="upload-wrap">
+                        <label class="upload-label" for="upload-file">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Thêm ảnh hoặc video</span>
+                            <span class="upload-hint">JPG, PNG, MP4 · Tối đa 20MB</span>
+                        </label>
+                        <input
+                                type="file"
+                                id="upload-file"
+                                accept="image/jpeg,image/png,video/mp4"
+                                hidden
+                        />
+                        <div class="upload-preview" id="upload-preview"></div>
+                    </div>
+
+                    <!-- Error -->
+                    <p class="form-error" id="form-error"></p>
+
+                    <!-- Submit -->
+                    <button class="btn-submit-review" id="btn-submit-review">
+                        <i class="fas fa-paper-plane"></i> Gửi đánh giá
+                    </button>
+                </div>
+            </div>
+
+            <!-- RIGHT: Reviews list -->
+            <div class="reviews-list-col fade-in fade-in-delay-1">
+                <div class="reviews-header">
+                    <h2 class="section-heading">
+                        <i class="fas fa-comments"></i> Đánh giá từ người xem
+                    </h2>
+                    <div class="reviews-sort">
+                        <select id="reviews-sort" class="sort-select">
+                            <option value="newest">Mới nhất</option>
+                            <option value="top">Điểm cao nhất</option>
+                            <option value="low">Điểm thấp nhất</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="reviews-scroll" id="reviews-scroll">
+                    <!-- Reviews injected by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+   RELATED MOVIES
+============================================================ -->
+<section class="related-section">
+    <div class="container">
+        <div class="section-head fade-in">
+            <h2 class="section-title">Phim liên quan</h2>
+            <a href="home.html#now-showing" class="see-all"
+            >Xem tất cả <i class="fas fa-arrow-right"></i
+            ></a>
+        </div>
+        <div class="movies-grid" id="related-grid">
+            <!-- Injected by JS -->
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+   FOOTER
+============================================================ -->
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <a href="home.html" class="logo f-logo">
+                    <div class="logo-text" style="font-size: 22px">
+                        CINE<span>MAX</span>
+                    </div>
+                </a>
+                <p>Hệ thống rạp chiếu phim hiện đại hàng đầu Việt Nam.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Liên kết nhanh</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Phim đang chiếu</a></li>
+                    <li><a href="#">Phim sắp chiếu</a></li>
+                    <li><a href="#">Khuyến mãi</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Hỗ trợ</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Điều khoản sử dụng</a></li>
+                    <li><a href="#">Chính sách bảo mật</a></li>
+                    <li><a href="#">Liên hệ</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Mạng xã hội</h4>
+                <div class="social-links">
+                    <a href="#" class="social-link"
+                    ><i class="fab fa-facebook-f"></i> Facebook</a
+                    >
+                    <a href="#" class="social-link"
+                    ><i class="fab fa-youtube"></i> YouTube</a
+                    >
+                    <a href="#" class="social-link"
+                    ><i class="fab fa-instagram"></i> Instagram</a
+                    >
+                    <!-- <a href="#" class="social-link"
+                      ><i class="fab fa-tiktok"></i> TikTok</a
+                    > -->
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 CineMax. Tất cả quyền được bảo lưu.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Điều khoản</a>
+                <a href="#">Bảo mật</a>
+                <a href="#">Cookies</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Back to top -->
+<button id="back-top" aria-label="Về đầu trang">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- Scripts -->
+<script type="module" src="../js/main/home.js"></script>
+<script type="module" src="../js/main/movie.js"></script>
+</body>
+</html>

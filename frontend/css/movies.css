@@ -1,0 +1,407 @@
+/* ============================================================
+   movies.css — CineMax Movie List Page
+   Extends style.css (shared homepage styles)
+============================================================ */
+
+/* ============================================================
+   PAGE HERO
+============================================================ */
+.page-hero {
+    position: relative;
+    padding: 90px 0 16px;
+    overflow: hidden;
+}
+.page-hero-bg {
+    position: absolute; inset: 0;
+    background:
+            radial-gradient(ellipse 80% 60% at 50% 0%, rgba(229,9,20,.12) 0%, transparent 70%),
+            linear-gradient(180deg, #0a0a0a 0%, var(--bg2) 100%);
+}
+.page-hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 60%, var(--bg2) 100%);
+}
+.page-hero-inner { position: relative; z-index: 2; }
+
+.page-breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: .8rem; color: rgba(255,255,255,.4);
+    margin-bottom: 14px;
+}
+.page-breadcrumb a { transition: color var(--transition); }
+.page-breadcrumb a:hover { color: var(--red); }
+.page-breadcrumb .sep { font-size: .65rem; }
+.page-breadcrumb span { color: rgba(255,255,255,.8); }
+
+.page-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 4vw, 3.5rem);
+    letter-spacing: 2px; margin-bottom: 8px;
+}
+.page-subtitle { color: var(--muted); font-size: .9rem; }
+
+/* ============================================================
+   MAIN
+============================================================ */
+.movies-main { background: var(--bg2); padding: 0 0 80px; }
+
+/* ============================================================
+   TABS BAR
+============================================================ */
+.tabs-bar {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    padding: 28px 0 0;
+    flex-wrap: wrap; gap: 12px;
+}
+
+.tab-group { display: flex; gap: 6px; }
+
+.tab-btn {
+    display: flex; align-items: center; gap: 7px;
+    padding: 10px 20px; border-radius: 50px;
+    font-size: .85rem; font-weight: 600;
+    color: rgba(255,255,255,.55);
+    border: 1.5px solid transparent;
+    transition: all var(--transition);
+}
+.tab-btn:hover {
+    color: #fff; background: rgba(255,255,255,.06);
+    border-color: rgba(255,255,255,.1);
+}
+.tab-btn.active {
+    background: var(--red); color: #fff;
+    border-color: var(--red);
+    box-shadow: 0 4px 20px rgba(229,9,20,.35);
+}
+
+.result-count {
+    font-size: .85rem; color: var(--muted);
+}
+.result-count strong { color: #fff; }
+
+/* ============================================================
+   FILTER BAR
+============================================================ */
+.filter-bar {
+    display: flex; align-items: center;
+    gap: 10px; flex-wrap: wrap;
+    padding: 20px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+}
+
+/* Search */
+.filter-search {
+    position: relative; flex: 1; min-width: 200px; max-width: 320px;
+}
+.filter-search .fs-icon {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--muted); font-size: .82rem; pointer-events: none;
+}
+.filter-search input {
+    width: 100%; padding: 10px 36px 10px 36px;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 10px; color: #fff;
+    font-family: inherit; font-size: .88rem; outline: none;
+    transition: border-color var(--transition), background var(--transition);
+}
+.filter-search input::placeholder { color: var(--muted); }
+.filter-search input:focus {
+    border-color: var(--red); background: rgba(229,9,20,.04);
+}
+.fs-clear {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    color: var(--muted); font-size: .78rem;
+    opacity: 0; pointer-events: none;
+    transition: opacity var(--transition);
+}
+.fs-clear.show { opacity: 1; pointer-events: all; }
+.fs-clear:hover { color: var(--red); }
+
+/* Selects */
+.filter-select-wrap { position: relative; }
+.filter-select {
+    padding: 10px 34px 10px 14px;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 10px; color: #fff;
+    font-family: inherit; font-size: .85rem;
+    cursor: pointer; appearance: none; outline: none;
+    transition: border-color var(--transition);
+}
+.filter-select:focus { border-color: var(--red); }
+.fsa-icon {
+    position: absolute; right: 11px; top: 50%; transform: translateY(-50%);
+    color: var(--muted); font-size: .72rem; pointer-events: none;
+}
+
+/* ---- Custom Genre Dropdown ---- */
+.custom-genre-wrap {
+    position: relative;
+    min-width: 160px; /* đủ rộng để chứa "Tất cả thể loại" */
+    width: 160px;
+    flex-shrink: 0;
+}
+
+.genre-trigger {
+    width: 100%;
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 10px; color: #fff;
+    font-family: inherit; font-size: .85rem; text-align: left;
+    transition: border-color var(--transition), background var(--transition);
+    white-space: nowrap;
+    overflow: hidden;
+}
+.genre-trigger:hover,
+.genre-trigger.open {
+    border-color: var(--red); background: rgba(229,9,20,.04);
+}
+.genre-trigger.open .fsa-icon { transform: rotate(180deg); }
+.genre-trigger .fsa-icon { transition: transform var(--transition); flex-shrink: 0; }
+
+#genre-selected {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.genre-list {
+    display: none;
+    position: absolute; top: calc(100% + 6px); left: 0;
+    width: 160px; /* cùng kích thước với trigger */
+    z-index: 200;
+    background: #1a1a1a;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    max-height: 160px; /* 4 items × 40px */
+    overflow-y: auto;
+    list-style: none;
+    box-shadow: 0 12px 40px rgba(0,0,0,.6);
+    scrollbar-width: thin;
+    scrollbar-color: var(--red) transparent;
+}
+.genre-list::-webkit-scrollbar { width: 4px; }
+.genre-list::-webkit-scrollbar-thumb { background: var(--red); border-radius: 2px; }
+.genre-list.open { display: block; }
+
+.genre-item {
+    padding: 0 14px;
+    height: 40px; display: flex; align-items: center;
+    font-size: .875rem; color: rgba(255,255,255,.7);
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition);
+}
+.genre-item:hover { background: rgba(255,255,255,.06); color: #fff; }
+.genre-item.active { color: var(--red); font-weight: 600; background: rgba(229,9,20,.08); }
+
+/* Reset button */
+.btn-reset-filter {
+    display: flex; align-items: center; gap: 7px;
+    padding: 10px 16px; border-radius: 10px;
+    border: 1.5px solid var(--border);
+    color: rgba(255,255,255,.5); font-size: .82rem; font-weight: 500;
+    transition: all var(--transition);
+    white-space: nowrap;
+}
+.btn-reset-filter:hover { border-color: var(--red); color: var(--red); }
+
+/* ============================================================
+   MOVIE GRID — overrides homepage grid for this page
+============================================================ */
+#movies-grid.movies-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    min-height: 200px;
+}
+
+/* Fade-in animation for cards */
+.movie-card {
+    animation: card-appear .35s ease both;
+}
+@keyframes card-appear {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Status badge — nằm trong poster-wrap, ngay dưới age-badge */
+.status-badge {
+    position: absolute;
+    top: 42px;      /* age-badge cao ~26px + top 10px + gap 6px */
+    left: 10px;
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: .65rem; font-weight: 700; letter-spacing: .5px;
+    text-transform: uppercase; padding: 3px 9px; border-radius: 6px;
+    z-index: 3;
+}
+.status-badge.now    { background: rgba(229,9,20,.85); color: #fff; }
+.status-badge.coming { background: rgba(255,215,0,.9);  color: #000; }
+
+/* Button overlay on hover — nút sát đáy ảnh, cách lề nhỏ */
+.card-overlay-btns {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,.2) 55%, transparent 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-end;
+    padding: 0 12px 12px;
+    opacity: 0; transition: opacity var(--transition);
+}
+.movie-card:hover .card-overlay-btns { opacity: 1; }
+
+.overlay-btn {
+    width: 100%; padding: 9px;
+    border-radius: 8px; font-weight: 700; font-size: .8rem;
+    text-align: center; cursor: pointer;
+    transition: all var(--transition);
+}
+.overlay-btn.detail {
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.3);
+    color: #fff; backdrop-filter: blur(8px);
+}
+.overlay-btn.detail:hover { background: rgba(255,255,255,.25); }
+
+.overlay-btn.overlay-follow {
+    background: rgba(255,215,0,.12);
+    border: 1.5px solid rgba(255,215,0,.45);
+    color: var(--gold);
+    backdrop-filter: blur(8px);
+    transition: all var(--transition);
+}
+.overlay-btn.overlay-follow:hover {
+    background: rgba(255,215,0,.22);
+    border-color: var(--gold);
+}
+.overlay-btn.overlay-follow.followed {
+    background: rgba(255,215,0,.2);
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+/* Card-body Theo dõi button */
+.btn-follow {
+    background: rgba(255,215,0,.1);
+    color: var(--gold);
+    border: 1.5px solid rgba(255,215,0,.35);
+    transition: all var(--transition);
+}
+.btn-follow:hover { background: rgba(255,215,0,.2); border-color: var(--gold); }
+.btn-follow.followed {
+    background: rgba(255,215,0,.2);
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+/* Bookmark pop animation */
+@keyframes bookmark-pop {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.4) rotate(-10deg); }
+    70%  { transform: scale(.9) rotate(5deg); }
+    100% { transform: scale(1) rotate(0); }
+}
+.bookmark-pop { animation: bookmark-pop .4s cubic-bezier(.175,.885,.32,1.275) both; }
+
+/* ============================================================
+   EMPTY STATE
+============================================================ */
+.empty-state {
+    text-align: center; padding: 80px 20px;
+    color: var(--muted);
+}
+.empty-state i { font-size: 3rem; opacity: .25; display: block; margin-bottom: 16px; }
+.empty-state h3 { font-size: 1.2rem; color: rgba(255,255,255,.7); margin-bottom: 8px; }
+.empty-state p  { font-size: .875rem; }
+
+/* ============================================================
+   PAGINATION
+============================================================ */
+.pagination-wrap {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 14px;
+    padding-top: 40px;
+}
+
+.pagination {
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    justify-content: center;
+}
+
+.pg-btn {
+    min-width: 40px; height: 40px; padding: 0 10px;
+    border-radius: 10px;
+    font-size: .875rem; font-weight: 600;
+    color: rgba(255,255,255,.6);
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    transition: all var(--transition);
+    display: flex; align-items: center; justify-content: center;
+}
+.pg-btn:hover:not(:disabled) {
+    color: #fff; border-color: rgba(255,255,255,.25);
+    background: rgba(255,255,255,.08);
+}
+.pg-btn.active {
+    background: var(--red); border-color: var(--red);
+    color: #fff; box-shadow: 0 4px 16px rgba(229,9,20,.4);
+}
+.pg-btn:disabled { opacity: .3; cursor: not-allowed; }
+.pg-btn.pg-dots { border: none; background: none; cursor: default; color: var(--muted); }
+
+.page-info {
+    font-size: .8rem; color: var(--muted);
+}
+
+/* ============================================================
+   LOADING SKELETON
+============================================================ */
+.skeleton-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+.skeleton-poster {
+    aspect-ratio: 2/3;
+    background: linear-gradient(90deg,
+    rgba(255,255,255,.04) 25%,
+    rgba(255,255,255,.08) 50%,
+    rgba(255,255,255,.04) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+.skeleton-body { padding: 12px; }
+.skeleton-line {
+    height: 10px; border-radius: 5px; margin-bottom: 8px;
+    background: rgba(255,255,255,.06);
+    animation: shimmer 1.5s infinite;
+}
+.skeleton-line.w70 { width: 70%; }
+.skeleton-line.w50 { width: 50%; }
+@keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position:  200% 0; }
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width: 1200px) {
+    #movies-grid.movies-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 960px) {
+    #movies-grid.movies-grid { grid-template-columns: repeat(3, 1fr); }
+    .filter-bar { gap: 8px; }
+}
+@media (max-width: 640px) {
+    #movies-grid.movies-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .tabs-bar { flex-direction: column; align-items: flex-start; }
+    .filter-search { max-width: 100%; }
+    .filter-bar { flex-direction: column; align-items: stretch; }
+    .filter-select-wrap { width: 100%; }
+    .filter-select { width: 100%; }
+    .btn-reset-filter { width: 100%; justify-content: center; }
+}

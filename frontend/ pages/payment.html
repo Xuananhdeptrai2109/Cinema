@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thanh toán – CineMax</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+    />
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../css/home.css" />
+    <link rel="stylesheet" href="../css/payment.css" />
+</head>
+<body>
+<!-- ══ HEADER ══════════════════════════════════════════════ -->
+<header id="header">
+    <div class="container">
+        <div class="header-inner">
+            <a href="home.html" class="logo">
+                <div class="logo-icon">🎬</div>
+                <div class="logo-text">CINE<span>MAX</span></div>
+            </a>
+            <nav class="nav">
+                <a href="home.html">Trang chủ</a>
+                <a href="movies.html?tab=now" class="active">Đang chiếu</a>
+                <a href="movies.html?tab=coming">Sắp chiếu</a>
+                <a href="home.html#cinemas">Rạp chiếu</a>
+                <a href="home.html#promotions">Khuyến mãi</a>
+            </nav>
+            <div class="search-wrap">
+                <input type="text" placeholder="Tìm kiếm phim..." />
+                <i class="fas fa-search icon"></i>
+            </div>
+            <div class="auth-btns">
+                <button class="btn-outline">Đăng nhập</button>
+                <button class="btn-red">Đăng ký</button>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+    <div class="mobile-nav" id="mobile-nav">
+        <a href="home.html">Trang chủ</a>
+        <a href="movies.html?tab=now">Phim đang chiếu</a>
+        <a href="movies.html?tab=coming">Phim sắp chiếu</a>
+        <div class="m-auth">
+            <button class="btn-outline" style="flex: 1">Đăng nhập</button>
+            <button class="btn-red" style="flex: 1">Đăng ký</button>
+        </div>
+    </div>
+</header>
+
+<main class="pay-main">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav class="pay-breadcrumb">
+            <a href="home.html"><i class="fas fa-home"></i> Trang chủ</a>
+            <i class="fas fa-chevron-right sep"></i>
+            <a href="booking.html">Chọn suất chiếu</a>
+            <i class="fas fa-chevron-right sep"></i>
+            <a href="seat.html">Chọn ghế</a>
+            <i class="fas fa-chevron-right sep"></i>
+            <span>Thanh toán</span>
+        </nav>
+
+        <!-- Progress steps -->
+        <div class="pay-steps">
+            <div class="step done">
+                <i class="fas fa-calendar-alt"></i><span>Chọn suất chiếu</span>
+            </div>
+            <div class="step-line done"></div>
+            <div class="step done">
+                <i class="fas fa-chair"></i><span>Chọn ghế</span>
+            </div>
+            <div class="step-line done"></div>
+            <div class="step active">
+                <i class="fas fa-credit-card"></i><span>Thanh toán</span>
+            </div>
+        </div>
+
+        <!-- ══ TOP LAYOUT: INFO + ORDER ══ -->
+        <div class="pay-top-layout">
+            <!-- LEFT: Movie info -->
+            <div class="movie-info-card">
+                <div class="mic-poster-wrap">
+                    <img src="" alt="poster" id="pay-poster" onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=300&q=80'" />
+                    <div class="mic-badge" id="pay-status">--</div>
+                </div>
+                <div class="mic-details">
+                    <h2 class="mic-title" id="pay-title">Đang tải tên phim...</h2>
+                    <div class="mic-tags" id="pay-tags">
+                    </div>
+                    <div class="mic-rows">
+                        <div class="mic-row">
+                            <i class="fas fa-store"></i><span>Rạp</span><strong id="pay-cinema"></strong>
+                        </div>
+                        <div class="mic-row">
+                            <i class="fas fa-calendar"></i><span>Ngày chiếu</span><strong id="pay-date"></strong>
+                        </div>
+                        <div class="mic-row">
+                            <i class="fas fa-clock"></i><span>Suất chiếu</span><strong id="pay-time"></strong>
+                        </div>
+                        <div class="mic-row">
+                            <i class="fas fa-film"></i><span>Phòng</span><strong id="pay-room"></strong>
+                        </div>
+                        <div class="mic-row">
+                            <i class="fas fa-user-shield"></i><span>Độ tuổi</span><strong id="pay-age"></strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Order summary -->
+            <div class="order-card">
+                <div class="order-head">
+                    <i class="fas fa-receipt"></i> Chi tiết đơn hàng
+                </div>
+
+                <!-- Seat rows -->
+                <div class="order-section">
+                    <div class="order-section-title">Ghế đã chọn</div>
+                    <div id="order-seats"></div>
+                </div>
+
+                <!-- Combo rows (filled by JS) -->
+                <div
+                        class="order-section"
+                        id="order-combo-section"
+                        style="display: none"
+                >
+                    <div class="order-section-title">Combo & thức ăn</div>
+                    <div id="order-combos"></div>
+                </div>
+
+                <!-- Discount -->
+                <div
+                        class="order-section"
+                        id="order-discount-section"
+                        style="display: none"
+                >
+                    <div class="order-section-title">Giảm giá</div>
+                    <div id="order-discounts"></div>
+                </div>
+
+                <div class="order-divider"></div>
+                <div class="order-total-row">
+                    <span>Tổng cộng</span>
+                    <span class="order-total" id="order-total">0đ</span>
+                </div>
+
+                <button class="btn-pay" id="btn-pay">
+                    <i class="fas fa-lock"></i> Thanh toán ngay
+                </button>
+                <p class="pay-warn" id="pay-warn"></p>
+            </div>
+        </div>
+
+        <!-- ══ COMBO SECTION ══ -->
+        <section class="pay-section">
+            <div class="pay-section-head">
+                <div class="pay-section-title">
+                    <i class="fas fa-popcorn"></i> Combo bỏng & nước
+                </div>
+                <div class="combo-nav">
+                    <button class="combo-arrow" id="combo-prev">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="combo-arrow" id="combo-next">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="combo-viewport">
+                <div class="combo-track" id="combo-track"></div>
+            </div>
+            <!-- Combo detail panel -->
+            <div class="combo-detail" id="combo-detail" style="display: none">
+                <img id="cd-img" src="" alt="" />
+                <div class="cd-info">
+                    <div class="cd-name" id="cd-name"></div>
+                    <div class="cd-desc" id="cd-desc"></div>
+                    <div class="cd-price" id="cd-price"></div>
+                    <div class="cd-qty-row">
+                        <button class="qty-btn" id="cd-minus">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <span class="qty-num" id="cd-qty">1</span>
+                        <button class="qty-btn" id="cd-plus">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="btn-add-combo" id="cd-add">
+                            <i class="fas fa-plus-circle"></i> Thêm vào đơn
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══ DISCOUNT & COIN ══ -->
+        <section class="pay-section">
+            <div class="pay-section-title">
+                <i class="fas fa-tags"></i> Ưu đãi & Giảm giá
+            </div>
+            <div class="dc-layout">
+                <!-- Discount code -->
+                <div class="dc-card">
+                    <div class="dc-card-head" id="toggle-discount">
+                        <i class="fas fa-ticket-alt"></i> Mã giảm giá
+                        <i class="fas fa-chevron-down dc-arrow" id="arrow-discount"></i>
+                    </div>
+                    <div class="dc-body" id="body-discount" style="display: none">
+                        <div class="dc-input-row">
+                            <input
+                                    type="text"
+                                    id="discount-input"
+                                    class="dc-input"
+                                    placeholder="Nhập mã giảm giá..."
+                            />
+                            <button class="dc-apply-btn" id="discount-apply">
+                                Áp dụng
+                            </button>
+                        </div>
+                        <p class="dc-msg" id="discount-msg"></p>
+                        <div class="dc-codes-hint">
+                            Mã thử:
+                            <span class="code-hint" data-code="SALE10">SALE10</span>,
+                            <span class="code-hint" data-code="GIAM20">GIAM20</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coin -->
+                <div class="dc-card">
+                    <div class="dc-card-head" id="toggle-coin">
+                        <i class="fas fa-coins"></i> Sử dụng Coin
+                        <span class="coin-bal-badge"
+                        ><i class="fas fa-star"></i>
+                  <span id="coin-balance-label">500</span> coin</span
+                        >
+                        <i class="fas fa-chevron-down dc-arrow" id="arrow-coin"></i>
+                    </div>
+                    <div class="dc-body" id="body-coin" style="display: none">
+                        <p class="dc-hint">
+                            Mỗi 1 coin = 100đ. Coin hiện có:
+                            <strong id="coin-avail">500</strong>
+                        </p>
+                        <div class="dc-input-row">
+                            <input
+                                    type="number"
+                                    id="coin-input"
+                                    class="dc-input"
+                                    placeholder="Nhập số coin muốn dùng..."
+                                    min="0"
+                                    max="500"
+                            />
+                            <button class="dc-apply-btn" id="coin-apply">Áp dụng</button>
+                        </div>
+                        <p class="dc-msg" id="coin-msg"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══ PAYMENT METHOD ══ -->
+        <section class="pay-section">
+            <div class="pay-section-title">
+                <i class="fas fa-wallet"></i> Phương thức thanh toán
+            </div>
+            <div class="pay-methods" id="pay-methods">
+                <button class="pay-method-btn active" data-method="qr">
+                    <i class="fas fa-qrcode"></i><span>QR Pay</span>
+                </button>
+                <button class="pay-method-btn" data-method="momo">
+                    <img
+                            src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png"
+                            alt="MoMo"
+                            class="method-logo"
+                            onerror="this.style.display = 'none'"
+                    />
+                    <span>MoMo</span>
+                </button>
+                <button class="pay-method-btn" data-method="zalopay">
+                    <i class="fas fa-bolt" style="color: #007aff"></i
+                    ><span>ZaloPay</span>
+                </button>
+                <button class="pay-method-btn" data-method="vnpay">
+                    <i class="fas fa-university" style="color: #0066cc"></i
+                    ><span>VN Pay</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ══ TERMS ══ -->
+        <section class="pay-section">
+            <div class="pay-section-title">
+                <i class="fas fa-file-contract"></i> Điều khoản dịch vụ
+            </div>
+            <div class="terms-box">
+                <div class="terms-text">
+                    <p>
+                        <strong>1. Chính sách vé:</strong> Vé đã mua không được hoàn trả
+                        hoặc đổi. CineMax có quyền hủy vé nếu phát hiện gian lận.
+                    </p>
+                    <p>
+                        <strong>2. Quyền vào rạp:</strong> Khán giả phải xuất trình vé
+                        (mã QR) khi vào cửa. CineMax không chịu trách nhiệm nếu bạn đến
+                        muộn hơn 15 phút sau suất chiếu.
+                    </p>
+                    <p>
+                        <strong>3. Nội dung phim:</strong> Khán giả có trách nhiệm kiểm
+                        tra nhãn độ tuổi trước khi mua vé. CineMax có quyền từ chối vào
+                        rạp nếu không đúng độ tuổi.
+                    </p>
+                    <p>
+                        <strong>4. Bảo mật thông tin:</strong> Thông tin cá nhân của bạn
+                        được bảo mật theo chính sách PDPA. Chúng tôi không chia sẻ dữ
+                        liệu với bên thứ ba.
+                    </p>
+                    <p>
+                        <strong>5. Thanh toán:</strong> Giao dịch được mã hóa SSL
+                        256-bit. CineMax không lưu thông tin thẻ thanh toán.
+                    </p>
+                    <p>
+                        <strong>6. Liên hệ hỗ trợ:</strong> Mọi thắc mắc vui lòng liên
+                        hệ hotline 1900-xxxx hoặc email support@cinemax.vn trong giờ
+                        hành chính.
+                    </p>
+                </div>
+            </div>
+            <label class="terms-check-label">
+                <input type="checkbox" id="terms-check" />
+                <span class="custom-check"><i class="fas fa-check"></i></span>
+                <span>Tôi đồng ý với điều khoản và dịch vụ của rạp</span>
+            </label>
+        </section>
+    </div>
+    <!-- /.container -->
+</main>
+
+<!-- ══ QR MODAL ══════════════════════════════════════════== -->
+<div class="modal-overlay" id="qr-modal">
+    <div class="qr-modal-box">
+        <button class="modal-close-btn" id="qr-close">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <div class="qr-method-badge" id="qr-method-badge">QR PAY</div>
+
+        <div class="qr-wrap">
+            <div class="qr-placeholder" id="qr-img">
+                <div class="qr-inner">
+                    <i class="fas fa-qrcode"></i>
+                    <span>Quét để thanh toán</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="qr-amount">
+            Số tiền: <strong id="qr-amount-val">0đ</strong>
+        </div>
+
+        <div class="qr-countdown">
+            <i class="fas fa-clock"></i> Hết hạn sau:
+            <span class="countdown-display" id="countdown">05:00</span>
+        </div>
+        <div class="countdown-bar-wrap">
+            <div class="countdown-bar" id="countdown-bar"></div>
+        </div>
+
+        <p class="qr-expire-msg" id="qr-expire-msg" style="display: none">
+            <i class="fas fa-exclamation-circle"></i> Hết thời gian thanh toán!
+        </p>
+
+        <div class="qr-actions">
+            <button class="qr-change-btn" id="qr-change">
+                <i class="fas fa-exchange-alt"></i> Đổi phương thức
+            </button>
+            <button class="qr-confirm-btn" id="qr-confirm">
+                <i class="fas fa-check-circle"></i> Xác nhận đã thanh toán
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ══ SUCCESS OVERLAY ══════════════════════════════════== -->
+<div class="success-overlay" id="success-overlay">
+    <div class="success-box">
+        <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+        <h2>Thanh toán thành công!</h2>
+        <p>
+            Cảm ơn bạn đã đặt vé tại CineMax.<br />Vé sẽ được gửi qua email của
+            bạn.
+        </p>
+        <div class="success-bar">
+            <div class="success-bar-fill" id="success-fill"></div>
+        </div>
+        <p class="success-redirect">Đang chuyển về trang chủ...</p>
+    </div>
+</div>
+
+<button id="back-top" aria-label="Về đầu trang">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<script type="module" src="../js/main/home.js"></script>
+<script type="module" src="../js/main/payment.js"></script>
+</body>
+</html>
