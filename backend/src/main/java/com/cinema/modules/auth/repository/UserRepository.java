@@ -7,8 +7,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    // JpaRepository đã có sẵn findById(Long id) nên bạn không cần viết lại.
-
     // Bạn nên thêm hàm này để phục vụ cho AuthService
     Optional<User> findByUserName(String userName);
 

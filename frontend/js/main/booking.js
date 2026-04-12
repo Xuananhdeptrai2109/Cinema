@@ -358,36 +358,52 @@ function showToast() {
 
     // Kiểm tra showtimeId hợp lệ (không null, không undefined và không phải chuỗi "undefined")
     if (s && s.showtimeId && s.showtimeId !== "undefined") {
+        // Lấy URL đích
+        const targetUrl = `seat.html?showtimeId=${s.showtimeId}`;
+
         toast.innerHTML = `
             <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
                 <i class="fas fa-check-circle" style="color:#00c853"></i>
-                <span style="flex-grow: 1;">
-                    <strong>${s.movieTitle}</strong> · ${s.type} · ${s.room} · <strong>${s.time}</strong>
+                <span style="flex-grow: 1; color: white;">
+                    <strong>${s.movieTitle}</strong> · ${s.time}
                 </span>
-                <a href="seat.html?showtimeId=${s.showtimeId}" 
-                   style="background: #E50914; color: white; padding: 8px 16px; border-radius: 6px; 
-                          text-decoration: none; font-weight: bold; font-size: 0.8rem; margin-left: 10px;
-                          transition: transform 0.2s, background 0.2s; display: inline-block;">
+                <button type="button" 
+                        onclick="window.handleBookingNext('${targetUrl}')" 
+                        style="background: #E50914; color: white; padding: 10px 20px; 
+                               border-radius: 8px; border: none; cursor: pointer; 
+                               font-weight: bold; pointer-events: auto; position: relative; z-index: 3001;">
                     Tiếp tục →
-                </a>
+                </button>
             </div>`;
-        // Reset trạng thái hiển thị
+
         toast.style.display = 'flex';
-        // Sử dụng requestAnimationFrame để hiệu ứng mượt mà hơn trên các thiết bị yếu
         requestAnimationFrame(() => {
             setTimeout(() => { toast.style.opacity = '1'; }, 10);
         });
-        // Tự động ẩn
+
         clearTimeout(toast._hide);
         toast._hide = setTimeout(() => {
             toast.style.opacity = '0';
-            // Đợi hiệu ứng transition kết thúc (0.3s) rồi mới đặt display: none
             setTimeout(() => {
                 if (toast.style.opacity === '0') toast.style.display = 'none';
             }, 300);
         }, 8000);
     }
 }
+// Gán trực tiếp vào window để đảm bảo onclick trong innerHTML hoạt động
+window.handleBookingNext = function(targetUrl) {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+        // Nếu đã có token, cho phép đi tiếp
+        window.location.href = targetUrl;
+    } else {
+        // Nếu chưa có, lưu lại trang hiện tại và chuyển hướng login
+        alert("Vui lòng đăng nhập để tiếp tục đặt vé!");
+        localStorage.setItem('redirect_after_login', window.location.href);
+        window.location.href = 'login.html';
+    }
+};
 
 function attachShowtimeEvents() {
     const list = document.getElementById('showtime-list');

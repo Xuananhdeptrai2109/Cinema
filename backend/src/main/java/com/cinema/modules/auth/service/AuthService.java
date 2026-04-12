@@ -27,6 +27,10 @@ public class AuthService {
     // REGISTER
     public AuthResponse register(RegisterRequest request) {
 
+        if (userRepository.findByUserName(request.getUsername()).isPresent()) {
+            throw new RuntimeException("Tên đăng nhập đã tồn tại");
+        }
+
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email đã tồn tại");
         }
@@ -38,7 +42,6 @@ public class AuthService {
         userRepository.save(user);
 
         String token = jwtUtil.generateToken(user.getEmail());
-
         return new AuthResponse(token, "Đăng kí thành công");
     }
 

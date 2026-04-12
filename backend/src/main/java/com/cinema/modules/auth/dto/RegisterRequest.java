@@ -18,7 +18,6 @@ public class RegisterRequest {
     public void setPassword(String password) {
         this.password = password;
     }
-
     public String getUsername() {
         return username;
     }

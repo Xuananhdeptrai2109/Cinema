@@ -1,47 +1,3 @@
-// // js/main/register.js
-//
-// const registerForm = document.getElementById('registerForm');
-//
-// registerForm.addEventListener('submit', async (e) => {
-//     e.preventDefault();
-//
-//     // Thu thập dữ liệu từ các ID đã đặt trong HTML
-//     const registerData = {
-//         username: document.getElementById('username').value,
-//         email: document.getElementById('email').value,
-//         password: document.getElementById('password').value
-//     };
-//
-//     try {
-//         const response = await fetch('http://localhost:8080/api/auth/register', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify(registerData)
-//         });
-//
-//         const result = await response.json();
-//
-//         if (response.ok) {
-//             alert("Đăng ký thành công!");
-//             // Sau khi đăng ký thành công, chuyển hướng sang trang login
-//             window.location.href = "login.html";
-//         } else {
-//             alert("Lỗi: " + (result.message || "Đăng ký thất bại"));
-//         }
-//     } catch (error) {
-//         console.error("Lỗi:", error);
-//         alert("Không thể kết nối đến server. Hãy kiểm tra xem Backend đã chạy chưa!");
-//     }
-// });
-
-// ============================================================
-// register.js — CineMax Register Page
-// Features: real-time validation, password strength, toggle,
-//           shake on error, loading button, success screen
-// ============================================================
-
 // ============================================================
 // ELEMENTS
 // ============================================================
@@ -312,13 +268,50 @@ form.addEventListener('submit', async (e) => {
     // ---- Loading state ----
     btnSubmit.classList.add('loading');
     btnSubmit.disabled = true;
+    const registerData = {
+        username: fields.username.value.trim(),
+        email:    fields.gmail.value.trim(),
+        password: fields.password.value
+    };
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+        const response = await fetch('http://localhost:8080/api/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(registerData)
+        });
 
-    // ---- Success ----
-    btnSubmit.classList.remove('loading');
-    showSuccess();
+        const result = await response.json();
+
+        if (response.ok) {
+            localStorage.setItem('username', registerData.username);
+            localStorage.setItem('token', result.token);
+
+            btnSubmit.classList.remove('loading');
+            showSuccess();
+        } else {
+            btnSubmit.classList.remove('loading');
+            btnSubmit.disabled = false;
+
+            // Nếu Backend báo lỗi về Email, hiển thị ngay dưới ô Gmail
+            if (result.message && result.message.includes("Email")) {
+                showError('gmail', result.message);
+                shake(fields.gmail.closest('.input-wrap'));
+            } else if (result.message && result.message.includes("Tên đăng nhập")) {
+                showError('username', result.message);
+                shake(fields.username.closest('.input-wrap'));
+            } else {
+                alert("Lỗi đăng ký: " + (result.message || "Vui lòng thử lại sau."));
+            }
+        }
+    } catch (error) {
+        console.error("Lỗi kết nối:", error);
+        btnSubmit.classList.remove('loading');
+        btnSubmit.disabled = false;
+        alert("Không thể kết nối đến máy chủ. Hãy đảm bảo Backend Spring Boot đang chạy tại port 8080!");
+    }
 });
 
 // ============================================================
@@ -333,7 +326,7 @@ function showSuccess() {
     });
 
     setTimeout(() => {
-        window.location.href = 'index.html';
+        window.location.href = 'home.html';
     }, 2800);
 }
 

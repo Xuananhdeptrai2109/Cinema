@@ -497,3 +497,36 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     console.log('%c🎬 CineMax Home - Only 5 movies displayed!', 'color:#E50914;font-size:14px;font-weight:bold');
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const guestZone = document.getElementById('guest-zone');
+    const userZone = document.getElementById('user-zone');
+    const displayUsername = document.getElementById('display-username');
+    const btnLogout = document.getElementById('btn-logout');
+
+    // Lấy thông tin từ localStorage (đã lưu ở bước đăng ký/đăng nhập)
+    const storedUsername = localStorage.getItem('username');
+
+    if (storedUsername) {
+        // Đã đăng nhập: Hiện tên, ẩn nút login
+        if (guestZone) guestZone.style.display = 'none';
+        if (userZone) {
+            userZone.style.display = 'flex';
+            displayUsername.textContent = storedUsername;
+        }
+    } else {
+        // Chưa đăng nhập: Hiện nút login, ẩn vùng user
+        if (guestZone) guestZone.style.display = 'flex';
+        if (userZone) userZone.style.display = 'none';
+    }
+
+    // Xử lý đăng xuất
+    if (btnLogout) {
+        btnLogout.addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('username');
+            localStorage.removeItem('token');
+            window.location.reload(); // Tải lại trang để về trạng thái ban đầu
+        });
+    }
+});

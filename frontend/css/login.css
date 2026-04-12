@@ -1,0 +1,50 @@
+/* ============================================================
+   login.css — CineMax Login Page
+   Extends register.css — chỉ override những gì khác biệt
+============================================================ */
+
+/* Left panel background — ảnh rạp chiếu tối hơn */
+.left-bg {
+    position: absolute; inset: 0;
+    background:
+            radial-gradient(ellipse 80% 35% at 50% 0%, rgba(200,220,255,.15) 0%, transparent 70%),
+            repeating-linear-gradient(
+                    180deg,
+                    rgba(100,15,15,.6) 0px, rgba(100,15,15,.6) 18px,
+                    rgba(65,8,8,.5)    18px, rgba(65,8,8,.5)    36px
+            ),
+            radial-gradient(ellipse 20% 60% at 0%   50%, rgba(229,9,20,.1) 0%, transparent 80%),
+            radial-gradient(ellipse 20% 60% at 100% 50%, rgba(229,9,20,.1) 0%, transparent 80%),
+            linear-gradient(160deg, #1a0505 0%, #0d0d0d 40%, #0a0a14 100%);
+    animation: slow-zoom 14s ease infinite alternate;
+}
+
+/* Login-specific options row */
+.login-options {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 22px; flex-wrap: wrap; gap: 8px;
+}
+
+.remember-label {
+    font-size: .855rem; color: rgba(255,255,255,.65);
+}
+
+.forgot-link {
+    font-size: .835rem; font-weight: 600;
+    color: var(--red); text-decoration: none;
+    transition: color var(--tr);
+    white-space: nowrap;
+}
+.forgot-link:hover { color: var(--red-hover); }
+
+/* Divider — social login optional */
+.login-divider {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 18px;
+}
+.login-divider::before,
+.login-divider::after {
+    content: ''; flex: 1; height: 1px;
+    background: rgba(255,255,255,.1);
+}
+.login-divider span { font-size: .75rem; color: var(--muted2); white-space: nowrap; }

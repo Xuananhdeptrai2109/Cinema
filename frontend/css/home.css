@@ -879,3 +879,41 @@ footer {
     .slider-controls { right: 16px; bottom: 24px; }
     .slide-content { max-width: 100%; padding: 0 0 100px 20px; }
 }
+
+.user-info {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: var(--white);
+    padding: 5px 10px;
+}
+
+.user-info i { font-size: 1.5rem; color: var(--primary); }
+
+.user-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    min-width: 150px;
+    display: none; /* Ẩn mặc định */
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.user-info:hover .user-dropdown { display: flex; }
+
+.user-dropdown a {
+    padding: 12px 15px;
+    color: var(--white);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: 0.3s;
+}
+
+.user-dropdown a:hover { background: var(--primary); }

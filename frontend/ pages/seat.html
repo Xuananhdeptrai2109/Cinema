@@ -34,10 +34,23 @@
                 <input type="text" placeholder="Tìm kiếm phim..." />
                 <i class="fas fa-search icon"></i>
             </div>
+
             <div class="auth-btns">
-                <button class="btn-outline">Đăng nhập</button>
-                <button class="btn-red">Đăng ký</button>
+                <div id="guest-zone" style="display: flex; gap: 10px;">
+                    <button class="btn-outline">
+                        <a href="login.html" style="color: inherit; text-decoration: none;">Đăng nhập</a>
+                    </button>
+                    <button class="btn-red">
+                        <a href="register.html" style="color: inherit; text-decoration: none;">Đăng ký</a>
+                    </button>
+                </div>
+
+                <div id="user-zone" style="display: none; align-items: center; gap: 15px;">
+                    <span style="color: white;">Xin chào, <strong id="display-username" style="color: var(--primary);"></strong></span>
+                    <button class="btn-outline" id="btn-logout">Đăng xuất</button>
+                </div>
             </div>
+
             <button class="hamburger" id="hamburger" aria-label="Menu">
                 <span></span><span></span><span></span>
             </button>

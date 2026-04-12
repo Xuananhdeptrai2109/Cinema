@@ -1,7 +1,6 @@
 package com.cinema.modules.user.entity;
 
 import com.cinema.modules.booking.entity.Invoice;
-import com.cinema.modules.seat.entity.ShowtimeSeat;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -46,8 +45,8 @@ public class User {
     private Integer coin = 0;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role")
-    private UserRole role; // Đổi thành UserRole để không bao giờ bị trùng tên lớp hệ thống
+    @Column(name = "role", nullable = false)
+    private UserRole role = UserRole.customer;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Invoice> invoices;
