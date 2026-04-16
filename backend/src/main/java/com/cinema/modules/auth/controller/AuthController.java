@@ -1,6 +1,8 @@
 package com.cinema.modules.auth.controller;
 
+import com.cinema.modules.auth.dto.ForgotPasswordRequest;
 import com.cinema.modules.auth.dto.LoginRequest;
+import com.cinema.modules.auth.dto.ResetPasswordRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.cinema.modules.auth.dto.RegisterRequest;
@@ -23,5 +25,16 @@ public class AuthController {
     @PostMapping("/login")
     public AuthResponse login(@RequestBody LoginRequest request) {
         return authService.login(request);
+    }
+
+    @PostMapping("/forgot-password")
+    public AuthResponse forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        authService.sendOtp(request.getEmail());
+        return new AuthResponse(null, "Mã OTP đã được gửi đến email của bạn");
+    }
+
+    @PostMapping("/reset-password")
+    public AuthResponse resetPassword(@RequestBody ResetPasswordRequest request) {
+        return authService.resetPassword(request);
     }
 }

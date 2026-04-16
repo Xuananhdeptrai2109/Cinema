@@ -34,3 +34,5 @@ build/
 
 ### Local Data ###
 src/main/resources/application.properties
+### Environment Variables ###
+.env

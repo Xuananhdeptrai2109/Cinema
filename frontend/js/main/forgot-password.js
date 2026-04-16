@@ -1,17 +1,16 @@
 // ============================================================
 // forgot-password.js — CineMax Forgot Password Page
 // ============================================================
-
-// ── MOCK DATA ──────────────────────────────────────────
-const VALID_EMAIL = "test@gmail.com";
-const MOCK_OTP = "123456";
-
-// ── STATE ──────────────────────────────────────────────
-let currentStep = 1;
-let countdownTimer = null;
+// URL Backend
+const API_AUTH = "http://localhost:8080/api/auth";
 
 // ── HELPERS ────────────────────────────────────────────
 const $ = (id) => document.getElementById(id);
+// ============================================================
+// STATE — Lưu trữ trạng thái hiện tại
+// ============================================================
+let currentStep = 1;
+let countdownTimer = null;
 
 function showError(id, msg) {
     const el = $(id);
@@ -64,39 +63,74 @@ function goToStep(n) {
     updateIndicator(n);
 }
 
-// ── STEP 1: EMAIL ──────────────────────────────────────
-$("btn-send-otp").addEventListener("click", async () => {
-    const email = $("email").value.trim();
+// ── STEP 1: EMAIL (Hoàn chỉnh) ──────────────────────────────────────
+$("btn-send-otp").addEventListener("click", async (e) => {
+    // 1. Ngăn chặn hành vi mặc định và xóa lỗi cũ
+    e.preventDefault();
+    const emailInput = $("email");
+    const emailValue = emailInput.value.trim();
     clearError("err-email");
-    $("email").classList.remove("invalid", "valid");
 
-    if (!email) {
-        showError("err-email", "Email không được để trống.");
-        shake($("email").closest(".input-wrap") || $("email"));
-        return;
-    }
-    const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailReg.test(email)) {
-        showError("err-email", "Địa chỉ email không hợp lệ.");
-        $("email").classList.add("invalid");
-        shake($("email").closest(".input-wrap"));
+    // 2. Kiểm tra định dạng Email tại Front-end
+    if (!emailValue || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
+        showError("err-email", "Vui lòng nhập địa chỉ email hợp lệ.");
+        shake(emailInput.closest(".input-wrap") || emailInput);
         return;
     }
 
-    await fakeLoad($("btn-send-otp"));
+    // 3. Trạng thái Loading
+    btnSubmitLoading($("btn-send-otp"), true);
 
-    if (email.toLowerCase() !== VALID_EMAIL) {
-        showError("err-email", "Email không tồn tại trong hệ thống.");
-        $("email").classList.add("invalid");
-        shake($("email").closest(".input-wrap"));
-        return;
+    try {
+        const response = await fetch(`${API_AUTH}/forgot-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: emailValue })
+        });
+
+        // 4. Đọc dữ liệu JSON an toàn (Tránh lỗi parse JSON khi server trả về body trống)
+        let result = {};
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+            result = await response.json();
+        }
+
+        if (response.ok) {
+            // ---- ĐƯỜNG HÀNH TRÌNH THÀNH CÔNG ----
+            console.log("Gửi OTP thành công:", result.message);
+
+            // Cập nhật email hiển thị ở Step 2
+            $("email-display").textContent = emailValue;
+
+            // Tắt trạng thái loading trước khi chuyển cảnh
+            btnSubmitLoading($("btn-send-otp"), false);
+
+            // Chuyển sang Step 2 ngay lập tức
+            goToStep(2);
+
+            // Các hiệu ứng phụ sau khi giao diện đã thay đổi
+            setTimeout(() => {
+                startCountdown(); // Bắt đầu đếm ngược 60s
+                if (otpDigits && otpDigits[0]) {
+                    otpDigits[0].focus(); // Tự động focus ô nhập OTP đầu tiên
+                }
+            }, 100);
+
+        } else {
+            // ---- LỖI TỪ BACKEND (Ví dụ: 404 Email không tồn tại) ----
+            const errorMsg = result.message || "Email không tồn tại trong hệ thống.";
+            showError("err-email", errorMsg);
+            shake(emailInput.closest(".input-wrap"));
+            btnSubmitLoading($("btn-send-otp"), false);
+        }
+
+    } catch (error) {
+        // ---- LỖI KẾT NỐI THỰC SỰ (Server sập, sai IP/Port) ----
+        console.error("Lỗi Fetch:", error);
+        // Chỉ hiện thông báo này khi thực sự không gọi được API
+        alert("Không thể kết nối đến máy chủ. Hãy kiểm tra Backend (Port 8080)!");
+        btnSubmitLoading($("btn-send-otp"), false);
     }
-
-    $("email").classList.add("valid");
-    $("email-display").textContent = email;
-    goToStep(2);
-    startCountdown();
-    otpDigits[0].focus();
 });
 
 // ── STEP 2: OTP DIGITS ─────────────────────────────────
@@ -163,51 +197,26 @@ function startCountdown() {
             clearInterval(countdownTimer);
             const row = $("resend-row");
             row.innerHTML = `<button class="btn-resend show" id="btn-resend">
-            <i class="fas fa-redo"></i> Gửi lại OTP
-          </button>`;
-            $("btn-resend").addEventListener("click", () => {
-                otpDigits.forEach((d) => {
-                    d.value = "";
-                    d.classList.remove("filled");
-                });
-                clearError("err-otp");
-                otpDigits[0].focus();
-                startCountdown();
-            });
+                <i class="fas fa-redo"></i> Gửi lại OTP
+            </button>`;
+            // Phải gán lại sự kiện sau khi ghi đè innerHTML
+            $("btn-resend").onclick = () => {
+                $("btn-send-otp").click(); // Tận dụng lại logic gửi OTP ở Step 1
+            };
         }
     }, 1000);
 }
 
 // ── VERIFY OTP ─────────────────────────────────────────
-$("btn-verify-otp").addEventListener("click", async () => {
+$("btn-verify-otp").addEventListener("click", () => {
     const otp = getOTP();
-    clearError("err-otp");
-
     if (otp.length < 6) {
         showError("err-otp", "Vui lòng nhập đủ 6 chữ số OTP.");
         shake($("otp-wrap"));
         return;
     }
-
-    await fakeLoad($("btn-verify-otp"), 1200);
-
-    if (otp !== MOCK_OTP) {
-        showError("err-otp", "OTP không đúng. Vui lòng thử lại.");
-        otpDigits.forEach((d) => {
-            d.classList.add("invalid-flash");
-            d.value = "";
-            d.classList.remove("filled");
-        });
-        setTimeout(
-            () => otpDigits.forEach((d) => d.classList.remove("invalid-flash")),
-            600,
-        );
-        shake($("otp-wrap"));
-        otpDigits[0].focus();
-        return;
-    }
-
-    clearInterval(countdownTimer);
+    // Ở bước này, ta chỉ đơn giản chuyển qua bước nhập mật khẩu mới.
+    // Việc xác thực mã OTP thực sự sẽ diễn ra ở bước cuối cùng cùng với Reset Password.
     goToStep(3);
     $("new-pw").focus();
 });
@@ -313,19 +322,37 @@ $("confirm-pw").addEventListener("input", () => {
 $("btn-change-pw").addEventListener("click", async () => {
     const ok1 = validateNewPw();
     const ok2 = validateConfirm();
-    if (!ok1) {
-        shake($("new-pw").closest(".input-wrap"));
-        $("new-pw").focus();
-        return;
-    }
-    if (!ok2) {
-        shake($("confirm-pw").closest(".input-wrap"));
-        $("confirm-pw").focus();
-        return;
-    }
+    if (!ok1 || !ok2) return;
 
-    await fakeLoad($("btn-change-pw"), 1500);
-    showSuccess();
+    const resetData = {
+        email: $("email").value.trim(),
+        otp: getOTP(),
+        newPassword: $("new-pw").value
+    };
+
+    btnSubmitLoading($("btn-change-pw"), true);
+
+    try {
+        const response = await fetch(`${API_AUTH}/reset-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(resetData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            showSuccess();
+        } else {
+            // Nếu OTP sai hoặc hết hạn, quay lại bước 2 để người dùng nhập lại
+            alert(result.message || "Có lỗi xảy ra.");
+            if (result.message.includes("OTP")) goToStep(2);
+        }
+    } catch (error) {
+        alert("Không thể kết nối đến máy chủ.");
+    } finally {
+        btnSubmitLoading($("btn-change-pw"), false);
+    }
 });
 
 // ── SUCCESS ────────────────────────────────────────────
@@ -355,6 +382,17 @@ document.querySelectorAll(".toggle-pw").forEach((btn) => {
         icon.classList.toggle("fa-eye-slash", hide);
     });
 });
+
+function btnSubmitLoading(btn, isLoading) {
+    if (!btn) return;
+    if (isLoading) {
+        btn.classList.add("loading");
+        btn.disabled = true;
+    } else {
+        btn.classList.remove("loading");
+        btn.disabled = false;
+    }
+}
 
 // ── INIT ───────────────────────────────────────────────
 goToStep(1);

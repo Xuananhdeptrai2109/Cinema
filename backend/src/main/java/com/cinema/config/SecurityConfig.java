@@ -27,6 +27,9 @@ public class SecurityConfig {
                 // 2. CẤU HÌNH PHÂN QUYỀN
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/forgot-password").permitAll()
+                        .requestMatchers("/api/auth/reset-password").permitAll()
+
                         .requestMatchers("/api/movies/**").permitAll()
                         .requestMatchers("/api/genres/**").permitAll()
                         .requestMatchers("/api/home/**").permitAll()

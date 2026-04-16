@@ -4,6 +4,7 @@ import com.cinema.modules.booking.entity.Invoice;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 // Định nghĩa Role ở ngoài class User để tránh lỗi xung đột "Role"
@@ -43,6 +44,12 @@ public class User {
 
     @Column(name = "coin", nullable = false)
     private Integer coin = 0;
+
+    @Column(name = "otp")
+    private String otp;
+
+    @Column(name = "otp_expiry")
+    private LocalDateTime otpExpiry;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
