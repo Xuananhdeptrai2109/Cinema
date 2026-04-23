@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <!-- HTML -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CineMax — Hồ Sơ</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+    />
+
+    <!-- Font Awesome Icons -->
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/home.css" />
+    <link rel="stylesheet" href="../css/profile.css" />
+</head>
+<body>
+<!-- ============================================================
+   HEADER — giữ nguyên từ trang HOME
+============================================================ -->
+<header id="header">
+    <div class="container">
+        <div class="header-inner">
+            <a href="home.html" class="logo">
+                <div class="logo-icon">🎬</div>
+                <div class="logo-text">CINE<span>MAX</span></div>
+            </a>
+
+            <nav class="nav">
+                <a href="home.html">Trang chủ</a>
+                <a href="movies.html?tab=now" class="active">Đang chiếu</a>
+                <a href="movies.html?tab=coming">Sắp chiếu</a>
+                <a href="home.html#cinemas">Rạp chiếu</a>
+                <a href="home.html#promotions">Khuyến mãi</a>
+            </nav>
+
+            <div class="search-wrap">
+                <input type="text" placeholder="Tìm kiếm phim..." />
+                <i class="fas fa-search icon"></i>
+            </div>
+
+            <div class="auth-btns">
+                <div id="guest-zone" style="display: flex; gap: 10px;">
+                    <button class="btn-outline">
+                        <a href="login.html" style="color: inherit; text-decoration: none;">Đăng nhập</a>
+                    </button>
+                    <button class="btn-red">
+                        <a href="register.html" style="color: inherit; text-decoration: none;">Đăng ký</a>
+                    </button>
+                </div>
+
+                <div id="user-zone" style="display: none; align-items: center; gap: 15px;">
+                    <a href="profile.html" style="text-decoration: none; display: flex; align-items: center;">
+                        <span style="color: white; cursor: pointer;">
+                            Xin chào, <strong id="display-username" style="color: var(--primary);"></strong>
+                        </span>
+                    </a>
+                    <button class="btn-outline" id="btn-logout">Đăng xuất</button>
+                </div>
+            </div>
+
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+
+    <div class="mobile-nav" id="mobile-nav">
+        <a href="home.html">Trang chủ</a>
+        <a href="movies.html?tab=now">Phim đang chiếu</a>
+        <a href="movies.html?tab=coming">Phim sắp chiếu</a>
+        <a href="home.html#cinemas">Rạp chiếu</a>
+        <a href="home.html#promotions">Khuyến mãi</a>
+        <div class="m-auth">
+            <button class="btn-outline" style="flex: 1">Đăng nhập</button>
+            <button class="btn-red" style="flex: 1">Đăng ký</button>
+        </div>
+    </div>
+</header>
+<!-- ============================================================
+ PAGE WRAPPER
+============================================================ -->
+<div class="page-wrapper">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-profile">
+            <div class="sidebar-avatar-wrap">
+                <img
+                        class="sidebar-avatar"
+                        id="sidebarAvatar"
+                        src="https://api.dicebear.com/7.x/avataaars/svg?seed=initial"
+                        alt="avatar"
+                />
+                <span class="sidebar-coin-badge">🪙 <span id="sidebarCoin">0</span></span>
+            </div>
+            <div class="sidebar-name" id="sidebarName">Đang tải...</div>
+            <div class="sidebar-username" id="displayUsername"></div>
+        </div>
+
+        <nav class="sidebar-menu">
+            <div class="sidebar-menu-item active" data-tab="tab-profile">
+                <span class="menu-icon"><i class="fas fa-user"></i></span>
+                <span class="menu-label">Thông tin cá nhân</span>
+            </div>
+            <div class="sidebar-menu-item" data-tab="tab-coin">
+                <span class="menu-icon"><i class="fas fa-coins"></i></span>
+                <span class="menu-label">Coin</span>
+            </div>
+            <div class="sidebar-menu-item" data-tab="tab-voucher">
+                <span class="menu-icon"><i class="fas fa-ticket-alt"></i></span>
+                <span class="menu-label">Voucher</span>
+            </div>
+            <div class="sidebar-menu-item" data-tab="tab-history">
+                <span class="menu-icon"><i class="fas fa-film"></i></span>
+                <span class="menu-label">Lịch sử đặt vé</span>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            © 2026 CineMax &nbsp;&nbsp;
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- TAB 1: THÔNG TIN CÁ NHÂN -->
+        <div class="tab-panel active" id="tab-profile">
+            <h1 class="section-heading">Thông Tin <span>Cá Nhân</span></h1>
+            <p class="section-sub">
+                Quản lý hồ sơ và tùy chỉnh thông tin của bạn
+            </p>
+
+            <div class="card">
+                <div class="card-title">Ảnh đại diện</div>
+                <div class="profile-avatar-area">
+                    <img
+                            class="profile-avatar-big"
+                            id="profileAvatar"
+                            src="https://api.dicebear.com/7.x/avataaars/svg?seed=placeholder"
+                            alt="avatar"
+                    />
+                    <div class="profile-avatar-info">
+                        <h3 id="displayName">Họ và tên</h3>
+                        <p id="displayUsername"></p>
+                        <button class="btn-change-avatar" onclick="document.getElementById('avatar-input').click()">
+                            <i class="fas fa-camera"></i> Đổi ảnh
+                        </button>
+                        <input type="file" id="avatar-input" accept="image/*" style="display: none;" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Thông tin cơ bản</div>
+
+                <!-- Chế độ xem -->
+                <div id="viewMode">
+                    <div class="field-grid">
+                        <div class="field-group">
+                            <div class="field-label">Họ và tên</div>
+                            <div class="field-value" id="viewName">---</div>
+                        </div>
+                        <div class="field-group">
+                            <div class="field-label">Ngày sinh</div>
+                            <div class="field-value" id="viewDob">--/--/----</div>
+                        </div>
+                        <div class="field-group" style="grid-column: 1/-1">
+                            <div class="field-label">Địa chỉ</div>
+                            <div class="field-value" id="viewAddress">Chưa cập nhật</div>
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label" for="inputEmail">Email</label>
+                            <input class="field-input" type="email" id="inputEmail" readonly style="background: #222; cursor: not-allowed;" />
+                        </div>
+                        <div class="field-group">
+                            <div class="field-label">Số điện thoại</div>
+                            <div class="field-value" id="viewPhone">Chưa cập nhật</div>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="btn-primary-p" onclick="enableEditMode()">
+                            <i class="fas fa-pen"></i> Chỉnh sửa
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chế độ chỉnh sửa -->
+                <div id="editMode" style="display: none">
+                    <div class="field-grid">
+                        <div class="field-group">
+                            <label class="field-label" for="inputName">Họ và tên</label>
+                            <input
+                                    class="field-input"
+                                    type="text"
+                                    id="inputName"
+                                    placeholder="Nhập tên của bạn"
+                            />
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label" for="inputDob">Ngày sinh</label>
+                            <input class="field-input" type="date" id="inputDob" />
+                        </div>
+                        <div class="field-group" style="grid-column: 1/-1">
+                            <label class="field-label" for="inputAddress">Địa chỉ</label>
+                            <input
+                                    class="field-input"
+                                    type="text"
+                                    id="inputAddress"
+                                    placeholder="Nhập địa chỉ"
+                            />
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label" for="inputEmail">Email</label>
+                            <input class="field-input" type="email" id="inputEmail" ... />
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label" for="inputPhone">Số điện thoại</label>
+                            <input class="field-input" type="tel" id="inputPhone" ... />
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="btn-primary-p" onclick="saveProfile()">
+                            <i class="fas fa-save"></i> Lưu
+                        </button>
+                        <button class="btn-secondary-p" onclick="cancelEdit()">
+                            Hủy
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: COIN -->
+        <div class="tab-panel" id="tab-coin">
+            <h1 class="section-heading">Ví <span>Coin</span></h1>
+            <p class="section-sub">
+                Theo dõi số dư và lịch sử giao dịch coin của bạn
+            </p>
+
+            <div class="coin-hero">
+                <div class="coin-icon"><i class="fas fa-coins"></i></div>
+                <div class="coin-info">
+                    <h2 id="coinBalance">1,500</h2>
+                    <p>Coin hiện có trong tài khoản</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Lịch sử giao dịch</div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                        <tr>
+                            <th>Ngày</th>
+                            <th>Nội dung</th>
+                            <th>Số coin</th>
+                        </tr>
+                        </thead>
+                        <tbody id="coinHistoryBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: VOUCHER -->
+        <div class="tab-panel" id="tab-voucher">
+            <h1 class="section-heading">Voucher <span>Của Tôi</span></h1>
+            <p class="section-sub">Danh sách mã giảm giá và lịch sử sử dụng</p>
+
+            <div class="card">
+                <div class="card-title">Voucher đang có</div>
+                <div class="voucher-grid" id="voucherGrid"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Lịch sử sử dụng voucher</div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                        <tr>
+                            <th>Tên voucher</th>
+                            <th>Ngày sử dụng</th>
+                            <th>Giá trị giảm</th>
+                        </tr>
+                        </thead>
+                        <tbody id="voucherHistoryBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: LỊCH SỬ ĐẶT VÉ -->
+        <div class="tab-panel" id="tab-history">
+            <h1 class="section-heading">Lịch Sử <span>Đặt Vé</span></h1>
+            <p class="section-sub">Tất cả vé bạn đã đặt tại CineMax</p>
+
+            <div class="ticket-list" id="ticketList"></div>
+        </div>
+    </main>
+</div>
+
+<!-- ============================================================
+ POPUP CHI TIẾT VÉ
+============================================================ -->
+<div class="popup-overlay" id="popupOverlay" onclick="closePopup(event)">
+    <div class="popup-box">
+        <button class="popup-close" onclick="hidePopup()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="popup-title" id="popupMovieTitle">Tên Phim</div>
+        <div id="popupRows"></div>
+        <div class="popup-qr"><i class="fas fa-qrcode"></i></div>
+    </div>
+</div>
+
+<!-- ============================================================
+ TOAST NOTIFICATION
+============================================================ -->
+<div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMsg">Thành công!</span>
+</div>
+
+<!-- JavaScript -->
+<script type="module" src="../js/main/home.js"></script>
+<script type="module" src="../js/main/profile.js"></script>
+</body>
+</html>

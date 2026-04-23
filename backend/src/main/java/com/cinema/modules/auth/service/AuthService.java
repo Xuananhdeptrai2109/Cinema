@@ -2,7 +2,7 @@ package com.cinema.modules.auth.service;
 
 import com.cinema.modules.auth.dto.ResetPasswordRequest;
 import com.cinema.modules.user.entity.User;
-import com.cinema.modules.auth.repository.UserRepository;
+import com.cinema.modules.auth.repository.AuthRepository; // Đã đổi tên import
 import com.cinema.modules.auth.dto.LoginRequest;
 import com.cinema.modules.auth.dto.RegisterRequest;
 import com.cinema.modules.auth.response.AuthResponse;
@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional // Đảm bảo mọi thay đổi sẽ được commit xuống DB
+@Transactional
 public class AuthService {
 
     @Autowired
-    private UserRepository userRepository;
+    private AuthRepository authRepository; // Đã đổi tên biến từ userRepository thành authRepository
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -31,28 +31,29 @@ public class AuthService {
     // REGISTER
     public AuthResponse register(RegisterRequest request) {
 
-        if (userRepository.findByUserName(request.getUsername()).isPresent()) {
+        if (authRepository.findByUserName(request.getUsername()).isPresent()) {
             throw new RuntimeException("Tên đăng nhập đã tồn tại");
         }
 
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+        if (authRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email đã tồn tại");
         }
+
         User user = new User();
         user.setUserName(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        userRepository.save(user);
+        authRepository.save(user);
 
         String token = jwtUtil.generateToken(user.getEmail());
-        return new AuthResponse(token, "Đăng kí thành công");
+        return new AuthResponse(token, "Đăng ký thành công");
     }
 
     // LOGIN
     public AuthResponse login(LoginRequest request) {
 
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = authRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -66,15 +67,15 @@ public class AuthService {
 
     // GỬI OTP
     public void sendOtp(String email) {
-        User user = userRepository.findByEmail(email)
+        User user = authRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Email không tồn tại"));
 
-        String otp = String.valueOf(new java.util.Random().nextInt(900000) + 100000); // 6 số
+        String otp = String.valueOf(new java.util.Random().nextInt(900000) + 100000);
         user.setOtp(otp);
-        user.setOtpExpiry(java.time.LocalDateTime.now().plusMinutes(5)); // Hết hạn sau 5p
-        userRepository.save(user);
+        user.setOtpExpiry(java.time.LocalDateTime.now().plusMinutes(5));
+        authRepository.save(user);
 
-        // Gửi mail (Chạy bất đồng bộ nếu cần)
+        // Gửi mail
         org.springframework.mail.SimpleMailMessage message = new org.springframework.mail.SimpleMailMessage();
         message.setTo(email);
         message.setSubject("Mã OTP đặt lại mật khẩu CineMax");
@@ -84,7 +85,7 @@ public class AuthService {
 
     // RESET MẬT KHẨU
     public AuthResponse resetPassword(ResetPasswordRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = authRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Email không tồn tại"));
 
         if (user.getOtp() == null || !user.getOtp().equals(request.getOtp())) {
@@ -97,9 +98,9 @@ public class AuthService {
 
         // Cập nhật mật khẩu mới
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        user.setOtp(null); // Xóa OTP sau khi dùng xong
+        user.setOtp(null);
         user.setOtpExpiry(null);
-        userRepository.save(user);
+        authRepository.save(user);
 
         return new AuthResponse(null, "Đặt lại mật khẩu thành công");
     }

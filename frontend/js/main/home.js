@@ -524,9 +524,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnLogout) {
         btnLogout.addEventListener('click', (e) => {
             e.preventDefault();
+
+            // 1. Xóa toàn bộ thông tin đăng nhập đã lưu
             localStorage.removeItem('username');
             localStorage.removeItem('token');
-            window.location.reload(); // Tải lại trang để về trạng thái ban đầu
+
+            // 2. Xóa các thông tin đặt vé tạm thời (nếu có) để tránh xung đột dữ liệu
+            sessionStorage.removeItem('tempBookingInfo');
+            sessionStorage.removeItem('selectedShowtimeId');
+
+            // 3. Hiển thị thông báo nhỏ (tùy chọn)
+            console.log("Đang đăng xuất và quay về trang chủ...");
+
+            // 4. Chuyển hướng trực tiếp về home.html thay vì chỉ reload()
+            window.location.href = 'home.html';
         });
     }
 });

@@ -6,7 +6,7 @@ import com.cinema.modules.booking.repository.*;
 import com.cinema.modules.seat.entity.ShowtimeSeat;
 import com.cinema.modules.booking.repository.ShowtimeSeatRepository; // Giả định bạn đã có
 import com.cinema.modules.user.entity.User;
-import com.cinema.modules.auth.repository.UserRepository;
+import com.cinema.modules.auth.repository.AuthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +19,7 @@ public class BookingService {
     @Autowired private InvoiceRepository invoiceRepository;
     @Autowired private BookingSeatRepository bookingSeatRepository;
     @Autowired private BookingProductRepository bookingProductRepository;
-    @Autowired private UserRepository userRepository;
+    @Autowired private AuthRepository userRepository;
     @Autowired private ShowtimeSeatRepository showtimeSeatRepository;
     @Autowired private ProductRepository productRepository; // Giả định bạn đã có
 

@@ -3,11 +3,15 @@ package com.cinema.modules.user.entity;
 import com.cinema.modules.booking.entity.Invoice;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import java.util.Collection;
+import java.util.Collections;
 
-// Định nghĩa Role ở ngoài class User để tránh lỗi xung đột "Role"
 enum UserRole {
     admin, customer
 }
@@ -18,7 +22,7 @@ enum UserRole {
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -36,8 +40,18 @@ public class User {
     @Column(name = "email_address")
     private String email;
 
+    @Column(name = "address", length = 255)
+    private String address;
+
+    @Column(name = "img_url", columnDefinition = "LONGTEXT") // Ép kiểu LONGTEXT để chứa đủ chuỗi ảnh
+    private String imgUrl;;
+
     @Column(name = "username")
     private String userName;
+
+    public String getUserName() {
+        return this.userName;
+    }
 
     @Column(name = "password")
     private String password;
@@ -57,4 +71,26 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Invoice> invoices;
+
+    // 2. Ghi đè hàm getAuthorities để Spring Security đọc được Role
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Chuyển Enum UserRole (admin/customer) thành Authority của Spring Security
+        if (this.role == null) {
+            return Collections.singletonList(new SimpleGrantedAuthority("customer"));
+        }
+        return Collections.singletonList(new SimpleGrantedAuthority(this.role.name()));
+    }
+
+    // 3. Cung cấp Username cho hệ thống (Trong trường hợp của bạn là email)
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    // 4. Các hàm bắt buộc khác của UserDetails (Để mặc định true)
+    @Override public boolean isAccountNonExpired() { return true; }
+    @Override public boolean isAccountNonLocked() { return true; }
+    @Override public boolean isCredentialsNonExpired() { return true; }
+    @Override public boolean isEnabled() { return true; }
 }
