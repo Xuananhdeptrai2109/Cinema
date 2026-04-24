@@ -6,6 +6,20 @@ let allReviews     = [];
 let uploadedFile   = null;
 let currentMovie   = null;
 
+const API_BASE = "http://localhost:8080/api";
+
+// Khai báo biến DOM một lần duy nhất ở đầu file
+const reviewsScroll  = document.getElementById('reviews-scroll');
+const btnSubmit      = document.getElementById('btn-submit-review');
+const reviewTextarea = document.getElementById('review-text');
+const starPicker     = document.getElementById('star-picker');
+const starHint       = document.getElementById('star-hint');
+const stars          = starPicker ? starPicker.querySelectorAll('.sp-star') : [];
+const formError      = document.getElementById('form-error');
+const charCur        = document.getElementById('char-cur');
+const uploadInput    = document.getElementById('upload-file');
+const uploadPreview  = document.getElementById('upload-preview');
+
 // ============================================================
 // INIT & FETCH DATA
 // ============================================================
@@ -19,124 +33,177 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        // 1. Lấy chi tiết phim từ DB
-        const response = await fetch(`http://localhost:8080/api/movies/${movieId}`);
+        // 1. Lấy chi tiết phim từ API
+        const response = await fetch(`${API_BASE}/movies/${movieId}`);
         if (!response.ok) throw new Error('Không tìm thấy phim');
         currentMovie = await response.json();
 
-        // 2. Đổ dữ liệu phim vào HTML (Fix giao diện)
+        // 2. Đổ dữ liệu phim vào giao diện
         renderMovieDetail(currentMovie);
 
-        // 3. Lấy phim liên quan dựa trên thể loại đầu tiên
+        // 3. Lấy bình luận thực tế từ Database
+        fetchComments(movieId);
+
+        // 4. Lấy phim liên quan (Dựa trên thể loại đầu tiên)
         if (currentMovie.genreNames && currentMovie.genreNames.length > 0) {
             fetchRelatedMovies(currentMovie.genreNames[0]);
         }
 
-        // 4. Khởi tạo hiệu ứng cuộn
+        // 5. Hiệu ứng cuộn
         const obs = initMovieFadeIn();
-        document.querySelectorAll('.fade-in:not(.visible)').forEach(el => obs.observe(el));
+        document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
 
     } catch (error) {
         console.error("Lỗi khởi tạo:", error);
     }
+});
+// ============================================================
+// COMMENT LOGIC (LƯU VÀ HIỂN THỊ TỪ DB)
+// ============================================================
+async function fetchComments(movieId) {
+    try {
+        const response = await fetch(`${API_BASE}/comments/movie/${movieId}`);
+        if (response.ok) {
+            allReviews = await response.json(); // Nhận List<CommentResponse> từ API
+            renderReviews();
+        }
+    } catch (error) { console.error("Lỗi lấy bình luận:", error); }
+}
 
-    renderReviews();
+// ============================================================
+// SUBMIT REVIEW TO DB (BẢN SỬA LỖI MẤT DỮ LIỆU)
+// ============================================================
+btnSubmit.addEventListener('click', async () => {
+    // BƯỚC 1: "Chụp" dữ liệu ngay lập tức khi vừa nhấn nút
+    const finalContent = reviewTextarea.value.trim();
+    const finalRating  = selectedRating;
+
+    // BƯỚC 2: Kiểm tra dữ liệu đầu vào (Validate)
+    if (finalRating === 0) {
+        alert("Vui lòng chọn số sao đánh giá!");
+        return;
+    }
+    if (!finalContent) {
+        alert("Vui lòng nhập nội dung bình luận!");
+        return;
+    }
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert("Bạn cần đăng nhập để thực hiện tác vụ này!");
+        return;
+    }
+
+    try {
+        btnSubmit.disabled = true;
+        btnSubmit.textContent = 'Đang xử lý...';
+
+        // BƯỚC 3: Xử lý ảnh sang Base64 (Nếu có)
+        let base64Img = null;
+        if (uploadedFile) {
+            base64Img = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsDataURL(uploadedFile);
+            });
+        }
+
+        // BƯỚC 4: Đóng gói dữ liệu (Ảnh luôn để cuối cùng)
+        const commentData = {
+            movieId: currentMovie.id,
+            starRating: finalRating, // Dùng giá trị đã "chụp" ở Bước 1
+            content: finalContent,   // Dùng giá trị đã "chụp" ở Bước 1
+            imageUrl: base64Img      // Dữ liệu ảnh khổng lồ ở cuối
+        };
+
+        // Kiểm tra log tại trình duyệt
+        console.log("DỮ LIỆU THỰC TẾ GỬI ĐI:", {
+            ...commentData,
+            imageUrl: commentData.imageUrl ? "Có ảnh (Base64...)" : "Không ảnh"
+        });
+
+        // BƯỚC 5: Gửi lên Server
+        const response = await fetch(`${API_BASE}/comments`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(commentData)
+        });
+
+        if (response.ok) {
+            // CHỈ RESET FORM KHI ĐÃ GỬI THÀNH CÔNG
+            reviewTextarea.value = '';
+            selectedRating = 0;
+            updateStars(0);
+            uploadedFile = null;
+            if (uploadPreview) uploadPreview.innerHTML = '';
+
+            // Tải lại danh sách bình luận
+            fetchComments(currentMovie.id);
+        } else {
+            const err = await response.text();
+        }
+
+    } catch (error) {
+        console.error("Lỗi kết nối:", error);
+        alert("Không thể kết nối đến máy chủ.");
+    } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = '<i class="fas fa-paper-plane"></i> Gửi đánh giá';
+    }
 });
 
+function resetReviewForm() {
+    selectedRating = 0;
+    updateStars(0);
+    reviewTextarea.value = '';
+    uploadedFile = null;
+    if (uploadPreview) uploadPreview.innerHTML = '';
+}
 // ============================================================
 // RENDER MOVIE DETAIL (FIX GIAO DIỆN)
 // ============================================================
 function renderMovieDetail(movie) {
     if (!movie) return;
 
-    // 1. Tiêu đề trang & Breadcrumb
     document.title = `${movie.title} – CineMax`;
+
+    // Cập nhật text & hình ảnh
     const breadcrumbTitle = document.getElementById('breadcrumb-movie-title');
     if (breadcrumbTitle) breadcrumbTitle.textContent = movie.title;
+    document.getElementById('movie-title').textContent = movie.title;
+    document.getElementById('movie-description').innerHTML = `<p>${movie.description}</p>`;
 
-    // 2. Backdrop & Poster
     const backdrop = document.getElementById('movie-backdrop');
     if (backdrop) backdrop.style.backgroundImage = `url('${movie.posterLink}')`;
 
     const poster = document.getElementById('movie-poster');
-    if (poster) {
-        poster.src = movie.posterLink;
-        poster.alt = movie.title;
-    }
+    if (poster) poster.src = movie.posterLink;
 
-    // 3. Status Badge (Đang chiếu / Sắp chiếu)
-    const statusBadge = document.getElementById('movie-status');
-    if (statusBadge) {
-        const isShowing = movie.status === 'showing';
-        statusBadge.textContent = isShowing ? 'ĐANG CHIẾU' : 'SẮP CHIẾU';
-        statusBadge.className = `poster-badge ${isShowing ? 'now' : 'coming'}`;
-    }
+    // Hiển thị điểm star (Ví dụ: 4.7 từ DB)
+    const avgScoreEl = document.querySelector('.avg-score');
+    if (avgScoreEl) avgScoreEl.textContent = movie.star ? movie.star.toFixed(1) : '0.0';
 
-    // 4. Genre Tags (Fix lỗi mất thẻ đỏ)
-    const genreContainer = document.getElementById('movie-genres');
-    if (genreContainer && movie.genreNames) {
-        genreContainer.innerHTML = movie.genreNames
-            .map(g => `<span class="gtag">${g}</span>`)
-            .join('');
-    }
-
-    // 5. Title & Star Rating
-    document.getElementById('movie-title').textContent = movie.title;
-    document.querySelector('.avg-score').textContent = movie.star || '0.0';
-
-    // Render sao vàng dựa trên điểm star từ API
     const starContainer = document.getElementById('avg-stars');
-    if (starContainer) {
-        starContainer.innerHTML = buildStarHTML(Math.round(movie.star || 0));
-    }
+    if (starContainer) starContainer.innerHTML = buildStarHTML(movie.star || 0);
 
-    // 6. Meta Grid (Thông tin chi tiết)
-    const setMetaVal = (id, val) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = val || 'Đang cập nhật';
-    };
-
-    setMetaVal('movie-date', movie.releaseDate ? new Date(movie.releaseDate).toLocaleDateString('vi-VN') : 'Sắp chiếu');
-    setMetaVal('movie-duration', movie.duration ? `${movie.duration} phút` : '---');
-    setMetaVal('movie-language', movie.language);
-    setMetaVal('movie-age', movie.ageRating);
-    setMetaVal('movie-director', movie.director);
-    setMetaVal('movie-actors', movie.actors);
-
-    const directorVal = document.getElementById('movie-director');
-    if (directorVal) {
-        // movie.director là trường String chúng ta vừa thêm vào MovieResponse ở bước trên
-        directorVal.textContent = movie.director || 'Đang cập nhật';
-    }
+    // Thông tin chi tiết (Meta Grid)
+    const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val || 'Đang cập nhật'; };
+    setVal('movie-date', movie.releaseDate);
+    setVal('movie-duration', `${movie.duration} phút`);
+    setVal('movie-language', movie.language);
+    setVal('movie-age', movie.ageRating);
+    setVal('movie-director', movie.director);
 
     const actorsEl = document.getElementById('movie-actors');
-    if (actorsEl && movie.performerNames) {
-        actorsEl.textContent = movie.performerNames.join(', ') || 'Đang cập nhật';
-    }
+    if (actorsEl && movie.performerNames) actorsEl.textContent = movie.performerNames.join(', ');
 
-    // Age Chip Color
-    const ageChip = document.getElementById('movie-age');
-    if (ageChip) ageChip.className = 'meta-val age-chip';
-
-    // 7. Description
-    document.getElementById('movie-description').innerHTML = `<p>${movie.description}</p>`;
-
-    // 8. Trailer Setup
+    // Trailer
     const trailerIframe = document.getElementById('trailer-iframe');
-    const modalMovieName = document.getElementById('modal-movie-name');
-    if (modalMovieName) modalMovieName.textContent = movie.title;
-
     if (trailerIframe && movie.trailerLink) {
-        const videoId = extractVideoID(movie.trailerLink);
-        const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
-
-        // Gán vào data-src để dùng cho Modal
-        trailerIframe.dataset.src = embedUrl;
-
-        console.log("Đã nhận Trailer Link:", movie.trailerLink);
-        console.log("Embed URL dự kiến:", embedUrl);
-    } else {
-        console.warn("Không tìm thấy trailerLink trong dữ liệu movie trả về từ API");
+        trailerIframe.dataset.src = `https://www.youtube.com/embed/${extractVideoID(movie.trailerLink)}?autoplay=1`;
     }
 }
 
@@ -185,12 +252,14 @@ function renderRelated(movies) {
 }
 
 // ============================================================
-// HELPERS (Giữ nguyên từ bản JS thuần)
+// HELPERS
 // ============================================================
 function buildStarHTML(rating) {
     let html = '';
     for (let i = 1; i <= 5; i++) {
-        html += `<i class="fas fa-star${i <= rating ? '' : ' empty'}"></i>`;
+        if (i <= rating) html += '<i class="fas fa-star"></i>';
+        else if (i - 0.5 <= rating) html += '<i class="fas fa-star-half-alt"></i>';
+        else html += '<i class="far fa-star"></i>';
     }
     return html;
 }
@@ -251,13 +320,16 @@ document.addEventListener('keydown', (e) => {
 // ============================================================
 const readMoreBtn = document.getElementById('read-more-btn');
 const descExtra   = document.getElementById('desc-extra');
-const btnSpan     = readMoreBtn.querySelector('span');
+// const btnSpan     = readMoreBtn.querySelector('span');
+const btnSpan = readMoreBtn ? readMoreBtn.querySelector('span') : null;
 
-readMoreBtn.addEventListener('click', () => {
-    const isOpen = descExtra.classList.toggle('show');
-    readMoreBtn.classList.toggle('open', isOpen);
-    btnSpan.textContent = isOpen ? 'Thu gọn' : 'Xem thêm';
-});
+if (readMoreBtn && btnSpan) {
+    readMoreBtn.addEventListener('click', () => {
+        const isOpen = descExtra.classList.toggle('show');
+        readMoreBtn.classList.toggle('open', isOpen);
+        btnSpan.textContent = isOpen ? 'Thu gọn' : 'Xem thêm';
+    });
+}
 
 // ============================================================
 // WISHLIST TOGGLE
@@ -272,9 +344,6 @@ document.getElementById('btn-wishlist').addEventListener('click', function () {
 // ============================================================
 // STAR RATING PICKER
 // ============================================================
-const starPicker = document.getElementById('star-picker');
-const starHint   = document.getElementById('star-hint');
-const stars      = starPicker.querySelectorAll('.sp-star');
 
 const LABELS = ['', 'Tệ', 'Không hay', 'Bình thường', 'Hay', 'Xuất sắc!'];
 
@@ -307,8 +376,6 @@ stars.forEach((star, idx) => {
 // ============================================================
 // UPLOAD PREVIEW
 // ============================================================
-const uploadInput   = document.getElementById('upload-file');
-const uploadPreview = document.getElementById('upload-preview');
 
 uploadInput.addEventListener('change', () => {
     const file = uploadInput.files[0];
@@ -355,11 +422,6 @@ function renderUploadPreview(file) {
 // ============================================================
 // FORM VALIDATION & SUBMIT REVIEW
 // ============================================================
-const formError      = document.getElementById('form-error');
-const reviewTextarea = document.getElementById('review-text');
-const charCur        = document.getElementById('char-cur');
-const btnSubmit      = document.getElementById('btn-submit-review');
-
 // Char count
 reviewTextarea.addEventListener('input', () => {
     charCur.textContent = reviewTextarea.value.length;
@@ -418,8 +480,10 @@ btnSubmit.addEventListener('click', () => {
     uploadInput.value    = '';
     uploadPreview.innerHTML = '';
 
-    // Update review count
-    document.getElementById('review-count').textContent = allReviews.length + 128 - seedReviews.length;
+    const countEl = document.getElementById('review-count');
+    if (countEl) {
+        countEl.textContent = allReviews.length;
+    }
 
     // Success flash
     btnSubmit.textContent = '✓ Đã gửi!';
@@ -435,58 +499,73 @@ btnSubmit.addEventListener('click', () => {
 // ============================================================
 const REVIEWS_PER_PAGE = 5; // Số bình luận hiển thị trước khi cuộn
 
-const reviewsScroll = document.getElementById('reviews-scroll');
-
 function renderReviews() {
-    const sortVal = document.getElementById('reviews-sort').value;
+    // 1. Kiểm tra phần tử hiển thị có tồn tại không
+    if (!reviewsScroll) return;
 
-    // Sắp xếp theo filter
+    // 2. Lấy giá trị sắp xếp an toàn với Optional Chaining (?.)
+    const sortSelect = document.getElementById('reviews-sort');
+    const sortVal = sortSelect ? sortSelect.value : 'newest';
+
+    // 3. Logic sắp xếp dữ liệu từ Database
     const sorted = [...allReviews].sort((a, b) => {
-        if (sortVal === 'top') return b.rating - a.rating;
-        if (sortVal === 'low') return a.rating - b.rating;
-        return 0; // 'newest' → giữ thứ tự chèn (mới nhất đầu)
+        if (sortVal === 'top') return b.starRating - a.starRating;
+        if (sortVal === 'low') return a.starRating - b.starRating;
+        // Mặc định sắp xếp theo ngày tạo (mới nhất lên đầu)
+        return new Date(b.createdAt) - new Date(a.createdAt);
     });
 
+    // 4. Hiển thị thông báo nếu chưa có bình luận và ẩn thanh cuộn
     if (!sorted.length) {
-        reviewsScroll.innerHTML = `
-      <div class="reviews-empty">
-        <i class="far fa-comment-dots"></i>
-        Chưa có đánh giá nào. Hãy là người đầu tiên!
-      </div>`;
+        reviewsScroll.innerHTML = `<div class="reviews-empty">Chưa có đánh giá nào. Hãy là người đầu tiên!</div>`;
         reviewsScroll.style.overflowY = 'hidden';
         return;
     }
 
+    // 5. Vẽ danh sách bình luận thực tế
     reviewsScroll.innerHTML = sorted.map((r, i) => {
-        const starsHTML = buildStarHTML(r.rating);
-        const mediaHTML = r.media.map(m => {
-            if (m.type && m.type.startsWith('video/')) return `<video src="${m.url}" controls></video>`;
-            if (m.url) return `<img src="${m.url}" alt="media" />`;
-            return '';
-        }).join('');
+        const starsHTML = buildStarHTML(r.starRating);
+        const mediaHTML = r.imageUrl ? `<div class="ri-media"><img src="${r.imageUrl}" alt="review-img" /></div>` : '';
+        const dateStr = r.createdAt ? new Date(r.createdAt).toLocaleDateString('vi-VN') : 'Vừa xong';
 
-        const delay = Math.min(i * 0.05, 0.3);
         return `
-      <div class="review-item" style="animation-delay:${delay}s">
-        <div class="ri-avatar" style="background:${avatarColor(r.name)}">${generateAvatar(r.name)}</div>
+      <div class="review-item" style="animation-delay:${Math.min(i * 0.05, 0.3)}s">
+        <div class="ri-avatar" style="background:${avatarColor(r.userName || 'U')}">
+            ${(r.userName || 'U').charAt(0).toUpperCase()}
+        </div>
         <div class="ri-body">
           <div class="ri-top">
-            <span class="ri-name">${r.name}</span>
+            <span class="ri-name">${r.fullName || 'Người dùng'} <small>(@${r.userName})</small></span>
             <div class="ri-stars">${starsHTML}</div>
-            <span class="ri-date">${r.date}</span>
+            <span class="ri-date">${dateStr}</span>
           </div>
-          <p class="ri-text">${r.text}</p>
-          ${mediaHTML ? `<div class="ri-media">${mediaHTML}</div>` : ''}
+          <p class="ri-text">${r.content}</p>
+          ${mediaHTML}
         </div>
       </div>`;
     }).join('');
 
-    // Bật / tắt cuộn tuỳ số lượng bình luận
+    // 6. FIX: KÍCH HOẠT HIỆU ỨNG CUỘN
+    // Nếu số lượng bình luận lớn hơn REVIEWS_PER_PAGE, bắt buộc hiện thanh cuộn
     if (sorted.length > REVIEWS_PER_PAGE) {
-        reviewsScroll.style.overflowY = 'auto';
+        reviewsScroll.style.maxHeight = '500px'; // Đặt chiều cao tối đa cho khung
+        reviewsScroll.style.overflowY = 'auto';  // Bật thanh cuộn dọc
+        reviewsScroll.style.paddingRight = '10px'; // Tránh việc thanh cuộn đè lên nội dung
     } else {
-        reviewsScroll.style.overflowY = 'hidden';
+        reviewsScroll.style.maxHeight = 'none';  // Tự động giãn theo nội dung nếu ít
+        reviewsScroll.style.overflowY = 'hidden'; // Ẩn thanh cuộn
+        reviewsScroll.style.paddingRight = '0';
     }
+
+    // 7. Cập nhật số lượng bình luận trên giao diện
+    const countEl = document.getElementById('review-count');
+    if (countEl) countEl.textContent = sorted.length;
+}
+
+// Lắng nghe sự kiện thay đổi kiểu sắp xếp
+const sortSelect = document.getElementById('reviews-sort');
+if (sortSelect) {
+    sortSelect.addEventListener('change', renderReviews);
 }
 
 document.getElementById('reviews-sort').addEventListener('change', renderReviews);

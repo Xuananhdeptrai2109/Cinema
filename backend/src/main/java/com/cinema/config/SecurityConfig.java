@@ -73,6 +73,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/users/profile").hasAnyAuthority("customer", "admin")
                         .requestMatchers(HttpMethod.PUT, "/api/users/profile").hasAnyAuthority("customer")
 
+                        .requestMatchers(HttpMethod.GET, "/api/comments/movie/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/comments").hasAnyAuthority("customer", "admin")
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

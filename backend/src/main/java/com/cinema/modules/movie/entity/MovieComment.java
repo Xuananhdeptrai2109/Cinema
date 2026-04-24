@@ -14,6 +14,7 @@ public class MovieComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "comment_id")
     private Long commentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,7 +28,8 @@ public class MovieComment {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "image_url", length = 500)
+    @Lob
+    @Column(name = "image_url", columnDefinition = "LONGTEXT")
     private String imageUrl;
 
     @Column(name = "star_rating")

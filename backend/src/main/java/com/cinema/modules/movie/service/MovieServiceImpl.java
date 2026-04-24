@@ -52,6 +52,7 @@ public class MovieServiceImpl implements MovieService {
         res.setAgeRating(movie.getAgeRating());
         res.setTrailerLink(movie.getTrailerLink());
         res.setStatus(movie.getStatus());
+        res.setStar(movie.getStar());
         if (movie.getDirector() != null) {
             res.setDirector(movie.getDirector().getDirectorName());
         }
@@ -98,6 +99,6 @@ public class MovieServiceImpl implements MovieService {
                 res.setGenreNames(genreNames);
             }
             return res;
-        }).toList(); // Hoặc .collect(Collectors.toList()) tùy phiên bản Java
+        }).toList();
     }
 }

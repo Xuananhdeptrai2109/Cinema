@@ -12,6 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/movies")
+// Lưu ý: origins đã khớp với SecurityConfig bạn cấu hình trước đó
 @CrossOrigin(origins = "http://localhost:63342")
 public class MovieController {
 
@@ -21,16 +22,14 @@ public class MovieController {
     @GetMapping("/home")
     public ResponseEntity<Map<String, List<MovieResponse>>> getHomeMovies() {
         Map<String, List<MovieResponse>> response = new HashMap<>();
-        // Gọi thông qua Service Interface
         response.put("nowShowing", movieService.getNowShowing());
         response.put("comingSoon", movieService.getComingSoon());
-
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<MovieResponse> getMovieDetail(@PathVariable Long id) {
-        // Gọi service để lấy chi tiết 1 phim
+        // Service sẽ chịu trách nhiệm gọi Constructor MovieResponse(movie)
         MovieResponse movie = movieService.getMovieById(id);
         return ResponseEntity.ok(movie);
     }

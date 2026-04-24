@@ -22,4 +22,6 @@ public class MovieResponse {
     private String director;
     private List<String> genreNames;
     private List<String> performerNames;
+
+
 }
