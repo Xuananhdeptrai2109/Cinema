@@ -5,7 +5,7 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "Screening_format")
+@Table(name = "screening_format")
 @Data
 public class ScreeningFormat {
     @Id

@@ -1,6 +1,7 @@
 package com.cinema.modules.booking.repository;
 
 import com.cinema.modules.booking.entity.BookingSeat;
+import com.cinema.modules.booking.entity.Invoice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,16 +13,16 @@ import java.util.UUID;
 @Repository
 public interface BookingSeatRepository extends JpaRepository<BookingSeat, Long> {
 
-    // 1. Tìm tất cả các ghế thuộc về một hóa đơn cụ thể (UUID)
+    // Tìm ghế theo invoiceId (UUID)
     List<BookingSeat> findByInvoice_InvoiceId(UUID invoiceId);
 
-    // 2. Kiểm tra xem một ghế trong suất chiếu đã được đặt chưa (tránh đặt trùng)
-    boolean existsByShowtime_ShowtimeIdAndShowtimeSeat_ShowtimeSeatId(Long showtimeId, Long showtimeSeatId);
+    // Tìm ghế theo invoice object
+    List<BookingSeat> findByInvoice(Invoice invoice);
 
-    // 3. Xóa các ghế thuộc về một hóa đơn (Dùng khi khách hàng hủy thanh toán)
-    void deleteByInvoice_InvoiceId(UUID invoiceId);
+    // Kiểm tra ghế đã được đặt chưa
+    boolean existsByShowtimeSeat_ShowtimeSeatId(Long showtimeSeatId);
 
-    // 4. Custom query lấy tên ghế từ bảng ShowtimeSeat (Ví dụ: "A1", "A2")
+    // Lấy số ghế theo invoiceId (UUID)
     @Query("SELECT bs.showtimeSeat.seat.seatNumber FROM BookingSeat bs WHERE bs.invoice.invoiceId = :invoiceId")
     List<String> findSeatNumbersByInvoiceId(@Param("invoiceId") UUID invoiceId);
 }

@@ -9,7 +9,7 @@ import com.cinema.modules.movie.entity.Movie;
 import com.cinema.modules.room.entity.Room;
 
 @Entity
-@Table(name = "Showtime")
+@Table(name = "showtime")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,10 +22,10 @@ public class Showtime {
     private Long showtimeId;
 
     @Column(name = "start_time")
-    private LocalDateTime startTime;
+    private java.time.LocalTime startTime;
 
     @Column(name = "end_time")
-    private LocalDateTime endTime;
+    private java.time.LocalTime endTime;
 
     @Column(name = "show_date")
     private LocalDate showDate;

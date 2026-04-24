@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "Performer")
+@Table(name = "performer")
 @Getter
 @Setter
 public class Performer {

@@ -5,7 +5,7 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "Seat_type")
+@Table(name = "seat_type")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class SeatType {

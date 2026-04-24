@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "Seat", uniqueConstraints = {
+@Table(name = "seat", uniqueConstraints = {
         // Lưu ý: SQL của bạn để UNIQUE (room_id, seat_location)
         // nhưng bạn đã đổi trường, nên constraint này cũng cần đổi theo:
         @UniqueConstraint(columnNames = {"room_id", "row_name", "seat_number"})

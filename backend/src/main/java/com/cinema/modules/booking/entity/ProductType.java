@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
-@Table(name = "Product_type")
+@Table(name = "product_type")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,9 +17,10 @@ import java.util.List;
 public class ProductType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "productTypeId")
     private Long productTypeId;
 
-    @Column(unique = true, nullable = false, length = 50)
+    @Column(name = "typeName", unique = true, nullable = false, length = 50)
     private String typeName;
 
     @OneToMany(mappedBy = "productType")

@@ -3,6 +3,7 @@ package com.cinema.modules.showtime.service;
 import com.cinema.modules.movie.entity.Movie;
 import com.cinema.modules.showtime.entity.Showtime;
 import com.cinema.modules.showtime.repository.ShowtimeRepository;
+import com.cinema.modules.showtime.response.ShowtimeDetailResponse;
 import com.cinema.modules.showtime.response.ShowtimeResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,27 +20,21 @@ public class ShowtimeServiceImpl implements ShowtimeService {
     @Autowired
     private ShowtimeRepository showtimeRepository;
 
-    // Định dạng giờ để tránh lỗi substring nếu dữ liệu thời gian không đồng nhất
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
     @Override
     @Transactional(readOnly = true)
     public List<ShowtimeResponse> getShowtimesByCinemaAndDate(Long cinemaId, String date) {
-        // 1. Chuyển đổi String sang LocalDate an toàn
         LocalDate showDate = LocalDate.parse(date);
-
-        // 2. Lấy dữ liệu từ Repository (Đã JOIN qua Room -> Cinema)
         List<Showtime> allShowtimes = showtimeRepository.findByCinemaAndDate(cinemaId, showDate);
 
-        // 3. Nhóm dữ liệu theo cấu trúc 3 tầng: Phim -> Định dạng (2D/3D) -> Phòng
         return allShowtimes.stream()
-                .collect(Collectors.groupingBy(Showtime::getMovie)) // Tầng 1: Movie
+                .collect(Collectors.groupingBy(s -> s.getMovie().getId())) // ✅ Sửa: group by movie ID (Long) thay vì Movie object
                 .entrySet().stream()
                 .map(movieEntry -> {
-                    Movie movie = movieEntry.getKey();
                     List<Showtime> movieSchedules = movieEntry.getValue();
+                    Movie movie = movieSchedules.get(0).getMovie(); // ✅ Lấy movie từ list
 
-                    // Tầng 2: Nhóm theo Loại phòng (IMAX, 2D, 3D...) lấy từ ScreeningFormat
                     List<ShowtimeResponse.RoomTypeGroup> typeGroups = movieSchedules.stream()
                             .collect(Collectors.groupingBy(s -> s.getRoom().getScreeningFormat().getType()))
                             .entrySet().stream()
@@ -47,29 +42,24 @@ public class ShowtimeServiceImpl implements ShowtimeService {
                                 String formatType = typeEntry.getKey();
                                 List<Showtime> typeSchedules = typeEntry.getValue();
 
-                                // Tầng 3: Nhóm theo Tên phòng (Phòng A, Phòng B...)
                                 List<ShowtimeResponse.RoomDetail> roomDetails = typeSchedules.stream()
                                         .collect(Collectors.groupingBy(s -> s.getRoom().getRoomName()))
                                         .entrySet().stream()
                                         .map(roomEntry -> {
                                             String roomName = roomEntry.getKey();
-
-                                            // Tầng 4: Danh sách giờ chiếu (TimeDetail)
                                             List<ShowtimeResponse.TimeDetail> times = roomEntry.getValue().stream()
                                                     .map(s -> new ShowtimeResponse.TimeDetail(
-                                                            s.getShowtimeId(), // LẤY ID TỪ ENTITY SHOWTIME
+                                                            s.getShowtimeId(),
                                                             s.getStartTime().format(TIME_FORMATTER),
                                                             100
                                                     ))
                                                     .collect(Collectors.toList());
-
                                             return new ShowtimeResponse.RoomDetail(roomName, times);
                                         }).collect(Collectors.toList());
 
                                 return new ShowtimeResponse.RoomTypeGroup(formatType, roomDetails);
                             }).collect(Collectors.toList());
 
-                    // Trả về Response cuối cùng cho mỗi phim
                     return new ShowtimeResponse(
                             movie.getId(),
                             movie.getTitle(),
@@ -77,10 +67,38 @@ public class ShowtimeServiceImpl implements ShowtimeService {
                             movie.getDuration(),
                             movie.getAgeRating(),
                             movie.getGenres().stream()
-                                    .map(g -> g.getGenreName()) // Lấy tên thể loại từ bảng Genre
+                                    .map(g -> g.getGenreName())
                                     .collect(Collectors.toList()),
                             typeGroups
                     );
                 }).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ShowtimeDetailResponse getShowtimeById(Long showtimeId) {
+        Showtime s = showtimeRepository.findById(showtimeId)
+                .orElseThrow(() -> new RuntimeException("Suất chiếu không tồn tại"));
+
+        ShowtimeDetailResponse res = new ShowtimeDetailResponse();
+        res.setShowtimeId(s.getShowtimeId());
+        res.setStartTime(s.getStartTime().format(TIME_FORMATTER));
+        res.setEndTime(s.getEndTime() != null ? s.getEndTime().format(TIME_FORMATTER) : "");
+        res.setShowDate(s.getShowDate().toString());
+        res.setRoomName(s.getRoom().getRoomName());
+        res.setRoomType(s.getRoom().getScreeningFormat().getType());
+        res.setCinemaName(s.getRoom().getCinema().getCinemaName());
+        res.setMovieId(s.getMovie().getId());
+        res.setMovieName(s.getMovie().getTitle());
+        res.setPosterUrl(s.getMovie().getPosterLink());
+        res.setDuration(s.getMovie().getDuration());
+        res.setAgeRating(s.getMovie().getAgeRating());
+        // ✅ Sửa: Set không có .get(0), dùng stream().findFirst() thay thế
+        res.setGenre(s.getMovie().getGenres().stream()
+                .findFirst()
+                .map(g -> g.getGenreName())
+                .orElse(""));
+
+        return res;
     }
 }

@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kết quả thanh toán VNPay – CineMax</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    />
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../css/home.css" />
+    <link rel="stylesheet" href="../css/vnpay-return.css" />
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════════════════ -->
+<header id="header">
+    <div class="container">
+        <div class="header-inner">
+            <a href="home.html" class="logo">
+                <div class="logo-icon">🎬</div>
+                <div class="logo-text">CINE<span>MAX</span></div>
+            </a>
+            <nav class="nav">
+                <a href="home.html">Trang chủ</a>
+                <a href="movies.html?tab=now">Đang chiếu</a>
+                <a href="movies.html?tab=coming">Sắp chiếu</a>
+                <a href="home.html#cinemas">Rạp chiếu</a>
+                <a href="home.html#promotions">Khuyến mãi</a>
+            </nav>
+            <div class="auth-btns">
+                <div id="guest-zone" style="display: flex; gap: 10px;">
+                    <button class="btn-outline">
+                        <a href="login.html" style="color: inherit; text-decoration: none;">Đăng nhập</a>
+                    </button>
+                    <button class="btn-red">
+                        <a href="register.html" style="color: inherit; text-decoration: none;">Đăng ký</a>
+                    </button>
+                </div>
+                <div id="user-zone" style="display: none; align-items: center; gap: 15px;">
+                    <span style="color: white;">Xin chào, <strong id="display-username" style="color: var(--red);"></strong></span>
+                    <button class="btn-outline" id="btn-logout">Đăng xuất</button>
+                </div>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+    <div class="mobile-nav" id="mobile-nav">
+        <a href="home.html">Trang chủ</a>
+        <a href="movies.html?tab=now">Phim đang chiếu</a>
+        <a href="movies.html?tab=coming">Phim sắp chiếu</a>
+        <div class="m-auth">
+            <button class="btn-outline" style="flex: 1"><a href="login.html" style="color:inherit;text-decoration:none">Đăng nhập</a></button>
+            <button class="btn-red" style="flex: 1"><a href="register.html" style="color:inherit;text-decoration:none">Đăng ký</a></button>
+        </div>
+    </div>
+</header>
+
+<!-- ══ MAIN ════════════════════════════════════════════════ -->
+<main class="vnpay-main">
+    <div class="container">
+
+        <!-- Loading state -->
+        <div class="vr-loading" id="vr-loading">
+            <div class="vr-spinner">
+                <div class="spinner-ring"></div>
+                <i class="fas fa-university spinner-icon"></i>
+            </div>
+            <p>Đang xác minh giao dịch VNPay...</p>
+        </div>
+
+        <!-- Result card -->
+        <div class="vr-card" id="vr-card" style="display:none;">
+
+            <!-- Status icon -->
+            <div class="vr-status-icon" id="vr-status-icon">
+                <!-- filled by JS -->
+            </div>
+
+            <h1 class="vr-title" id="vr-title">--</h1>
+            <p class="vr-subtitle" id="vr-subtitle">--</p>
+
+            <!-- VNPay badge -->
+            <div class="vnpay-badge">
+                <i class="fas fa-university"></i>
+                <span>Thanh toán qua <strong>VNPay</strong></span>
+            </div>
+
+            <!-- Transaction details -->
+            <div class="vr-details" id="vr-details">
+                <div class="vr-row">
+                    <span class="vr-label"><i class="fas fa-hashtag"></i> Mã giao dịch</span>
+                    <span class="vr-value" id="vr-txn-ref">--</span>
+                </div>
+                <div class="vr-row">
+                    <span class="vr-label"><i class="fas fa-receipt"></i> Mã đơn hàng</span>
+                    <span class="vr-value" id="vr-invoice-id">--</span>
+                </div>
+                <div class="vr-row">
+                    <span class="vr-label"><i class="fas fa-money-bill-wave"></i> Số tiền</span>
+                    <span class="vr-value vr-amount" id="vr-amount">--</span>
+                </div>
+                <div class="vr-row">
+                    <span class="vr-label"><i class="fas fa-credit-card"></i> Ngân hàng</span>
+                    <span class="vr-value" id="vr-bank">--</span>
+                </div>
+                <div class="vr-row">
+                    <span class="vr-label"><i class="fas fa-calendar-check"></i> Thời gian</span>
+                    <span class="vr-value" id="vr-pay-date">--</span>
+                </div>
+                <div class="vr-row">
+                    <span class="vr-label"><i class="fas fa-info-circle"></i> Trạng thái</span>
+                    <span class="vr-value" id="vr-status-text">--</span>
+                </div>
+            </div>
+
+            <!-- Booking info (success only) -->
+            <div class="vr-booking-info" id="vr-booking-info" style="display:none;">
+                <div class="vr-booking-head">
+                    <i class="fas fa-ticket-alt"></i> Thông tin vé
+                </div>
+                <div class="vr-booking-body">
+                    <div class="vr-booking-row">
+                        <i class="fas fa-film"></i>
+                        <span id="vr-movie-title">--</span>
+                    </div>
+                    <div class="vr-booking-row">
+                        <i class="fas fa-clock"></i>
+                        <span id="vr-showtime">--</span>
+                    </div>
+                    <div class="vr-booking-row">
+                        <i class="fas fa-chair"></i>
+                        <span id="vr-seats">--</span>
+                    </div>
+                    <div class="vr-booking-row">
+                        <i class="fas fa-store"></i>
+                        <span id="vr-cinema">--</span>
+                    </div>
+                </div>
+                <div class="vr-ticket-note">
+                    <i class="fas fa-envelope"></i>
+                    Vé điện tử đã được gửi về email của bạn
+                </div>
+            </div>
+
+            <!-- Error detail (failed only) -->
+            <div class="vr-error-detail" id="vr-error-detail" style="display:none;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span id="vr-error-msg">Giao dịch không thành công.</span>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="vr-actions" id="vr-actions">
+                <!-- filled by JS -->
+            </div>
+
+            <!-- Auto-redirect countdown (success) -->
+            <div class="vr-redirect" id="vr-redirect" style="display:none;">
+                <p>Tự động chuyển trang sau <span id="vr-countdown">5</span> giây...</p>
+                <div class="vr-redirect-bar">
+                    <div class="vr-redirect-fill" id="vr-redirect-fill"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<button id="back-top" aria-label="Về đầu trang">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<script type="module" src="../js/main/home.js"></script>
+<script type="module">
+// ============================================================
+// CONFIG
+// ============================================================
+const API_BASE = 'http://localhost:8080/api';
+
+// ============================================================
+// PARSE VNPAY QUERY PARAMS
+// ============================================================
+function parseVNPayParams() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+        vnp_ResponseCode:   params.get('vnp_ResponseCode')   || '',
+        vnp_TransactionNo:  params.get('vnp_TransactionNo')  || '',
+        vnp_TxnRef:         params.get('vnp_TxnRef')         || '',
+        vnp_Amount:         params.get('vnp_Amount')         || '0',
+        vnp_BankCode:       params.get('vnp_BankCode')       || '',
+        vnp_PayDate:        params.get('vnp_PayDate')        || '',
+        vnp_OrderInfo:      params.get('vnp_OrderInfo')      || '',
+        vnp_SecureHash:     params.get('vnp_SecureHash')     || '',
+    };
+}
+
+// ============================================================
+// FORMAT HELPERS
+// ============================================================
+function formatAmount(raw) {
+    const num = parseInt(raw, 10) / 100;
+    return num.toLocaleString('vi-VN') + 'đ';
+}
+
+function formatDate(raw) {
+    if (!raw || raw.length < 14) return raw;
+    // yyyyMMddHHmmss
+    const y = raw.slice(0,4), mo = raw.slice(4,6), d = raw.slice(6,8);
+    const h = raw.slice(8,10), mi = raw.slice(10,12), s = raw.slice(12,14);
+    return `${d}/${mo}/${y} ${h}:${mi}:${s}`;
+}
+
+// ============================================================
+// RESPONSE CODE MAP
+// ============================================================
+const RESPONSE_CODES = {
+    '00': { success: true,  label: 'Giao dịch thành công' },
+    '07': { success: false, label: 'Trừ tiền thành công nhưng bị nghi ngờ gian lận' },
+    '09': { success: false, label: 'Chưa đăng ký dịch vụ InternetBanking' },
+    '10': { success: false, label: 'Xác thực thông tin thẻ sai quá 3 lần' },
+    '11': { success: false, label: 'Đã hết hạn chờ thanh toán' },
+    '12': { success: false, label: 'Thẻ/tài khoản bị khóa' },
+    '13': { success: false, label: 'Sai mật khẩu xác thực OTP' },
+    '24': { success: false, label: 'Khách hàng hủy giao dịch' },
+    '51': { success: false, label: 'Tài khoản không đủ số dư' },
+    '65': { success: false, label: 'Vượt hạn mức giao dịch trong ngày' },
+    '75': { success: false, label: 'Ngân hàng đang bảo trì' },
+    '79': { success: false, label: 'Sai mật khẩu thanh toán quá số lần quy định' },
+    '99': { success: false, label: 'Lỗi không xác định' },
+};
+
+// ============================================================
+// RENDER RESULT
+// ============================================================
+function renderSuccess(params) {
+    document.getElementById('vr-status-icon').innerHTML =
+        `<div class="status-circle success">
+            <i class="fas fa-check-circle"></i>
+            <div class="status-ripple"></div>
+            <div class="status-ripple delay1"></div>
+        </div>`;
+    document.getElementById('vr-title').textContent   = 'Thanh toán thành công!';
+    document.getElementById('vr-subtitle').textContent = 'Cảm ơn bạn đã đặt vé tại CineMax. Chúc bạn xem phim vui vẻ!';
+
+    document.getElementById('vr-txn-ref').textContent  = params.vnp_TransactionNo || params.vnp_TxnRef;
+    document.getElementById('vr-invoice-id').textContent = params.vnp_TxnRef;
+    document.getElementById('vr-amount').textContent   = formatAmount(params.vnp_Amount);
+    document.getElementById('vr-bank').textContent     = params.vnp_BankCode || '—';
+    document.getElementById('vr-pay-date').textContent = formatDate(params.vnp_PayDate);
+    document.getElementById('vr-status-text').innerHTML = `<span class="badge-success">Thành công</span>`;
+
+    // Show booking info from sessionStorage
+    const movieTitle = sessionStorage.getItem('movieTitle');
+    const showtime   = sessionStorage.getItem('showtime');
+    const seats      = sessionStorage.getItem('selectedSeats');
+    const cinema     = sessionStorage.getItem('cinema');
+
+    if (movieTitle || showtime || seats) {
+        document.getElementById('vr-booking-info').style.display = 'block';
+        document.getElementById('vr-movie-title').textContent = movieTitle || '—';
+        document.getElementById('vr-showtime').textContent    = showtime   || '—';
+        document.getElementById('vr-seats').textContent       = seats      || '—';
+        document.getElementById('vr-cinema').textContent      = cinema     || '—';
+    }
+
+    document.getElementById('vr-actions').innerHTML = `
+        <a href="home.html" class="vr-btn vr-btn-primary">
+            <i class="fas fa-home"></i> Về trang chủ
+        </a>
+        <a href="my-tickets.html" class="vr-btn vr-btn-outline">
+            <i class="fas fa-ticket-alt"></i> Xem vé của tôi
+        </a>
+    `;
+
+    // // Auto redirect
+    // const redirectEl  = document.getElementById('vr-redirect');
+    // const countdownEl = document.getElementById('vr-countdown');
+    // const fillEl      = document.getElementById('vr-redirect-fill');
+    // redirectEl.style.display = 'none';
+
+    // let secs = 7;
+    // requestAnimationFrame(() => { fillEl.style.width = '100%'; });
+    // const timer = setInterval(() => {
+    //     secs--;
+    //     countdownEl.textContent = secs;
+    //     if (secs <= 0) {
+    //         clearInterval(timer);
+    //         window.location.href = 'home.html';
+    //     }
+    // }, 1000);
+}
+
+function renderFailed(params, codeInfo) {
+    document.getElementById('vr-status-icon').innerHTML =
+        `<div class="status-circle failed">
+            <i class="fas fa-times-circle"></i>
+        </div>`;
+
+    const isCancelled = params.vnp_ResponseCode === '24';
+    document.getElementById('vr-title').textContent    = isCancelled ? 'Giao dịch đã hủy' : 'Thanh toán thất bại';
+    document.getElementById('vr-subtitle').textContent = 'Giao dịch của bạn chưa được hoàn tất. Vui lòng thử lại.';
+
+    document.getElementById('vr-txn-ref').textContent  = params.vnp_TxnRef || '—';
+    document.getElementById('vr-invoice-id').textContent = params.vnp_TxnRef || '—';
+    document.getElementById('vr-amount').textContent   = formatAmount(params.vnp_Amount);
+    document.getElementById('vr-bank').textContent     = params.vnp_BankCode || '—';
+    document.getElementById('vr-pay-date').textContent = formatDate(params.vnp_PayDate) || '—';
+    document.getElementById('vr-status-text').innerHTML =
+        `<span class="badge-failed">${codeInfo?.label || 'Thất bại'}</span>`;
+
+    document.getElementById('vr-error-detail').style.display = 'flex';
+    document.getElementById('vr-error-msg').textContent =
+        codeInfo?.label || 'Có lỗi xảy ra trong quá trình thanh toán.';
+
+    const invoiceId = sessionStorage.getItem('pendingInvoiceId') || '';
+    document.getElementById('vr-actions').innerHTML = `
+        <a href="payment.html${invoiceId ? '?invoiceId=' + invoiceId : ''}" class="vr-btn vr-btn-primary">
+            <i class="fas fa-redo"></i> Thử lại thanh toán
+        </a>
+        <a href="home.html" class="vr-btn vr-btn-outline">
+            <i class="fas fa-home"></i> Về trang chủ
+        </a>
+    `;
+}
+
+// ============================================================
+// VERIFY WITH BACKEND (optional)
+// ============================================================
+async function verifyWithBackend(params) {
+    try {
+        const qs = new URLSearchParams(window.location.search).toString();
+        const res = await fetch(`${API_BASE}/payment/vnpay-verify?${qs}`, {
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+        });
+        if (!res.ok) return null;
+        return await res.json();
+    } catch {
+        return null;
+    }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', async () => {
+    const params   = parseVNPayParams();
+    const loading  = document.getElementById('vr-loading');
+    const card     = document.getElementById('vr-card');
+
+    // Small delay for better UX
+    await new Promise(r => setTimeout(r, 1200));
+
+    // Optional: verify with backend
+    await verifyWithBackend(params);
+
+    // Determine success/failure
+    const code     = params.vnp_ResponseCode;
+    const codeInfo = RESPONSE_CODES[code] || { success: false, label: `Mã lỗi: ${code}` };
+
+    // Hide loading, show card
+    loading.classList.add('fade-out');
+    setTimeout(() => {
+        loading.style.display = 'none';
+        card.style.display    = 'block';
+        card.classList.add('slide-in');
+
+        if (codeInfo.success) {
+            renderSuccess(params);
+            // Clear pending invoice
+            sessionStorage.removeItem('pendingInvoiceId');
+        } else {
+            renderFailed(params, codeInfo);
+        }
+    }, 400);
+});
+</script>
+</body>
+</html>

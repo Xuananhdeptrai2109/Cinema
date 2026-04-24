@@ -5,7 +5,7 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Table(name = "Province_city")
+@Table(name = "province_city")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

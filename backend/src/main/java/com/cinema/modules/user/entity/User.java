@@ -13,7 +13,7 @@ enum UserRole {
 }
 
 @Entity
-@Table(name = "User")
+@Table(name = "user")
 @Getter
 @Setter
 @NoArgsConstructor

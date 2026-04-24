@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vé của tôi – CineMax</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    />
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../css/home.css" />
+    <link rel="stylesheet" href="../css/my-tickets.css" />
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════════════════ -->
+<header id="header">
+    <div class="container">
+        <div class="header-inner">
+            <a href="home.html" class="logo">
+                <div class="logo-icon">🎬</div>
+                <div class="logo-text">CINE<span>MAX</span></div>
+            </a>
+            <nav class="nav">
+                <a href="home.html">Trang chủ</a>
+                <a href="movies.html?tab=now">Đang chiếu</a>
+                <a href="movies.html?tab=coming">Sắp chiếu</a>
+                <a href="home.html#cinemas">Rạp chiếu</a>
+                <a href="home.html#promotions">Khuyến mãi</a>
+            </nav>
+            <div class="auth-btns">
+                <div id="guest-zone" style="display: flex; gap: 10px;">
+                    <a href="login.html" class="btn-outline" style="display:inline-flex;align-items:center;text-decoration:none;">Đăng nhập</a>
+                    <a href="register.html" class="btn-red" style="display:inline-flex;align-items:center;text-decoration:none;">Đăng ký</a>
+                </div>
+                <div id="user-zone" style="display: none; align-items: center; gap: 15px;">
+                    <a href="my-tickets.html" class="nav-tickets-link" title="Vé của tôi">
+                        <i class="fas fa-ticket-alt"></i>
+                        <span>Vé của tôi</span>
+                    </a>
+                    <span style="color: white;">Xin chào, <strong id="display-username" style="color: var(--red);"></strong></span>
+                    <button class="btn-outline" id="btn-logout">Đăng xuất</button>
+                </div>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+    <div class="mobile-nav" id="mobile-nav">
+        <a href="home.html">Trang chủ</a>
+        <a href="movies.html?tab=now">Phim đang chiếu</a>
+        <a href="movies.html?tab=coming">Phim sắp chiếu</a>
+        <a href="my-tickets.html">Vé của tôi</a>
+        <div class="m-auth">
+            <a href="login.html" class="btn-outline" style="flex:1;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">Đăng nhập</a>
+            <a href="register.html" class="btn-red" style="flex:1;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">Đăng ký</a>
+        </div>
+    </div>
+</header>
+
+<!-- ══ MAIN ════════════════════════════════════════════════ -->
+<main class="tickets-main">
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="tickets-header">
+            <div class="tickets-header-left">
+                <div class="tickets-icon-wrap">
+                    <i class="fas fa-ticket-alt"></i>
+                </div>
+                <div>
+                    <h1 class="tickets-title">Vé của tôi</h1>
+                    <p class="tickets-subtitle">Lịch sử đặt vé và vé điện tử</p>
+                </div>
+            </div>
+            <div class="tickets-stats" id="tickets-stats" style="display:none;">
+                <div class="stat-item">
+                    <span class="stat-number" id="stat-total">0</span>
+                    <span class="stat-label">Tổng vé</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-number stat-paid" id="stat-paid">0</span>
+                    <span class="stat-label">Đã thanh toán</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-number stat-pending" id="stat-pending">0</span>
+                    <span class="stat-label">Chờ xử lý</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs" id="filter-tabs" style="display:none;">
+            <button class="filter-tab active" data-filter="all">
+                <i class="fas fa-list"></i> Tất cả
+            </button>
+            <button class="filter-tab" data-filter="paid">
+                <i class="fas fa-check-circle"></i> Đã thanh toán
+            </button>
+            <button class="filter-tab" data-filter="pending">
+                <i class="fas fa-clock"></i> Chờ xử lý
+            </button>
+            <button class="filter-tab" data-filter="cancelled">
+                <i class="fas fa-times-circle"></i> Đã hủy
+            </button>
+        </div>
+
+        <!-- Login Required -->
+        <div class="mt-require-login" id="mt-require-login" style="display:none;">
+            <div class="require-login-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h3>Bạn chưa đăng nhập</h3>
+            <p>Vui lòng đăng nhập để xem lịch sử đặt vé của bạn.</p>
+            <div class="require-login-btns">
+                <a href="login.html" class="mt-btn mt-btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                </a>
+                <a href="register.html" class="mt-btn mt-btn-outline">
+                    <i class="fas fa-user-plus"></i> Đăng ký
+                </a>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="mt-loading" id="mt-loading" style="display:none;">
+            <div class="mt-spinner">
+                <div class="spinner-ring"></div>
+                <i class="fas fa-ticket-alt spinner-icon"></i>
+            </div>
+            <p>Đang tải vé của bạn...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div class="mt-empty" id="mt-empty" style="display:none;">
+            <div class="empty-illustration">
+                <div class="empty-cinema">
+                    <i class="fas fa-film"></i>
+                </div>
+                <div class="empty-ticket-pile">
+                    <div class="empty-ticket t1"></div>
+                    <div class="empty-ticket t2"></div>
+                    <div class="empty-ticket t3"></div>
+                </div>
+            </div>
+            <h3>Chưa có vé nào</h3>
+            <p>Bạn chưa đặt vé nào. Hãy khám phá các bộ phim đang chiếu!</p>
+            <a href="movies.html?tab=now" class="mt-btn mt-btn-primary">
+                <i class="fas fa-play-circle"></i> Xem phim đang chiếu
+            </a>
+        </div>
+
+        <!-- Error State -->
+        <div class="mt-error" id="mt-error" style="display:none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Không thể tải dữ liệu</h3>
+            <p id="mt-error-msg">Đã có lỗi xảy ra. Vui lòng thử lại.</p>
+            <button class="mt-btn mt-btn-outline" onclick="loadTickets()">
+                <i class="fas fa-redo"></i> Thử lại
+            </button>
+        </div>
+
+        <!-- Ticket List -->
+        <div class="tickets-list" id="tickets-list"></div>
+
+    </div>
+</main>
+
+<!-- ══ TICKET DETAIL MODAL ════════════════════════════════ -->
+<div class="modal-overlay" id="ticket-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-container">
+        <button class="modal-close" id="modal-close" aria-label="Đóng">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="ticket-stub">
+            <div class="stub-header">
+                <div class="stub-logo">
+                    <span class="stub-logo-text">CINE<span>MAX</span></span>
+                </div>
+                <div class="stub-status" id="stub-status"></div>
+            </div>
+            <div class="stub-movie">
+                <h2 class="stub-movie-title" id="stub-movie-title">--</h2>
+                <div class="stub-tags" id="stub-tags"></div>
+            </div>
+            <div class="stub-perf">
+                <div class="perf-circle left"></div>
+                <div class="perf-line"></div>
+                <div class="perf-circle right"></div>
+            </div>
+            <div class="stub-details">
+                <div class="stub-detail-item">
+                    <span class="stub-detail-label"><i class="fas fa-calendar-alt"></i> Ngày chiếu</span>
+                    <span class="stub-detail-value" id="stub-date">--</span>
+                </div>
+                <div class="stub-detail-item">
+                    <span class="stub-detail-label"><i class="fas fa-clock"></i> Giờ chiếu</span>
+                    <span class="stub-detail-value" id="stub-time">--</span>
+                </div>
+                <div class="stub-detail-item">
+                    <span class="stub-detail-label"><i class="fas fa-map-marker-alt"></i> Rạp</span>
+                    <span class="stub-detail-value" id="stub-cinema">--</span>
+                </div>
+                <div class="stub-detail-item">
+                    <span class="stub-detail-label"><i class="fas fa-door-open"></i> Phòng chiếu</span>
+                    <span class="stub-detail-value" id="stub-room">--</span>
+                </div>
+                <div class="stub-detail-item stub-detail-full">
+                    <span class="stub-detail-label"><i class="fas fa-chair"></i> Ghế ngồi</span>
+                    <span class="stub-detail-value" id="stub-seats">--</span>
+                </div>
+            </div>
+            <div class="stub-perf">
+                <div class="perf-circle left"></div>
+                <div class="perf-line"></div>
+                <div class="perf-circle right"></div>
+            </div>
+            <div class="stub-bottom">
+                <div class="stub-combos" id="stub-combos-wrap" style="display:none;">
+                    <span class="stub-detail-label"><i class="fas fa-popcorn"></i> Bắp / Nước</span>
+                    <span class="stub-combo-list" id="stub-combos">--</span>
+                </div>
+                <div class="stub-price-row">
+                    <span class="stub-price-label">Tổng thanh toán</span>
+                    <span class="stub-price-value" id="stub-price">--</span>
+                </div>
+                <div class="stub-payment-row">
+                    <span class="stub-detail-label"><i class="fas fa-credit-card"></i> Phương thức</span>
+                    <span class="stub-payment-value" id="stub-payment">--</span>
+                </div>
+                <div class="stub-invoice-row">
+                    <span class="stub-detail-label"><i class="fas fa-hashtag"></i> Mã đơn hàng</span>
+                    <span class="stub-invoice-id" id="stub-invoice-id">--</span>
+                </div>
+            </div>
+            <div class="stub-barcode">
+                <div class="barcode-lines" id="stub-barcode-lines"></div>
+                <p class="barcode-text" id="stub-barcode-text">--</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button id="back-top" aria-label="Về đầu trang">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- ══ SCRIPT: VÉ CỦA TÔI ════════════════════════════════ -->
+<script type="module">
+const API_BASE = 'http://localhost:8080/api';
+let allTickets = [];
+let currentFilter = 'all';
+
+function formatPrice(amount) {
+    if (!amount && amount !== 0) return '—';
+    return Number(amount).toLocaleString('vi-VN') + 'đ';
+}
+
+function formatDateTime(dt) {
+    if (!dt) return { date: '—', time: '—', full: '—' };
+    if (typeof dt === 'string' && /^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}$/.test(dt.trim())) {
+        const [datePart, timePart] = dt.trim().split(' ');
+        return { date: datePart, time: timePart, full: `${datePart} ${timePart}` };
+    }
+    const d = new Date(dt);
+    if (isNaN(d)) return { date: '—', time: '—', full: '—' };
+    const date = d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const time = d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    return { date, time, full: `${date} ${time}` };
+}
+
+function getStatusInfo(status) {
+    const map = {
+        paid:      { label: 'Đã thanh toán',  cls: 'status-paid',      icon: 'fa-check-circle' },
+        PAID:      { label: 'Đã thanh toán',  cls: 'status-paid',      icon: 'fa-check-circle' },
+        pending:   { label: 'Chờ thanh toán', cls: 'status-pending',   icon: 'fa-clock' },
+        PENDING:   { label: 'Chờ thanh toán', cls: 'status-pending',   icon: 'fa-clock' },
+        paying:    { label: 'Đang thanh toán',cls: 'status-paying',    icon: 'fa-spinner fa-spin' },
+        PAYING:    { label: 'Đang thanh toán',cls: 'status-paying',    icon: 'fa-spinner fa-spin' },
+        cancelled: { label: 'Đã hủy',         cls: 'status-cancelled', icon: 'fa-times-circle' },
+        CANCELLED: { label: 'Đã hủy',         cls: 'status-cancelled', icon: 'fa-times-circle' },
+        failed:    { label: 'Thất bại',        cls: 'status-cancelled', icon: 'fa-times-circle' },
+        FAILED:    { label: 'Thất bại',        cls: 'status-cancelled', icon: 'fa-times-circle' },
+    };
+    return map[status] || { label: status || 'Không rõ', cls: 'status-pending', icon: 'fa-question-circle' };
+}
+
+function generateBarcode(invoiceId) {
+    const lines = document.getElementById('stub-barcode-lines');
+    if (!lines) return;
+    lines.innerHTML = '';
+    const seed = (invoiceId || '').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+    for (let i = 0; i < 48; i++) {
+        const bar = document.createElement('div');
+        const h = 20 + ((seed * (i + 3)) % 40);
+        bar.style.cssText = `width:${i % 3 === 0 ? '3px' : '1.5px'};height:${h}px;background:var(--text);opacity:${0.4 + (i % 5) * 0.12}`;
+        lines.appendChild(bar);
+    }
+}
+
+function show(id) { const el = document.getElementById(id); if (el) el.style.display = ''; }
+function hide(id) { const el = document.getElementById(id); if (el) el.style.display = 'none'; }
+
+async function loadTickets() {
+    const token    = localStorage.getItem('token');
+    const username = localStorage.getItem('username');
+    if (!token || !username) { show('mt-require-login'); return; }
+
+    show('mt-loading'); hide('mt-error'); hide('mt-empty'); hide('tickets-list');
+
+    try {
+        const res = await fetch(`${API_BASE}/booking/my-invoices`, {
+            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }
+        });
+        if (res.status === 401) {
+            localStorage.removeItem('token'); localStorage.removeItem('username');
+            hide('mt-loading'); show('mt-require-login'); return;
+        }
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const data = await res.json();
+        allTickets = Array.isArray(data) ? data : (data.invoices || data.data || []);
+        hide('mt-loading');
+
+        if (allTickets.length === 0) { show('mt-empty'); return; }
+        updateStats(); show('filter-tabs'); show('tickets-stats'); renderTickets();
+
+    } catch (err) {
+        console.error('Load tickets error:', err);
+        hide('mt-loading');
+        document.getElementById('mt-error-msg').textContent = 'Không thể kết nối đến máy chủ. Vui lòng thử lại.';
+        show('mt-error');
+    }
+}
+
+function updateStats() {
+    const paid    = allTickets.filter(t => ['paid','PAID'].includes(t.status || t.invoiceStatus)).length;
+    const pending = allTickets.filter(t => ['pending','PENDING','paying','PAYING'].includes(t.status || t.invoiceStatus)).length;
+    document.getElementById('stat-total').textContent   = allTickets.length;
+    document.getElementById('stat-paid').textContent    = paid;
+    document.getElementById('stat-pending').textContent = pending;
+}
+
+function getFilteredTickets() {
+    if (currentFilter === 'all')       return allTickets;
+    if (currentFilter === 'paid')      return allTickets.filter(t => ['paid','PAID'].includes(t.status || t.invoiceStatus));
+    if (currentFilter === 'pending')   return allTickets.filter(t => ['pending','PENDING','paying','PAYING'].includes(t.status || t.invoiceStatus));
+    if (currentFilter === 'cancelled') return allTickets.filter(t => ['cancelled','CANCELLED','failed','FAILED'].includes(t.status || t.invoiceStatus));
+    return allTickets;
+}
+
+function renderTickets() {
+    const list    = document.getElementById('tickets-list');
+    const tickets = getFilteredTickets();
+    if (tickets.length === 0) {
+        list.innerHTML = `<div class="mt-no-filter"><i class="fas fa-filter"></i><p>Không có vé nào trong bộ lọc này.</p></div>`;
+        show('tickets-list'); return;
+    }
+    list.innerHTML = tickets.map((ticket, idx) => {
+        const status    = ticket.status || ticket.invoiceStatus || 'pending';
+        const si        = getStatusInfo(status);
+        const dt        = formatDateTime(ticket.createdAt || ticket.createdDatetime);
+        const seats     = Array.isArray(ticket.seatLabels)    ? ticket.seatLabels.join(', ')    : (ticket.seatLabels    || '—');
+        const products  = Array.isArray(ticket.productLabels) ? ticket.productLabels.join(' · ') : (ticket.productLabels || '');
+        const price     = formatPrice(ticket.finalPrice || ticket.totalPrice);
+        const movieTitle = ticket.movieTitle || 'Không rõ tên phim';
+        const cinema    = ticket.cinemaName || ticket.cinema || '—';
+        const showtime  = ticket.showtime   || ticket.showtimeStr || '—';
+        const invoiceId = ticket.invoiceId  || ticket.id || '';
+        const shortId   = invoiceId ? invoiceId.toString().slice(-8).toUpperCase() : '--------';
+        const isPaying  = ['paying','PAYING'].includes(status);
+        const COUNTDOWN_SECONDS = 10 * 60; // 10 phút
+        const paymentUrl = ticket.paymentUrl || ticket.vnpayUrl || null;
+
+        const countdownHtml = isPaying ? `
+            <div class="paying-countdown-wrap" id="countdown-wrap-${invoiceId}">
+                <div class="paying-countdown-bar-bg">
+                    <div class="paying-countdown-bar" id="countdown-bar-${invoiceId}"></div>
+                </div>
+                <div class="paying-countdown-info">
+                    <i class="fas fa-hourglass-half"></i>
+                    <span>Còn lại: <strong id="countdown-text-${invoiceId}">10:00</strong></span>
+                </div>
+            </div>` : '';
+
+        const paymentBtnHtml = isPaying ? `
+            <button class="ticket-pay-btn" data-invoiceid="${invoiceId}" data-payurl="${paymentUrl || ''}" title="Tiếp tục thanh toán">
+                <i class="fas fa-credit-card"></i><span>Thanh toán</span>
+            </button>` : '';
+
+        return `
+        <div class="ticket-card${isPaying ? ' ticket-card-paying' : ''}" data-idx="${idx}" data-status="${status}" data-invoiceid="${invoiceId}" data-created="${ticket.payingAt || ''}"
+            <div class="ticket-card-left">
+                <div class="ticket-card-number">#${(idx + 1).toString().padStart(2, '0')}</div>
+                <div class="ticket-card-badge ${si.cls}"><i class="fas ${si.icon}"></i> ${si.label}</div>
+            </div>
+            <div class="ticket-card-body">
+                <div class="ticket-card-movie"><i class="fas fa-film"></i><h3>${movieTitle}</h3></div>
+                <div class="ticket-card-meta">
+                    <span><i class="fas fa-map-marker-alt"></i> ${cinema}</span>
+                    <span><i class="fas fa-clock"></i> ${showtime}</span>
+                    <span><i class="fas fa-chair"></i> ${seats}</span>
+                    ${products ? `<span><i class="fas fa-shopping-bag"></i> ${products}</span>` : ''}
+                </div>
+                ${countdownHtml}
+                <div class="ticket-card-footer">
+                    <span class="ticket-card-date"><i class="fas fa-calendar"></i> ${dt.full}</span>
+                    <span class="ticket-card-id">ID: ${shortId}</span>
+                </div>
+            </div>
+            <div class="ticket-card-right">
+                <div class="ticket-card-price">${price}</div>
+                ${paymentBtnHtml}
+                <button class="ticket-view-btn" data-idx="${idx}" title="Xem chi tiết">
+                    <i class="fas fa-eye"></i><span>Chi tiết</span>
+                </button>
+            </div>
+            <div class="ticket-card-tear">
+                <div class="tear-circle top"></div><div class="tear-line"></div><div class="tear-circle bottom"></div>
+            </div>
+        </div>`;
+    }).join('');
+
+    list.querySelectorAll('.ticket-view-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => { e.stopPropagation(); openModal(parseInt(btn.dataset.idx)); });
+    });
+    list.querySelectorAll('.ticket-card').forEach(card => {
+        card.addEventListener('click', () => { openModal(parseInt(card.dataset.idx)); });
+    });
+    show('tickets-list');
+
+    // Animation
+    list.querySelectorAll('.ticket-card').forEach((card, i) => {
+        card.style.animationDelay = `${i * 60}ms`;
+        card.classList.add('card-enter');
+    });
+
+    // Nút tiếp tục thanh toán
+    list.querySelectorAll('.ticket-pay-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const url = btn.dataset.payurl;
+            if (url) {
+                window.location.href = url;
+            } else {
+                const invoiceId = btn.dataset.invoiceid;
+                window.location.href = `payment.html?invoiceId=${invoiceId}`;
+            }
+        });
+    });
+
+    // Đếm ngược cho vé đang thanh toán
+    list.querySelectorAll('.ticket-card-paying').forEach(card => {
+        const invoiceId  = card.dataset.invoiceid;
+        const createdRaw = card.dataset.created;
+        const LIMIT_MS   = 10 * 60 * 1000;
+
+        const createdAt = createdRaw ? new Date(createdRaw + 'Z').getTime() : Date.now();
+        const deadline  = createdAt + LIMIT_MS;
+
+        const textEl = document.getElementById(`countdown-text-${invoiceId}`);
+        const barEl  = document.getElementById(`countdown-bar-${invoiceId}`);
+
+        function tick() {
+            const remaining = deadline - Date.now();
+            if (remaining <= 0) {
+                if (textEl) textEl.textContent = '00:00';
+                if (barEl)  barEl.style.width  = '0%';
+                card.classList.add('ticket-expired');
+
+                const token = localStorage.getItem('token');
+                if (token && invoiceId) {
+                    fetch(`${API_BASE}/booking/cancel/${invoiceId}`, {
+                        method: 'PUT',
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    }).catch(() => {});
+                }
+
+                setTimeout(() => loadTickets(), 1500);
+                return;
+            }
+
+            const pct = Math.max(0, (remaining / LIMIT_MS) * 100);
+            const m   = Math.floor(remaining / 60000);
+            const s   = Math.floor((remaining % 60000) / 1000);
+            if (textEl) textEl.textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            if (barEl)  barEl.style.width  = pct + '%';
+
+            setTimeout(tick, 1000);
+        }
+
+        tick();
+    });
+}
+
+function openModal(idx) {
+    const tickets = getFilteredTickets();
+    const ticket  = tickets[idx];
+    if (!ticket) return;
+
+    const status    = ticket.status || ticket.invoiceStatus || 'pending';
+    const si        = getStatusInfo(status);
+    const dt        = formatDateTime(ticket.createdAt || ticket.createdDatetime);
+    const seats     = Array.isArray(ticket.seatLabels)    ? ticket.seatLabels.join(' · ')    : (ticket.seatLabels    || '—');
+    const products  = Array.isArray(ticket.productLabels) ? ticket.productLabels : [];
+    const invoiceId = (ticket.invoiceId || ticket.id || '').toString();
+
+    document.getElementById('stub-status').innerHTML =
+        `<span class="stub-badge ${si.cls}"><i class="fas ${si.icon}"></i> ${si.label}</span>`;
+    document.getElementById('stub-movie-title').textContent = ticket.movieTitle || 'Không rõ tên phim';
+    document.getElementById('stub-tags').innerHTML =
+        `<span class="stub-tag"><i class="fas fa-map-marker-alt"></i> ${ticket.cinemaName || ticket.cinema || '—'}</span>`;
+
+    const showtimeDatePart = (ticket.showtime || '').split(' - ')[1] || '';
+    document.getElementById('stub-date').textContent    = showtimeDatePart || dt.date || '—';
+    document.getElementById('stub-time').textContent    = ticket.showtime || ticket.showtimeStr || '—';
+    document.getElementById('stub-cinema').textContent  = ticket.cinemaName || ticket.cinema || '—';
+    document.getElementById('stub-room').textContent    = ticket.roomName   || ticket.room   || '—';
+    document.getElementById('stub-seats').textContent   = seats;
+
+    if (products.length > 0) {
+        document.getElementById('stub-combos-wrap').style.display = 'flex';
+        document.getElementById('stub-combos').textContent = products.join(' · ');
+    } else {
+        document.getElementById('stub-combos-wrap').style.display = 'none';
+    }
+
+    document.getElementById('stub-price').textContent      = formatPrice(ticket.finalPrice || ticket.totalPrice);
+    document.getElementById('stub-payment').textContent    = ticket.paymentMethod || 'VNPay';
+    document.getElementById('stub-invoice-id').textContent = invoiceId ? invoiceId.slice(-12).toUpperCase() : '—';
+    generateBarcode(invoiceId);
+    document.getElementById('stub-barcode-text').textContent = invoiceId.slice(0, 20).toUpperCase();
+
+    const modal = document.getElementById('ticket-modal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => modal.classList.add('modal-visible'));
+}
+
+function closeModal() {
+    const modal = document.getElementById('ticket-modal');
+    modal.classList.remove('modal-visible');
+    setTimeout(() => { modal.style.display = 'none'; document.body.style.overflow = ''; }, 300);
+}
+
+document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentFilter = tab.dataset.filter;
+        renderTickets();
+    });
+});
+
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('ticket-modal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+document.addEventListener('DOMContentLoaded', () => { loadTickets(); });
+window.loadTickets = loadTickets;
+</script>
+
+<!-- ══ SCRIPT: HEADER — Auth, Hamburger, Scroll ══════════ -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const guestZone       = document.getElementById('guest-zone');
+    const userZone        = document.getElementById('user-zone');
+    const displayUsername = document.getElementById('display-username');
+    const btnLogout       = document.getElementById('btn-logout');
+    const storedUsername  = localStorage.getItem('username');
+
+    if (storedUsername) {
+        if (guestZone) guestZone.style.display = 'none';
+        if (userZone) { userZone.style.display = 'flex'; if (displayUsername) displayUsername.textContent = storedUsername; }
+    } else {
+        if (guestZone) guestZone.style.display = 'flex';
+        if (userZone)  userZone.style.display  = 'none';
+    }
+
+    if (btnLogout) {
+        btnLogout.addEventListener('click', () => {
+            localStorage.removeItem('username');
+            localStorage.removeItem('token');
+            window.location.href = 'home.html';
+        });
+    }
+
+    const hamburger = document.getElementById('hamburger');
+    const mobileNav = document.getElementById('mobile-nav');
+    if (hamburger && mobileNav) {
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('open');
+            mobileNav.classList.toggle('open');
+        });
+    }
+
+    const header = document.getElementById('header');
+    if (header) {
+        window.addEventListener('scroll', () => {
+            header.classList.toggle('scrolled', window.scrollY > 60);
+        }, { passive: true });
+    }
+
+    const backTop = document.getElementById('back-top');
+    if (backTop) {
+        window.addEventListener('scroll', () => {
+            backTop.classList.toggle('show', window.scrollY > 400);
+        }, { passive: true });
+        backTop.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    }
+});
+</script>
+
+</body>
+</html>

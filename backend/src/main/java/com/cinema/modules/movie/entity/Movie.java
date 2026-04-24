@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "Movie")
+@Table(name = "movie")
 @Getter
 @Setter
 public class Movie {

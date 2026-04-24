@@ -1,5 +1,6 @@
 package com.cinema.modules.showtime.controller;
 
+import com.cinema.modules.showtime.response.ShowtimeDetailResponse;
 import com.cinema.modules.showtime.response.ShowtimeResponse;
 import com.cinema.modules.showtime.service.ShowtimeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,5 +22,10 @@ public class ShowtimeController {
             @RequestParam Long cinemaId,
             @RequestParam String date) {
         return ResponseEntity.ok(showtimeService.getShowtimesByCinemaAndDate(cinemaId, date));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ShowtimeDetailResponse> getShowtimeById(@PathVariable Long id) {
+        return ResponseEntity.ok(showtimeService.getShowtimeById(id));
     }
 }
