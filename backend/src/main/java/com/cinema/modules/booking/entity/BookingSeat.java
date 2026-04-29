@@ -38,6 +38,6 @@ public class BookingSeat {
     @JoinColumn(name = "discount_id", nullable = true)
     private Discount discountId;
 
-    @Column(nullable = false)
+    @Column(name = "price_at_booking", nullable = false)
     private BigDecimal priceAtBooking;
 }

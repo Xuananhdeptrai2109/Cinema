@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponse {
+    private Long userId;
     private String fullName;     // Khớp với id="viewName"
     private String userName;     // Khớp với @username
     private String email;
@@ -20,6 +21,7 @@ public class UserResponse {
 
     // UserResponse.java
     public UserResponse(User user) {
+        this.userId = user.getUserId(); // PHẢI lấy từ user.getUserId()
         this.fullName = user.getFullName();
         this.email = user.getEmail();
         this.userName = user.getUserName();

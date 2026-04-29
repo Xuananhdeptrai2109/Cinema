@@ -13,11 +13,12 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final ProductRepository productRepository;
 
-    public List<ProductResponse> getAllCombos() {
+    public List<ProductResponse> getAllProducts() {
         return productRepository.findAll().stream().map(product ->
                 ProductResponse.builder()
                         .id(product.getProductId())
                         .name(product.getProductName())
+                        .description(product.getDescription())
                         .price(product.getPrice())
                         .imageUrl(product.getImageUrl())
                         .typeName(product.getProductType().getTypeName())

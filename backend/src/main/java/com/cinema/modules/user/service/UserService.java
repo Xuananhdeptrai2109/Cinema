@@ -34,6 +34,7 @@ public class UserService {
 
     private UserResponse mapToResponse(User user) {
         return UserResponse.builder()
+                .userId(user.getUserId())
                 .fullName(user.getFullName())
                 .userName(user.getUserName())
                 .email(user.getEmail())

@@ -6,8 +6,9 @@ import java.util.List;
 @Data
 public class BookingRequest {
     private Long userId;
-    private List<Long> showtimeSeatIds; // Danh sách ID ghế chọn
-    private List<ProductSelection> products; // Danh sách combo chọn
+    private Long showtimeId;
+    private List<Long> showtimeSeatIds;
+    private List<ProductSelection> products;
 
     @Data
     public static class ProductSelection {

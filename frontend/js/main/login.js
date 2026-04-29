@@ -180,10 +180,9 @@ form.addEventListener('submit', async e => {
             btnSubmit.disabled = false;
 
             if (response.status === 403) {
-                alert("Lỗi 403: Spring Security chặn truy cập!");
+                alert("Tài khoản hoặc mật khẩu không chính xác.");
             } else {
                 const errorMsg = result.message || "Tài khoản hoặc mật khẩu không chính xác.";
-                // Hiển thị lỗi email nếu không tìm thấy người dùng
                 showError(errorMsg.includes("mật khẩu") ? 'password' : 'gmail', errorMsg);
                 shake(fields.password.closest('.input-wrap'));
             }

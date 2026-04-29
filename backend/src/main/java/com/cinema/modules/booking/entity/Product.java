@@ -17,16 +17,23 @@ import java.math.BigDecimal;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_id")
     private Long productId;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "product_name")
     private String productName;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
 
     @Column(nullable = false)
     private BigDecimal price;
 
-    @Column(name = "image_url", length = 255)
+    @Column(name = "image_url", columnDefinition = "LONGTEXT")
     private String imageUrl;
+
+    @Column(name = "is_available", columnDefinition = "TINYINT(1) DEFAULT 1")
+    private boolean isAvailable = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_type_id", nullable = false)

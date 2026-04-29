@@ -1,8 +1,4 @@
 // ============================================================
-// payment.js — CineMax Payment Page
-// Features: seat summary, combo slider, discount/coin, payment
-//           method, QR modal, countdown, success redirect
-// ============================================================
 // STATE (Bây giờ sẽ được đổ từ API)
 // ============================================================
 let dbCombos = [];       // Lấy từ bảng products/product_type
@@ -29,80 +25,103 @@ const API_BASE = "http://localhost:8080/api";
 // ============================================================
 // FETCH DATA FROM DATABASE
 // ============================================================
-
-// Hàm khởi tạo thông tin từ Database
-async function initBookingInfoFromDB() {
-    const showtimeId = sessionStorage.getItem('selectedShowtimeId');
-
-    if (!showtimeId || showtimeId === "undefined") {
-        console.error("❌ Không tìm thấy mã suất chiếu hợp lệ!");
-        return;
-    }
-
+function getAuthUser() {
+    const userStr = localStorage.getItem('user');
+    if (!userStr || userStr === "undefined") return null;
     try {
-        const response = await fetch(`${API_BASE}/showtimes/${showtimeId}`);
-
-        // KIỂM TRA PHẢN HỒI: Nếu lỗi 403, 404, 500 thì ném lỗi ngay, không JSON parse
-        if (!response.ok) {
-            throw new Error(`Lỗi hệ thống (${response.status}): Có thể do Spring Security chặn 403.`);
-        }
-
-        const data = await response.json();
-        console.log("✅ Dữ liệu suất chiếu từ DB:", data);
-
-        // Đổ dữ liệu vào HTML - Sử dụng toán tử ?. để tránh crash nếu data bị thiếu trường
-        if (document.getElementById('pay-poster'))
-            document.getElementById('pay-poster').src = data.movie?.posterUrl || '';
-
-        if (document.getElementById('pay-title'))
-            document.getElementById('pay-title').textContent = data.movie?.movieName || 'N/A';
-
-        // Cập nhật các thông tin rạp, ngày, giờ
-        document.getElementById('pay-cinema').textContent = data.cinemaName || 'CineMax';
-        document.getElementById('pay-date').textContent   = data.showDate || '--/--/----';
-        document.getElementById('pay-time').textContent   = data.startTime || '--:--';
-        document.getElementById('pay-room').textContent   = data.roomName || 'Room A';
-
-        const age = data.movie?.ageRating || '13';
-        document.getElementById('pay-age').textContent    = age + "+";
-
-        // Đổ các tag (Thể loại, định dạng)
-        const tagsEl = document.getElementById('pay-tags');
-        if (tagsEl) {
-            tagsEl.innerHTML = `
-                <span class="mic-tag">${data.movie?.genre || 'Phim'}</span>
-                <span class="mic-tag age">T${age}</span>
-                <span class="mic-tag type">${data.roomType || '2D'}</span>
-            `;
-        }
-
-    } catch (error) {
-        console.error("❌ Lỗi chi tiết tại initBookingInfoFromDB:", error.message);
-        // Có thể hiển thị thông báo nhẹ cho user trên giao diện
+        return JSON.parse(userStr);
+    } catch (e) {
+        return null;
     }
 }
 
+/**
+ * Lấy thông tin suất chiếu và phim từ Backend để hiển thị trên trang thanh toán.
+ */
+async function initBookingInfoFromDB() {
+    const showtimeId = sessionStorage.getItem('selectedShowtimeId');
+    const userStr = localStorage.getItem('user');
+
+    // 1. Kiểm tra ID suất chiếu (Bắt buộc)
+    if (!showtimeId) {
+        console.error("❌ Thiếu selectedShowtimeId trong sessionStorage.");
+        const titleEl = document.getElementById('pay-title');
+        if (titleEl) titleEl.textContent = "Không tìm thấy thông tin suất chiếu";
+        return;
+    }
+
+    // 2. Parse User và Token an toàn
+    let user = null;
+    try {
+        user = (userStr && userStr !== "undefined") ? JSON.parse(userStr) : null;
+    } catch (e) {
+        console.error("❌ Lỗi dữ liệu người dùng:", e);
+    }
+
+    // 3. Xây dựng Headers thông minh
+    const headers = { 'Content-Type': 'application/json' };
+
+    // CHỈ thêm Authorization nếu token thực sự tồn tại và hợp lệ
+    const token = user?.token;
+    if (token && token !== "null" && token !== "undefined" && token.length > 10) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    try {
+        // 4. Thực hiện Fetch
+        let response = await fetch(`${API_BASE}/showtimes/${showtimeId}`, {
+            method: 'GET',
+            headers: headers
+        });
+
+        // 5. Xử lý fallback cho lỗi 403 (Phòng trường hợp Token lỗi khiến Security chặn)
+        if (response.status === 403) {
+            console.warn("🔄 Token không hợp lệ hoặc bị chặn. Đang thử lấy dữ liệu công khai...");
+            response = await fetch(`${API_BASE}/showtimes/${showtimeId}`);
+        }
+
+        if (!response.ok) {
+            throw new Error(`Server trả về lỗi: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("✅ Dữ liệu suất chiếu hợp lệ:", data);
+
+        // Gọi hàm cập nhật giao diện (Đảm bảo hàm này đã được định nghĩa)
+        if (typeof updateMovieUI === 'function') {
+            updateMovieUI(data);
+        }
+
+    } catch (error) {
+        console.error("❌ Lỗi initBookingInfoFromDB:", error.message);
+        const titleEl = document.getElementById('pay-title');
+        if (titleEl) titleEl.textContent = "Lỗi kết nối máy chủ";
+    }
+}
 // Gọi hàm khi trang load xong
 document.addEventListener('DOMContentLoaded', initBookingInfoFromDB);
 
-// 1. Lấy danh sách Combo từ DB
-async function fetchCombos() {
-    try {
-        const response = await fetch(`${API_BASE}/products/combos`);
+// ============================================================
+// FETCH DATA
+// ============================================================
 
-        // Kiểm tra nếu không phải 200 OK thì dừng lại, không parse JSON
-        if (!response.ok) {
-            throw new Error(`Server trả về lỗi ${response.status}`);
-        }
+async function fetchProducts() {
+    try {
+        const response = await fetch(`${API_BASE}/products/all`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!response.ok) throw new Error(`Lỗi hệ thống (${response.status})`);
 
         dbCombos = await response.json();
+        console.log("✅ Dữ liệu sản phẩm nhận về:", dbCombos);
+
         if (dbCombos && dbCombos.length > 0) {
             buildCombos();
         }
     } catch (error) {
-        console.error("Lỗi lấy dữ liệu combo:", error.message);
-        const track = document.getElementById('combo-track');
-        if (track) track.innerHTML = `<p class="error-msg">Không thể tải bắp nước (Lỗi hệ thống)</p>`;
+        console.error("❌ Lỗi hiển thị sản phẩm:", error.message);
     }
 }
 // 2. Kiểm tra mã giảm giá từ DB (Bảng discount)
@@ -128,27 +147,66 @@ async function applyDiscountFromDB() {
 // SYNCHRONIZE WITH BACKEND (Tạo hóa đơn thực)
 // ============================================================
 
+// payment.js
 async function createInvoice() {
-    // Bước 1: Tạo hóa đơn rỗng thông qua Procedure sp_invoice_create
-    const response = await fetch(`${API_BASE}/invoices`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: getCurrentUserId() })
-    });
-    const data = await response.json();
-    invoiceId = data.invoiceId; // Đây là UUID từ DB
+    // 1. Lấy đúng Token từ đối tượng user
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : null;
+    const token = user ? user.token : null;
 
-    // Bước 2: Lưu các ghế đã chọn vào bảng booking_seat
-    await syncSeats(invoiceId);
+    if (!token) {
+        alert("Phiên đăng nhập hết hạn, vui lòng đăng nhập lại!");
+        return;
+    }
 
-    // Bước 3: Lưu combo vào bảng booking_products
-    await syncCombos(invoiceId);
+    // 2. Chuẩn bị dữ liệu theo đúng BookingRequest
+    const invoiceData = {
+        userId: user.userId,
+        showtimeSeatIds: selectedSeats.map(s => s.dbId),
+        products: addedCombos.map(c => ({
+            productId: c.id,
+            quantity: c.qty
+        }))
+    };
+
+    try {
+        const response = await fetch(`${API_BASE}/invoices/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Gửi token chính xác
+            },
+            body: JSON.stringify(invoiceData)
+        });
+
+        // 3. Kiểm tra phản hồi trước khi parse JSON để tránh lỗi "Unexpected end"
+        if (!response.ok) {
+            if (response.status === 403) {
+                throw new Error("Bạn không có quyền thực hiện giao dịch này (403).");
+            }
+            throw new Error(`Lỗi hệ thống: ${response.status}`);
+        }
+
+        const result = await response.json();
+        invoiceId = result.invoiceId; // Lưu UUID hóa đơn để dùng tiếp
+        console.log("✅ Hóa đơn đã tạo:", invoiceId);
+
+    } catch (err) {
+        console.error("❌ Lỗi createInvoice:", err.message);
+        alert(err.message);
+        throw err; // Ngăn không cho mở Modal QR nếu lỗi
+    }
 }
+
 async function syncCombos(id) {
+    const user = JSON.parse(localStorage.getItem('user'));
     for (let item of addedCombos) {
         await fetch(`${API_BASE}/invoices/${id}/items`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' }, // THÊM DÒNG NÀY
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.token}` // Thêm Token
+            },
             body: JSON.stringify({
                 productId: item.id,
                 quantity: item.qty
@@ -159,22 +217,30 @@ async function syncCombos(id) {
 // ============================================================
 // PAYMENT CONFIRMATION
 // ============================================================
+// payment.js
 document.getElementById('qr-confirm').addEventListener('click', async () => {
     try {
-        // Gọi Procedure sp_payment_success ở Backend
-        const response = await fetch(`${API_BASE}/payments/confirm`, {
+        // Khớp URL với BookingController: /api/invoices/confirm-payment
+        const response = await fetch(`${API_BASE}/invoices/confirm-payment`, {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${JSON.parse(localStorage.getItem('user')).token}`
+            },
             body: JSON.stringify({
-                invoiceId: invoiceId,
-                method: selectedMethod,
-                transactionId: "TXN" + Date.now()
+                invoiceId: invoiceId, // UUID nhận được từ createInvoice
+                transactionId: "TXN" + Date.now(),
+                method: selectedMethod
             })
         });
 
         if (response.ok) {
             showSuccess();
+        } else {
+            alert("Xác nhận thanh toán thất bại!");
         }
     } catch (error) {
+        console.error("❌ Lỗi confirmPayment:", error);
         alert("Thanh toán thất bại, vui lòng thử lại!");
     }
 });
@@ -208,7 +274,18 @@ function initBookingInfo() {
         }
     }
 }
+// Lưu trạng thái combo hiện tại vào sessionStorage
+function saveCombosToSession() {
+    sessionStorage.setItem('addedCombos', JSON.stringify(addedCombos));
+}
 
+// Khôi phục combo từ sessionStorage khi load trang
+function loadCombosFromSession() {
+    const saved = sessionStorage.getItem('addedCombos');
+    if (saved) {
+        addedCombos = JSON.parse(saved);
+    }
+}
 // ============================================================
 // ORDER SUMMARY
 // ============================================================
@@ -235,6 +312,7 @@ function renderOrder() {
         combosEl.querySelectorAll('.or-remove').forEach(btn => {
             btn.addEventListener('click', () => {
                 addedCombos = addedCombos.filter(c => c.id != btn.dataset.id);
+                saveCombosToSession();
                 renderOrder();
             });
         });
@@ -299,72 +377,93 @@ function getTotal() {
 // ============================================================
 const VISIBLE = 4;
 
+// ============================================================
+// UI RENDERING
+// ============================================================
+
 function buildCombos() {
     const track = document.getElementById('combo-track');
     if (!track) return;
 
+    // Kiểm tra nếu chưa có dữ liệu từ API
     if (!dbCombos || dbCombos.length === 0) {
-        track.innerHTML = '<p style="padding: 20px;">Không có sản phẩm nào.</p>';
+        track.innerHTML = '<p class="no-data">Đang tải danh sách bắp nước...</p>';
         return;
     }
 
+    // 1. Render danh sách sản phẩm sử dụng cấu trúc mới
     track.innerHTML = dbCombos.map(c => `
-    <div class="combo-card" data-id="${c.id}">
-      <div class="combo-img-wrap" style="height: 120px; overflow: hidden; border-radius: 8px;">
-        <img src="${c.imageUrl}" alt="${c.name}" 
-             style="width: 100%; height: 100%; object-fit: cover;"
-             onerror="this.src='https://images.unsplash.com/photo-1585647347483-22b66260dfff?w=200&q=80'">
-      </div> 
-      <div class="combo-body">
-        <div class="combo-name" style="font-weight:600; margin-top:10px;">${c.name}</div>
-        <div class="combo-price" style="color:var(--gold)">${fmt(c.price)}</div>
-      </div>
-    </div>`).join('');
+        <div class="combo-card" data-id="${c.id}">
+            <div class="combo-img">
+                <img src="${c.imageUrl}" alt="${c.name}" 
+                     onerror="this.src='https://images.unsplash.com/photo-1585647347483-22b66260dfff?w=200&q=80'">
+            </div>
+            <div class="combo-body">
+                <div class="combo-name">${c.name}</div>
+<!--                <div class="combo-type" style="font-size: 0.8rem; color: #888;">${c.typeName || ''}</div>-->
+                <div class="combo-price">${fmt(c.price)}</div>
+            </div>
+        </div>`).join('');
 
-    // Thiết lập sự kiện click
+    // 2. Thiết lập sự kiện click theo cách viết mới (addEventListener)
     track.querySelectorAll('.combo-card').forEach(card => {
-        card.onclick = () => {
+        card.addEventListener('click', () => {
+            // Xóa class selected cũ
             track.querySelectorAll('.combo-card').forEach(c => c.classList.remove('selected'));
+            // Thêm class selected cho thẻ vừa chọn
             card.classList.add('selected');
-            const id = parseInt(card.dataset.id);
-            selectedCombo = dbCombos.find(item => item.id === id);
+
+            // Tìm sản phẩm đã chọn từ mảng dữ liệu DB
+            const id = card.dataset.id;
+            selectedCombo = dbCombos.find(item => item.id == id);
+
             comboQty = 1;
-            showComboDetail();
-        };
+            showComboDetail(); // Hiển thị bảng chi tiết bên dưới
+        });
     });
-    updateComboNav();
+
+    // 3. Cập nhật trạng thái nút điều hướng (nếu có dùng slider)
+    if (typeof updateComboNav === "function") {
+        updateComboNav();
+    }
 }
 
 function updateComboNav() {
-    const track   = document.getElementById('combo-track');
-    const cardW   = track.querySelector('.combo-card')?.offsetWidth || 0;
-    const gap     = 14;
-    const shift   = comboOffset * (cardW + gap);
+    const track = document.getElementById('combo-track');
+    const cardW = track.querySelector('.combo-card')?.offsetWidth || 0;
+    const shift = comboOffset * (cardW + 14);
     track.style.transform = `translateX(-${shift}px)`;
 
     document.getElementById('combo-prev').disabled = comboOffset === 0;
-    // ĐỔI COMBOS THÀNH dbCombos
-    document.getElementById('combo-next').disabled = comboOffset >= dbCombos.length - VISIBLE;
+    document.getElementById('combo-next').disabled = comboOffset >= dbCombos.length - 4;
 }
+
 document.getElementById('combo-next').addEventListener('click', () => {
-    if (comboOffset < dbCombos.length - VISIBLE) { // ĐỔI TẠI ĐÂY
+    if (comboOffset < dbCombos.length - 4) {
         comboOffset++;
         updateComboNav();
     }
 });
+document.getElementById('combo-prev').addEventListener('click', () => {
+    if (comboOffset > 0) {
+        comboOffset--;
+        updateComboNav();
+    }
+});
+
 
 function showComboDetail() {
     if (!selectedCombo) return;
     const det = document.getElementById('combo-detail');
     det.style.display = 'flex';
-    // Đổ ảnh sản phẩm từ Database
+
     const imgEl = document.getElementById('cd-img');
     if (imgEl) {
         imgEl.src = selectedCombo.imageUrl || '../assets/images/default-combo.png';
-        imgEl.style.fontSize = 'initial'; // Reset font-size của emoji cũ
     }
+
     document.getElementById('cd-name').textContent  = selectedCombo.name;
-    document.getElementById('cd-desc').textContent  = selectedCombo.typeName || 'Sản phẩm chất lượng';
+    document.getElementById('cd-desc').textContent  = selectedCombo.description || selectedCombo.typeName || 'Sản phẩm chất lượng';
     document.getElementById('cd-price').textContent = fmt(selectedCombo.price) + ' / phần';
     document.getElementById('cd-qty').textContent   = comboQty;
 }
@@ -383,6 +482,7 @@ document.getElementById('cd-add').addEventListener('click', () => {
     } else {
         addedCombos.push({ ...selectedCombo, qty: comboQty });
     }
+    saveCombosToSession();
     renderOrder();
     // Flash button
     const btn = document.getElementById('cd-add');
@@ -492,19 +592,20 @@ const termsCheck = document.getElementById('terms-check');
 // ============================================================
 // PAY BUTTON
 // ============================================================
+// payment.js
 document.getElementById('btn-pay').addEventListener('click', async () => {
-    const warn = document.getElementById('pay-warn');
-    if (!termsCheck.checked) {
-        warn.innerHTML = '<i class="fas fa-exclamation-circle"></i> Bạn chưa đồng ý điều khoản.';
-        return;
-    }
-    // Tạo hóa đơn thật trong DB trước khi hiện QR
-    try {
-        await createInvoice();
-        openQRModal();
-    } catch (err) {
-        alert("Lỗi khởi tạo hóa đơn!");
-    }
+    // 1. Tạo hóa đơn tạm ở Backend trước
+    const invoice = await createInvoice();
+
+    // 2. Gọi API lấy link thanh toán VNPay
+    const res = await fetch(`${API_BASE}/invoices/${invoice.invoiceId}/payment-url`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    const paymentUrl = await res.text();
+
+    // 3. Chuyển hướng người dùng sang trang của VNPay
+    window.location.href = paymentUrl;
 });
 
 // ============================================================
@@ -594,10 +695,12 @@ function showSuccess() {
     setTimeout(() => { window.location.href = 'index.html'; }, 3200);
 }
 
-// Giả định lấy UserId từ token hoặc session
 function getCurrentUserId() {
-    const user = JSON.parse(localStorage.getItem('user'));
-    return user ? user.userId : 1; // Trả về 1 nếu chưa login để test
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+        return JSON.parse(userStr).userId;
+    }
+    return null;
 }
 
 // Tính số tiền giảm dựa trên loại discount trong DB
@@ -614,27 +717,26 @@ function calculateAmount(discountData) {
 
 // Đồng bộ ghế lên DB (Bước 2 trong createInvoice)
 async function syncSeats(id) {
+    const user = JSON.parse(localStorage.getItem('user'));
     for (let seat of selectedSeats) {
         await fetch(`${API_BASE}/invoices/${id}/seats`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ showtimeSeatId: seat.dbId }) // Giả định ghế có dbId
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.token}`
+            },
+            // Sử dụng .dbId vì trang seat.js đã map showtimeSeatId sang dbId
+            body: JSON.stringify({ showtimeSeatId: seat.dbId })
         });
     }
 }
-
 // ============================================================
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Hiện thông tin nhanh từ session
-    initBookingInfo();
-    renderOrder();
-    try {
-        // 2. Tải dữ liệu thật từ DB
-        await initBookingInfoFromDB();
-        await fetchCombos(); // Hàm này sẽ tự gọi buildCombos() bên trong
-    } catch (err) {
-        console.error("Lỗi khởi tạo dữ liệu:", err);
-    }
+    loadCombosFromSession();
+    initBookingInfo(); // Dữ liệu từ session
+    renderOrder();     // Vẽ giỏ hàng ban đầu
+    await fetchProducts(); // Lấy bắp nước
+    await initBookingInfoFromDB(); // Lấy thông tin phim từ DB
 });

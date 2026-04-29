@@ -17,9 +17,10 @@ import java.util.List;
 public class ProductType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_type_id")
     private Long productTypeId;
 
-    @Column(unique = true, nullable = false, length = 50)
+    @Column(name = "type_name", unique = true, nullable = false, length = 50)
     private String typeName;
 
     @OneToMany(mappedBy = "productType")

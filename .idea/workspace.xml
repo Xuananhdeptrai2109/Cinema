@@ -5,19 +5,39 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="53247214-d6fa-4b18-996f-e56af6044b7c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/controller/CommentController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/dto/CommentRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/repository/CommentRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/response/CommentResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/service/CommentService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/controller/PaymentController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/seat/repository/StatusRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/showtime/response/ShowtimeDetailResponse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/controller/MovieController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/controller/MovieController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/entity/MovieComment.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/entity/MovieComment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/response/MovieResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/response/MovieResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/service/MovieServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/movie/service/MovieServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/ pages/movie.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ pages/movie.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/js/main/movie.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/js/main/movie.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/auth/response/AuthResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/auth/response/AuthResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/controller/ProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/dto/BookingRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/dto/BookingRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/entity/BookingProduct.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/entity/BookingProduct.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/entity/BookingSeat.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/entity/BookingSeat.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/entity/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/entity/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/entity/ProductType.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/entity/ProductType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/repository/BookingSeatRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/repository/BookingSeatRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/response/ProductResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/response/ProductResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/service/ProductService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/showtime/controller/ShowtimeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/showtime/controller/ShowtimeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/showtime/service/ShowtimeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/showtime/service/ShowtimeService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/showtime/service/ShowtimeServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/showtime/service/ShowtimeServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/user/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/user/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/user/response/UserResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/user/response/UserResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/user/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/user/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ pages/booking.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pages/booking.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ pages/forgot-password.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pages/forgot-password.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ pages/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pages/home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ pages/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pages/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ pages/movie.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pages/movie.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ pages/movies.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pages/movies.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ pages/payment.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pages/payment.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ pages/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pages/profile.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ pages/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pages/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ pages/seat.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pages/seat.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/js/main/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/js/main/login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/js/main/payment.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/js/main/payment.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

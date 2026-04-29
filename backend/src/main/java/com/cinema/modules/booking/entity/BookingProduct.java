@@ -22,9 +22,9 @@ public class BookingProduct {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @Column(nullable = false)
+    @Column(name = "product_quantity", nullable = false)
     private Integer productQuantity;
 
-    @Column(nullable = false)
+    @Column(name = "price_at_booking", nullable = false)
     private BigDecimal priceAtBooking;
 }

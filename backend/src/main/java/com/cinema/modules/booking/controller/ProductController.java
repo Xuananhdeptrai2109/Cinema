@@ -14,8 +14,9 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
 
-    @GetMapping("/combos")
-    public ResponseEntity<List<ProductResponse>> getCombos() {
-        return ResponseEntity.ok(productService.getAllCombos());
+    @GetMapping("/all") // Thay đổi endpoint nếu muốn
+    public ResponseEntity<List<ProductResponse>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
+
 }
