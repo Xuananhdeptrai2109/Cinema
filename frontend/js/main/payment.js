@@ -35,9 +35,6 @@ function getAuthUser() {
     }
 }
 
-/**
- * Lấy thông tin suất chiếu và phim từ Backend để hiển thị trên trang thanh toán.
- */
 async function initBookingInfoFromDB() {
     const showtimeId = sessionStorage.getItem('selectedShowtimeId');
     const userStr = localStorage.getItem('user');
@@ -146,55 +143,72 @@ async function applyDiscountFromDB() {
 // ============================================================
 // SYNCHRONIZE WITH BACKEND (Tạo hóa đơn thực)
 // ============================================================
-
-// payment.js
 async function createInvoice() {
-    // 1. Lấy đúng Token từ đối tượng user
+
+    if (!selectedSeats || selectedSeats.length === 0) {
+        throw new Error("Chưa có thông tin ghế. Vui lòng quay lại chọn ghế.");
+    }
+    const showtimeSeatIds = selectedSeats.map(s => s.dbId).filter(Boolean);
     const userStr = localStorage.getItem('user');
     const user = userStr ? JSON.parse(userStr) : null;
-    const token = user ? user.token : null;
+    // const token = user?.token || localStorage.getItem('token');
+    const token = JSON.parse(localStorage.getItem('user'))?.token || localStorage.getItem('token');
 
     if (!token) {
-        alert("Phiên đăng nhập hết hạn, vui lòng đăng nhập lại!");
+        alert("Vui lòng đăng nhập lại!");
+        window.location.href = "login.html";
         return;
     }
 
-    // 2. Chuẩn bị dữ liệu theo đúng BookingRequest
-    const invoiceData = {
-        userId: user.userId,
-        showtimeSeatIds: selectedSeats.map(s => s.dbId),
-        products: addedCombos.map(c => ({
-            productId: c.id,
-            quantity: c.qty
-        }))
+    if (showtimeSeatIds.length === 0) {
+        throw new Error("Ghế không có dbId hợp lệ. Vui lòng quay lại chọn ghế.");
+    }
+    // Gom tất cả dữ liệu vào 1 request duy nhất gửi lên /api/booking/create
+    const products = addedCombos.map(c => ({
+        productId: c.id,
+        quantity: c.qty
+    }));
+    const showtimeId = sessionStorage.getItem('selectedShowtimeId');
+    const userId = user?.userId || getCurrentUserId(); // Ưu tiên lấy từ object user[cite: 23]
+
+    const requestBody = {
+        userId: userId,
+        showtimeId: showtimeId ? parseInt(showtimeId) : null,
+        showtimeSeatIds: showtimeSeatIds,
+        products: products
     };
 
+    console.log("🚀 Đang gửi yêu cầu tạo hóa đơn:", requestBody);
     try {
-        const response = await fetch(`${API_BASE}/invoices/create`, {
+        const response = await fetch(`${API_BASE}/booking/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Gửi token chính xác
+                'Authorization': `Bearer ${token}` //[cite: 23]
             },
-            body: JSON.stringify(invoiceData)
+            body: JSON.stringify(requestBody)
         });
 
-        // 3. Kiểm tra phản hồi trước khi parse JSON để tránh lỗi "Unexpected end"
+        // 3. Xử lý các mã lỗi HTTP cụ thể[cite: 23]
         if (!response.ok) {
-            if (response.status === 403) {
-                throw new Error("Bạn không có quyền thực hiện giao dịch này (403).");
-            }
-            throw new Error(`Lỗi hệ thống: ${response.status}`);
+            const errorText = await response.text();
+            console.error("❌ Backend trả về lỗi:", response.status, errorText);
+
+            if (response.status === 403) throw new Error("Lỗi 403: Token hết hạn hoặc sai quyền.");
+            if (response.status === 500) throw new Error("Lỗi 500: Server gặp lỗi khi lưu Database.");
+            throw new Error(`Lỗi tạo hóa đơn: ${response.status}`);
         }
 
-        const result = await response.json();
-        invoiceId = result.invoiceId; // Lưu UUID hóa đơn để dùng tiếp
-        console.log("✅ Hóa đơn đã tạo:", invoiceId);
+        const data = await response.json();
+        invoiceId = data.invoiceId;
 
-    } catch (err) {
-        console.error("❌ Lỗi createInvoice:", err.message);
-        alert(err.message);
-        throw err; // Ngăn không cho mở Modal QR nếu lỗi
+        const createdAt = new Date(data.payingAt).getTime();
+        sessionStorage.setItem('invoiceCreatedAt_' + invoiceId, createdAt.toString());
+        console.log("✅ Tạo hóa đơn thành công:", invoiceId);
+
+    } catch (error) {
+        console.error("❌ Lỗi hàm createInvoice:", error.message);
+        throw error;
     }
 }
 
@@ -217,31 +231,37 @@ async function syncCombos(id) {
 // ============================================================
 // PAYMENT CONFIRMATION
 // ============================================================
-// payment.js
+
 document.getElementById('qr-confirm').addEventListener('click', async () => {
+    const confirmBtn = document.getElementById('qr-confirm');
+    confirmBtn.disabled = true;
+    confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xác nhận...';
     try {
-        // Khớp URL với BookingController: /api/invoices/confirm-payment
-        const response = await fetch(`${API_BASE}/invoices/confirm-payment`, {
+        const response = await fetch(`${API_BASE}/booking/confirm-payment`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${JSON.parse(localStorage.getItem('user')).token}`
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
             },
             body: JSON.stringify({
-                invoiceId: invoiceId, // UUID nhận được từ createInvoice
-                transactionId: "TXN" + Date.now(),
-                method: selectedMethod
+                invoiceId: invoiceId,
+                method: selectedMethod,
+                transactionId: "TXN" + Date.now()
             })
         });
 
         if (response.ok) {
+            clearInterval(countdownTimer);
+            document.getElementById('qr-modal').classList.remove('open');
             showSuccess();
         } else {
-            alert("Xác nhận thanh toán thất bại!");
+            throw new Error(`Lỗi ${response.status}`);
         }
     } catch (error) {
-        console.error("❌ Lỗi confirmPayment:", error);
+        console.error('❌ Lỗi xác nhận thanh toán:', error);
         alert("Thanh toán thất bại, vui lòng thử lại!");
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = '<i class="fas fa-check-circle"></i> Xác nhận đã thanh toán';
     }
 });
 
@@ -377,10 +397,6 @@ function getTotal() {
 // ============================================================
 const VISIBLE = 4;
 
-// ============================================================
-// UI RENDERING
-// ============================================================
-
 function buildCombos() {
     const track = document.getElementById('combo-track');
     if (!track) return;
@@ -450,7 +466,6 @@ document.getElementById('combo-prev').addEventListener('click', () => {
         updateComboNav();
     }
 });
-
 
 function showComboDetail() {
     if (!selectedCombo) return;
@@ -550,7 +565,34 @@ document.getElementById('toggle-coin').addEventListener('click', () => {
 
 document.getElementById('coin-apply').addEventListener('click', applyCoin);
 
-let USER_COINS = 500;
+let USER_COINS = 0;
+
+async function fetchUserCoins() {
+    try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user?.userId) return;
+
+        const response = await fetch(`${API_BASE}/users/${user.userId}/coins`, {
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+        });
+        if (!response.ok) return;
+
+        const data = await response.json();
+        USER_COINS = data.coins ?? 0;
+
+        const coinBalance = document.getElementById('coin-balance-label');
+        const coinAvail   = document.getElementById('coin-avail');
+        const coinInput   = document.getElementById('coin-input');
+        if (coinBalance) coinBalance.textContent = USER_COINS;
+        if (coinAvail)   coinAvail.textContent   = USER_COINS;
+        if (coinInput)   coinInput.max           = USER_COINS;
+
+        console.log('✅ Coin của user:', USER_COINS);
+    } catch (err) {
+        console.warn('⚠️ Không lấy được coin:', err.message);
+    }
+}
+
 function applyCoin() {
     const inp  = document.getElementById('coin-input');
     const msg  = document.getElementById('coin-msg');
@@ -592,22 +634,89 @@ const termsCheck = document.getElementById('terms-check');
 // ============================================================
 // PAY BUTTON
 // ============================================================
-// payment.js
+
 document.getElementById('btn-pay').addEventListener('click', async () => {
-    // 1. Tạo hóa đơn tạm ở Backend trước
-    const invoice = await createInvoice();
+    const warn   = document.getElementById('pay-warn');
+    const btnPay = document.getElementById('btn-pay');
 
-    // 2. Gọi API lấy link thanh toán VNPay
-    const res = await fetch(`${API_BASE}/invoices/${invoice.invoiceId}/payment-url`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : null;
+    const token = user ? user.token : null;
 
-    const paymentUrl = await res.text();
+    if (!token || token === "undefined" || token === "null") {
+        warn.innerHTML = '<i class="fas fa-exclamation-circle"></i> Bạn cần đăng nhập để thanh toán. <a href="login.html" style="color:var(--primary);text-decoration:underline">Đăng nhập ngay</a>';
+        // Tự động chuyển hướng sau 2 giây nếu muốn
+        setTimeout(() => { window.location.href = "login.html"; }, 2000);
+        return;
+    }
 
-    // 3. Chuyển hướng người dùng sang trang của VNPay
-    window.location.href = paymentUrl;
+    if (!termsCheck.checked) {
+        warn.innerHTML = '<i class="fas fa-exclamation-circle"></i> Bạn chưa đồng ý điều khoản.';
+        return;
+    }
+
+    btnPay.disabled = true;
+    btnPay.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+    warn.innerHTML = '';
+
+    try {
+        if (!invoiceId) {
+            await createInvoice();
+        }
+
+        if (selectedMethod === 'vnpay') {
+            await handleVNPay();
+        } else {
+            openQRModal();
+            btnPay.disabled = false;
+            btnPay.innerHTML = '<i class="fas fa-lock"></i> Thanh toán ngay';
+        }
+    } catch (err) {
+        console.error('❌ Lỗi tạo hóa đơn:', err);
+        warn.innerHTML = '<i class="fas fa-exclamation-circle"></i> Lỗi khởi tạo hóa đơn, vui lòng thử lại!';
+        btnPay.disabled = false;
+        btnPay.innerHTML = '<i class="fas fa-lock"></i> Thanh toán ngay';
+    }
 });
 
+async function handleVNPay() {
+    const btnPay = document.getElementById('btn-pay');
+    const warn   = document.getElementById('pay-warn');
+    try {
+        sessionStorage.setItem('pendingInvoiceId', invoiceId);
+        sessionStorage.setItem('movieTitle', document.getElementById('pay-movie-title')?.textContent || '');
+        sessionStorage.setItem('showtime', document.getElementById('pay-showtime')?.textContent || '');
+        sessionStorage.setItem('cinema', document.getElementById('pay-cinema')?.textContent || '');
+        sessionStorage.setItem('selectedSeats', selectedSeats.map(s => s.label || s.name).join(', '));
+
+        const response = await fetch(`${API_BASE}/payment/vnpay-create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // 'Authorization': 'Bearer ' + localStorage.getItem('token')
+                'Authorization': 'Bearer ' + (JSON.parse(localStorage.getItem('user'))?.token)
+            },
+            body: JSON.stringify({
+                invoiceId: invoiceId,
+                amount: getTotal()
+            })
+        });
+
+        if (!response.ok) throw new Error(`Lỗi ${response.status}`);
+
+        const data = await response.json();
+        if (data.paymentUrl) {
+            window.location.href = data.paymentUrl;
+        } else {
+            throw new Error('Không nhận được URL thanh toán');
+        }
+    } catch (err) {
+        console.error('❌ Lỗi VNPay:', err);
+        warn.innerHTML = '<i class="fas fa-exclamation-circle"></i> Không thể kết nối VNPay, vui lòng chọn phương thức khác.';
+        btnPay.disabled = false;
+        btnPay.innerHTML = '<i class="fas fa-lock"></i> Thanh toán ngay';
+    }
+}
 // ============================================================
 // QR MODAL
 // ============================================================
@@ -637,43 +746,45 @@ function closeQRModal() {
 
 document.getElementById('qr-change').addEventListener('click', closeQRModal);
 
-document.getElementById('qr-confirm').addEventListener('click', () => {
-    clearInterval(countdownTimer);
-    document.getElementById('qr-modal').classList.remove('open');
-    showSuccess();
-});
-
 // ============================================================
 // COUNTDOWN
 // ============================================================
 function startCountdown() {
-    let secs = 5 * 60; // 5 minutes
+    const DURATION = 5 * 60;
     const display = document.getElementById('countdown');
     const bar     = document.getElementById('countdown-bar');
     const expire  = document.getElementById('qr-expire-msg');
     const confirm = document.getElementById('qr-confirm');
-    const total   = secs;
 
     clearInterval(countdownTimer);
     display.classList.remove('urgent');
-    bar.style.background = 'var(--red)';
-    bar.style.width      = '100%';
 
-    countdownTimer = setInterval(() => {
-        secs--;
-        const m = String(Math.floor(secs / 60)).padStart(2,'0');
-        const s = String(secs % 60).padStart(2,'0');
+    function getRemainingSeconds() {
+        const createdAt = sessionStorage.getItem('invoiceCreatedAt_' + invoiceId);
+        if (!createdAt) return DURATION;
+        const elapsed = Math.floor((Date.now() - parseInt(createdAt)) / 1000);
+        return Math.max(0, DURATION - elapsed);
+    }
+
+    function tick() {
+        const secs = getRemainingSeconds();
+        const m = String(Math.floor(secs / 60)).padStart(2, '0');
+        const s = String(secs % 60).padStart(2, '0');
         display.textContent = `${m}:${s}`;
-        bar.style.width = `${(secs / total) * 100}%`;
+        bar.style.width = `${(secs / DURATION) * 100}%`;
 
         if (secs <= 60) {
             display.classList.add('urgent');
             bar.style.background = '#ff5252';
+        } else {
+            display.classList.remove('urgent');
+            bar.style.background = 'var(--red)';
         }
 
         if (secs <= 0) {
             clearInterval(countdownTimer);
             display.textContent = '00:00';
+            bar.style.width = '0%';
             expire.style.display = 'flex';
             expire.style.alignItems = 'center';
             expire.style.gap = '6px';
@@ -681,7 +792,10 @@ function startCountdown() {
             confirm.disabled = true;
             confirm.style.opacity = '.4';
         }
-    }, 1000);
+    }
+
+    tick();
+    countdownTimer = setInterval(tick, 1000);
 }
 
 // ============================================================
@@ -692,13 +806,14 @@ function showSuccess() {
     const fill = document.getElementById('success-fill');
     ov.classList.add('show');
     requestAnimationFrame(() => { fill.style.width = '100%'; });
-    setTimeout(() => { window.location.href = 'index.html'; }, 3200);
+    setTimeout(() => { window.location.href = 'home.html'; }, 3200);
 }
 
 function getCurrentUserId() {
     const userStr = localStorage.getItem('user');
-    if (userStr) {
-        return JSON.parse(userStr).userId;
+    if (userStr && userStr !== "undefined") {
+        const user = JSON.parse(userStr);
+        return user.userId; 
     }
     return null;
 }
@@ -715,7 +830,6 @@ function calculateAmount(discountData) {
     return discountData.value; // FLAT amount
 }
 
-// Đồng bộ ghế lên DB (Bước 2 trong createInvoice)
 async function syncSeats(id) {
     const user = JSON.parse(localStorage.getItem('user'));
     for (let seat of selectedSeats) {
@@ -731,12 +845,66 @@ async function syncSeats(id) {
     }
 }
 // ============================================================
+// RESUME PENDING INVOICE (từ trang my-tickets)
+// ============================================================
+async function resumePendingInvoice() {
+    const params = new URLSearchParams(window.location.search);
+    const resumeId = params.get('invoiceId');
+    if (!resumeId) return false; // Không phải luồng resume
+
+    try {
+        const res = await fetch(`${API_BASE}/booking/invoice/${resumeId}`, {
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+        });
+        if (!res.ok) throw new Error(`Lỗi ${res.status}`);
+
+        const data = await res.json();
+
+        // Gán invoiceId toàn cục — bỏ qua bước createInvoice()
+        invoiceId = data.invoiceId;
+
+        // Phục hồi selectedSeats từ dữ liệu server
+        selectedSeats = (data.seats || []).map(s => ({
+            dbId:  s.dbId,
+            id:    s.id,
+            type:  s.type,
+            price: s.price
+        }));
+
+        // Phục hồi sessionStorage để initBookingInfo() hoạt động
+        sessionStorage.setItem('selectedShowtimeId', data.showtimeId || '');
+        sessionStorage.setItem('selectedSeats', JSON.stringify(selectedSeats));
+        sessionStorage.setItem('selectedMovie', JSON.stringify({
+            title:  data.movieTitle  || 'N/A',
+            poster: data.posterUrl   || '',
+            date:   data.showDate    || '',
+            time:   data.startTime   || '',
+            cinema: data.cinemaName  || '',
+            room:   data.roomName    || '',
+            age:    data.ageRating   || 'T13',
+            tags:   [data.genre || 'Phim', data.roomType || '2D', 'T' + (data.ageRating || '13')]
+        }));
+
+        console.log('✅ Resume invoice thành công:', resumeId, '| Ghế:', selectedSeats.length);
+        return true;
+    } catch (err) {
+        console.error('❌ Lỗi resume invoice:', err.message);
+        return false;
+    }
+}
+// ============================================================
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', async () => {
+    await resumePendingInvoice();
     loadCombosFromSession();
     initBookingInfo(); // Dữ liệu từ session
     renderOrder();     // Vẽ giỏ hàng ban đầu
-    await fetchProducts(); // Lấy bắp nước
-    await initBookingInfoFromDB(); // Lấy thông tin phim từ DB
+    try {
+        await fetchProducts(); // Lấy bắp nước
+        await initBookingInfoFromDB(); // Lấy thông tin phim từ DB
+        await fetchUserCoins();
+    } catch (err) {
+        console.error("Lỗi khởi tạo dữ liệu:", err);
+    }
 });

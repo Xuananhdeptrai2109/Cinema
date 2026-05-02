@@ -580,4 +580,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderCoinHistory();
     renderVouchers();
     renderTickets();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetTab = urlParams.get('tab');
+
+    if (targetTab === 'history') {
+        // Gọi hàm switchTab đã có sẵn trong profile.js để chuyển sang tab-history[cite: 9]
+        switchTab('tab-history');
+
+        // Cuộn nhẹ xuống phần tiêu đề lịch sử để người dùng nhận diện
+        const historySection = document.getElementById('tab-history');
+        if (historySection) {
+            historySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
 });

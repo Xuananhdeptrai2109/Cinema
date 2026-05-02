@@ -1,6 +1,6 @@
 package com.cinema.modules.booking.entity;
 
-import com.cinema.modules.discount.entity.Discount;
+
 import com.cinema.modules.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,21 +8,19 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
-@Table(name = "Invoice")
+@Table(name = "invoice")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Invoice {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "invoice_id", columnDefinition = "BINARY(16)")
-    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.BINARY)
-    private UUID invoiceId;
+    private java.util.UUID invoiceId;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -31,24 +29,34 @@ public class Invoice {
     @Column(name = "total_price")
     private BigDecimal totalPrice;
 
-    @Column(name = "invoice_status")
-    private String invoiceStatus ;
+    @Column(name = "final_price")
+    private BigDecimal finalPrice;
 
-    @Enumerated(EnumType.STRING)
+    @Column(name = "invoice_status")
+    private String invoiceStatus;
+
     @Column(name = "payment_method")
-    private PaymentMethod paymentMethod;
-    public enum PaymentMethod {
-        momo, vnpay, cash, zalopay
-    }
+    private String paymentMethod;
 
     @Column(name = "transaction_id")
-    private String transactionId ;
+    private String transactionId;
 
     @Column(name = "email_address")
     private String emailAddress;
 
-    @Column(updatable = false)
-    private LocalDateTime createdDatetime = LocalDateTime.now();
+    @Column(name = "paying_at")
+    private LocalDateTime payingAt;
+
+    @Column(name = "created_datetime", updatable = false)
+    private LocalDateTime createdDatetime;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdDatetime = LocalDateTime.now();
+    }
+
+    @Column(name = "paid_at")
+    private LocalDateTime paidAt;
 
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
     private List<BookingSeat> bookingSeats;

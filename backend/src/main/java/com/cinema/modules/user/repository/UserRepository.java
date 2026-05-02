@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     // Tìm kiếm theo email vì email là định danh trong Token của bạn
     Optional<User> findByEmail(String email);
+    Optional<User> findByUserName(String userName);
 }

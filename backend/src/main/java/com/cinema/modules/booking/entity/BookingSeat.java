@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 public class BookingSeat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "booking_seat_id")
     private Long bookingSeatId;
 
     @ManyToOne(fetch = FetchType.LAZY)

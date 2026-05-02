@@ -76,43 +76,29 @@ public class ShowtimeServiceImpl implements ShowtimeService {
 
     @Override
     @Transactional(readOnly = true)
-    public ShowtimeResponse getShowtimeById(Long id) {
-        // 1. Tìm suất chiếu trong DB
-        Showtime showtime = showtimeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy suất chiếu ID: " + id));
+    public ShowtimeDetailResponse getShowtimeById(Long showtimeId) {
+        Showtime s = showtimeRepository.findById(showtimeId)
+                .orElseThrow(() -> new RuntimeException("Suất chiếu không tồn tại"));
 
-        Movie movie = showtime.getMovie();
+        ShowtimeDetailResponse res = new ShowtimeDetailResponse();
+        res.setShowtimeId(s.getShowtimeId());
+        res.setStartTime(s.getStartTime().format(TIME_FORMATTER));
+        res.setEndTime(s.getEndTime() != null ? s.getEndTime().format(TIME_FORMATTER) : "");
+        res.setShowDate(s.getShowDate().toString());
+        res.setRoomName(s.getRoom().getRoomName());
+        res.setRoomType(s.getRoom().getScreeningFormat().getType());
+        res.setCinemaName(s.getRoom().getCinema().getCinemaName());
+        res.setMovieId(s.getMovie().getId());
+        res.setMovieName(s.getMovie().getTitle());
+        res.setPosterUrl(s.getMovie().getPosterLink());
+        res.setDuration(s.getMovie().getDuration());
+        res.setAgeRating(s.getMovie().getAgeRating());
+        // ✅ Sửa: Set không có .get(0), dùng stream().findFirst() thay thế
+        res.setGenre(s.getMovie().getGenres().stream()
+                .findFirst()
+                .map(g -> g.getGenreName())
+                .orElse(""));
 
-        // 2. Tạo chi tiết giờ chiếu cho suất chiếu này
-        ShowtimeResponse.TimeDetail timeDetail = new ShowtimeResponse.TimeDetail(
-                showtime.getShowtimeId(),
-                showtime.getStartTime().format(TIME_FORMATTER),
-                100 // Số ghế trống mặc định hoặc lấy từ logic đếm ghế
-        );
-
-        // 3. Tạo chi tiết phòng chiếu
-        ShowtimeResponse.RoomDetail roomDetail = new ShowtimeResponse.RoomDetail(
-                showtime.getRoom().getRoomName(),
-                List.of(timeDetail)
-        );
-
-        // 4. Tạo nhóm định dạng (2D/3D...)
-        ShowtimeResponse.RoomTypeGroup typeGroup = new ShowtimeResponse.RoomTypeGroup(
-                showtime.getRoom().getScreeningFormat().getType(),
-                List.of(roomDetail)
-        );
-
-        // 5. Trả về Response chứa thông tin phim và duy nhất suất chiếu đã chọn
-        return new ShowtimeResponse(
-                movie.getId(),
-                movie.getTitle(),
-                movie.getPosterLink(),
-                movie.getDuration(),
-                movie.getAgeRating(),
-                movie.getGenres().stream()
-                        .map(g -> g.getGenreName())
-                        .collect(Collectors.toList()),
-                List.of(typeGroup)
-        );
+        return res;
     }
 }

@@ -173,6 +173,11 @@ form.addEventListener('submit', async e => {
             localStorage.setItem('token', result.token);
             const displayName = result.username || fields.gmail.value.split('@')[0];
             localStorage.setItem('username', displayName);
+            localStorage.setItem('user', JSON.stringify({
+                userId: result.userId,
+                username: result.username,
+                token: result.token
+            }));
             btnSubmit.classList.remove('loading');
             showSuccess();
         } else {

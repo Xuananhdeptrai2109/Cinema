@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     @Autowired
-    private AuthRepository authRepository; // Đã đổi tên biến từ userRepository thành authRepository
+    private AuthRepository authRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -44,10 +44,10 @@ public class AuthService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        authRepository.save(user);
+        User savedUser = authRepository.save(user);
 
         String token = jwtUtil.generateToken(user.getEmail());
-        return new AuthResponse(token, "Đăng ký thành công");
+        return new AuthResponse(token, "Đăng kí thành công", savedUser.getUserId(), savedUser.getUserName());
     }
 
     // LOGIN
@@ -62,7 +62,7 @@ public class AuthService {
 
         String token = jwtUtil.generateToken(user.getEmail());
 
-        return new AuthResponse(token, "Đăng nhập thành công");
+        return new AuthResponse(token, "Đăng nhập thành công", user.getUserId(), user.getUserName());
     }
 
     // GỬI OTP
