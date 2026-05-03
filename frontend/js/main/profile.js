@@ -484,16 +484,22 @@ function renderVouchers() {
 ────────────────────────────────────── */
 function renderTickets() {
     const list = document.getElementById('ticketList');
+    if (!list) return;
+
     const statusMap = {
         paid:      { label: '<i class="fas fa-check-circle"></i> Đã thanh toán', color: 'var(--success)' },
-        upcoming:  { label: '<i class="fas fa-clock"></i> Sắp chiếu',            color: '#60a5fa'        },
+        paying:   { label: '<i class="fas fa-clock"></i> Chờ thanh toán',       color: '#facc15'        },
         cancelled: { label: '<i class="fas fa-times-circle"></i> Đã hủy',        color: '#f87171'        },
     };
+
     list.innerHTML = mockData.tickets.map(t => {
         const s = statusMap[t.status] || statusMap.paid;
         return `
       <div class="ticket-card">
-        <div class="ticket-poster">${t.poster}</div>
+        <div class="ticket-poster">
+            <!-- Thay đổi từ text sang thẻ img để load ảnh -->
+            <img src="${t.poster}" alt="${t.movie}" onerror="this.src='../images/default-poster.jpg'">
+        </div>
         <div class="ticket-info">
           <div class="ticket-movie">${t.movie}</div>
           <div class="ticket-meta">
@@ -506,50 +512,117 @@ function renderTickets() {
           <span style="color:${s.color}; font-size:.78rem; font-weight:600; display:inline-flex; align-items:center; gap:5px;">${s.label}</span>
         </div>
         <div class="ticket-actions">
-          <button class="btn-detail" onclick="showTicketPopup(${t.id})">Xem chi tiết</button>
+          <!-- Đảm bảo truyền t.id (UUID string) vào hàm popup[cite: 11] -->
+          <button class="btn-detail" onclick="showTicketPopup('${t.id}')">Xem chi tiết</button>
         </div>
       </div>
     `;
     }).join('');
 }
+/**
+ * Lấy danh sách hóa đơn từ Backend và chuyển đổi sang định dạng hiển thị vé
+ */
+async function fetchMyTickets() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+        // Gọi API lấy danh sách hóa đơn của người dùng hiện tại
+        const response = await fetch("http://localhost:8080/api/booking/my-invoices", {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            const invoices = await response.json();
+
+            mockData.tickets = invoices.map(inv => {
+                // Tách chuỗi showtime (VD: "19:30 - 02/04/2026") thành Giờ và Ngày
+                const showtimeParts = inv.showtime ? inv.showtime.split(' - ') : ['--', '--'];
+                let posterPath = inv.posterUrl || "../images/default-poster.jpg";
+
+                // Kiểm tra nếu là dữ liệu Base64 thô (không bắt đầu bằng http hoặc data:)
+                if (posterPath && !posterPath.startsWith('http') && !posterPath.startsWith('data:')) {
+                    posterPath = `data:image/jpeg;base64,${posterPath}`;
+                }
+
+                return {
+                    id: inv.invoiceId,
+                    movie: inv.movieTitle || 'Không rõ tên phim',
+                    date: showtimeParts[1],
+                    time: showtimeParts[0],
+                    seats: inv.seatLabels ? inv.seatLabels.join(', ') : '—',
+                    cinema: inv.cinemaName || '—',
+                    room: inv.roomName || '—',
+                    price: inv.finalPrice ? inv.finalPrice.toLocaleString() + "đ" : "0đ",
+                    status: inv.status === 'paid' ? 'paid' :
+                        (inv.status === 'paying' ? 'paying' : 'cancelled'),
+                    poster: posterPath
+                };
+            });
+
+            // Gọi hàm render để hiển thị lên UI
+            renderTickets();
+        } else {
+            console.error("Không thể tải lịch sử đặt vé:", response.status);
+        }
+    } catch (error) {
+        console.error("Lỗi kết nối API lịch sử vé:", error);
+    }
+}
 
 /* ──────────────────────────────────────
    POPUP TICKET DETAIL
 ────────────────────────────────────── */
-function showTicketPopup(ticketId) {
-    const t = mockData.tickets.find(t => t.id === ticketId);
+window.showTicketPopup = function(ticketId) {
+    // Tìm vé trong mảng mockData bằng chuỗi ID[cite: 11]
+    const t = mockData.tickets.find(ticket => ticket.id === ticketId);
     if (!t) return;
-    const statusLabel = { paid: 'Đã thanh toán', upcoming: 'Sắp chiếu', cancelled: 'Đã hủy' };
+
+    const statusLabel = { paid: 'Đã thanh toán', paying: 'Chờ thanh toán', cancelled: 'Đã hủy' };
     document.getElementById('popupMovieTitle').textContent = t.movie;
+
     const rows = [
         { label: 'Ngày chiếu', value: t.date },
         { label: 'Giờ chiếu',  value: t.time },
         { label: 'Ghế',        value: t.seats },
         { label: 'Rạp',        value: t.cinema },
         { label: 'Phòng',      value: t.room },
-        { label: 'Giá vé',     value: t.price },
+        { label: 'Giá vé',     value: t.price }, // Bây giờ đã có giá vé từ fetchMyTickets[cite: 11]
         { label: 'Trạng thái', value: statusLabel[t.status] || t.status },
     ];
+
     document.getElementById('popupRows').innerHTML = rows.map(r => `
     <div class="popup-row">
       <span class="popup-row-label">${r.label}</span>
       <span class="popup-row-value">${r.value}</span>
     </div>
   `).join('');
+
     document.getElementById('popupOverlay').classList.add('show');
     document.body.style.overflow = 'hidden';
 }
 
-function hidePopup() {
-    document.getElementById('popupOverlay').classList.remove('show');
-    document.body.style.overflow = '';
+window.hidePopup = function() { // Thêm window. vào trước tên hàm
+    const overlay = document.getElementById('popupOverlay');
+    if (overlay) {
+        overlay.classList.remove('show');
+        document.body.style.overflow = '';
+    }
 }
 
-function closePopup(e) {
-    if (e.target === document.getElementById('popupOverlay')) hidePopup();
+window.closePopup = function(e) { // Thêm window. vào trước tên hàm
+    const overlay = document.getElementById('popupOverlay');
+    if (e.target === overlay) window.hidePopup();
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') hidePopup(); });
+// Lắng nghe phím ESC để đóng popup
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') window.hidePopup();
+});
 
 /* ──────────────────────────────────────
    KHỞI TẠO — ĐÃ SỬA LỖI BIẾN STOREDNAME
@@ -569,6 +642,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Sau đó mới gọi API để lấy dữ liệu thực tế từ Database
     await fetchUserProfile();
+    await fetchMyTickets();
 
     // Khởi tạo các thành phần khác
     initStickyHeader();
@@ -585,10 +659,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const targetTab = urlParams.get('tab');
 
     if (targetTab === 'history') {
-        // Gọi hàm switchTab đã có sẵn trong profile.js để chuyển sang tab-history[cite: 9]
         switchTab('tab-history');
-
-        // Cuộn nhẹ xuống phần tiêu đề lịch sử để người dùng nhận diện
         const historySection = document.getElementById('tab-history');
         if (historySection) {
             historySection.scrollIntoView({ behavior: 'smooth', block: 'start' });

@@ -172,6 +172,7 @@ public class BookingController {
 
             List<String> seatLabels = new ArrayList<>();
             String movieTitle = null, showtimeStr = null, cinemaName = null, roomName = null;
+            String posterUrl = null;
 
             if (inv.getBookingSeats() != null) {
                 for (BookingSeat bs : inv.getBookingSeats()) {
@@ -183,6 +184,7 @@ public class BookingController {
                         var st = bs.getShowtime();
                         if (st.getMovie() != null)
                             movieTitle = st.getMovie().getTitle();
+                            posterUrl = st.getMovie().getPosterLink();
                         if (st.getStartTime() != null)
                             showtimeStr = st.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm"))
                                     + " - "
@@ -205,6 +207,7 @@ public class BookingController {
             }
 
             m.put("movieTitle",    movieTitle);
+            m.put("posterUrl",     posterUrl);
             m.put("showtime",      showtimeStr);
             m.put("cinemaName",    cinemaName);
             m.put("roomName",      roomName);
