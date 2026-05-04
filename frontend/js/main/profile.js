@@ -307,7 +307,7 @@ function initAvatarUpload() {
                 });
 
                 if (response.ok) {
-                    mockData.user.imgUrl = base64Image; // Cập nhật biến tạm
+                    mockData.user.imgUrl = base64Image;
                     showToast('Đã cập nhật ảnh đại diện thành công!');
                 } else {
                     showToast('Không thể lưu ảnh vào máy chủ', 'error');
@@ -381,6 +381,7 @@ window.saveProfile = async function() {
         dateOfBirth: document.getElementById('inputDob').value,
         phoneNumber: document.getElementById('inputPhone').value.trim(),
         address: document.getElementById('inputAddress').value.trim(),
+        imgUrl: mockData.user.imgUrl
     };
 
     if (!updatedData.fullName) {
@@ -443,6 +444,34 @@ function renderCoinHistory() {
   `).join('');
 }
 
+async function fetchCoinHistory() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    try {
+        // Gọi API lấy lịch sử giao dịch Coin
+        const response = await fetch("http://localhost:8080/api/users/me/coin-history", {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            const history = await response.json();
+            mockData.coinHistory = history.map(item => ({
+                date: item.date,
+                content: item.description,
+                amount: item.amount
+            }));
+
+            renderCoinHistory();
+        }
+    } catch (error) {
+        console.error("Lỗi tải lịch sử coin:", error);
+    }
+}
+
 /* ──────────────────────────────────────
    RENDER VOUCHERS
 ────────────────────────────────────── */
@@ -477,6 +506,36 @@ function renderVouchers() {
       <td style="color:var(--success);font-weight:600">${v.discount}</td>
     </tr>
   `).join('');
+}
+
+async function fetchVoucherHistory() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+        const response = await fetch("http://localhost:8080/api/users/me/voucher-history", {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+
+            // Map dữ liệu vào mảng voucherHistory trong profile.js
+            mockData.voucherHistory = data.map(item => ({
+                code: item.code,
+                usedDate: item.usedDate,
+                discount: item.discount
+            }));
+
+            renderVouchers(); // Gọi hàm render có sẵn để cập nhật UI
+        }
+    } catch (error) {
+        console.error("Lỗi tải lịch sử voucher:", error);
+    }
 }
 
 /* ──────────────────────────────────────
@@ -643,14 +702,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Sau đó mới gọi API để lấy dữ liệu thực tế từ Database
     await fetchUserProfile();
     await fetchMyTickets();
+    await fetchCoinHistory();
+    await fetchVoucherHistory();
 
-    // Khởi tạo các thành phần khác
     initStickyHeader();
     initAuthZone();
     initTabs();
     initAvatarUpload();
 
-    // Render các danh sách lịch sử
     renderCoinHistory();
     renderVouchers();
     renderTickets();

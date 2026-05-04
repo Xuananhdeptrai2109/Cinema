@@ -78,6 +78,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/showtimes/**", "/api/showtime-seats/**", "/api/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/comments/movie/**").permitAll()
 
+                        .requestMatchers("/api/users/me/**").hasAnyAuthority("customer", "admin", "ROLE_customer", "ROLE_admin")
                         .requestMatchers("/api/users/profile/**").hasAnyAuthority("customer", "admin", "ROLE_customer", "ROLE_admin")
                         .requestMatchers("/api/comments").hasAnyAuthority("customer", "admin", "ROLE_customer", "ROLE_admin")
                         .requestMatchers("/api/invoices/**", "/api/payment/**", "/api/booking/**").hasAnyAuthority("customer", "ROLE_customer")
