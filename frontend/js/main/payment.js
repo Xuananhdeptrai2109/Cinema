@@ -14,7 +14,10 @@ let comboOffset = 0;
 let selectedCombo = null;
 let comboQty = 1;
 
-const fmt = n => n.toLocaleString('vi-VN') + 'đ';
+const fmt = n => {
+    if (n === null || n === undefined) return '0đ';
+    return n.toLocaleString('vi-VN') + 'đ';
+};
 const TYPE_LABELS = {
     normal:'Ghế thường', vip:'Ghế VIP', sweetbox:'Sweetbox',
     couple:'Ghế Couple', premium:'Ghế Cao cấp',
@@ -123,21 +126,44 @@ async function fetchProducts() {
 }
 // 2. Kiểm tra mã giảm giá từ DB (Bảng discount)
 async function applyDiscountFromDB() {
-    const code = document.getElementById('discount-input').value.trim();
+    const codeInput = document.getElementById('discount-input');
+    const code = codeInput.value.trim();
+    const msgEl = document.getElementById('discount-msg');
+
+    if (!code) {
+        showMsg(msgEl, "Vui lòng nhập mã giảm giá", "error");
+        return;
+    }
+
+    console.log("🚀 Đang gọi API kiểm tra mã:", code); // Dòng này để bạn check Console
+
     try {
+        // Gọi đến đúng Endpoint của DiscountController bạn vừa tạo[cite: 14]
         const response = await fetch(`${API_BASE}/discounts/check?code=${code}`);
-        if (!response.ok) throw new Error("Mã không hợp lệ");
+
+        if (!response.ok) {
+            // Nếu server trả về 404 hoặc 403, nó sẽ nhảy vào đây[cite: 14]
+            const errorText = await response.text();
+            throw new Error(errorText || "Mã không hợp lệ");
+        }
 
         const discountData = await response.json();
-        // Cập nhật appliedDiscount với dữ liệu thực từ DB
+
+        // Lưu thông tin vào biến toàn cục để createInvoice sử dụng[cite: 14]
         appliedDiscount = {
             id: discountData.discountId,
             label: discountData.discountCode,
-            amount: calculateAmount(discountData)
+            amount: calculateAmount(discountData) // Hàm này phải tính dựa trên discountValue từ DB[cite: 14]
         };
-        renderOrder();
+
+        showMsg(msgEl, `✅ Giảm ${fmt(appliedDiscount.amount)}`, "success");
+        renderOrder(); // Vẽ lại bảng tổng tiền[cite: 14]
+
     } catch (err) {
-        showMsg(document.getElementById('discount-msg'), "❌ Mã không tồn tại", "error");
+        console.error("❌ Lỗi applyDiscountFromDB:", err.message);
+        showMsg(msgEl, "❌ " + err.message, "error");
+        appliedDiscount = null;
+        renderOrder();
     }
 }
 // ============================================================
@@ -175,7 +201,9 @@ async function createInvoice() {
         userId: userId,
         showtimeId: showtimeId ? parseInt(showtimeId) : null,
         showtimeSeatIds: showtimeSeatIds,
-        products: products
+        products: products,
+        usedCoin: appliedCoin / 1000,
+        discountCode: appliedDiscount ? appliedDiscount.label : null
     };
 
     console.log("🚀 Đang gửi yêu cầu tạo hóa đơn:", requestBody);
@@ -520,38 +548,18 @@ document.getElementById('toggle-discount').addEventListener('click', () => {
     arrow.classList.toggle('open', !open);
 });
 document.getElementById('discount-apply').addEventListener('click', applyDiscountFromDB);
-document.getElementById('discount-input').addEventListener('keydown', e => { if (e.key === 'Enter') applyDiscount(); });
+document.getElementById('discount-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+        e.preventDefault(); // Ngăn trang bị reload
+        applyDiscountFromDB();
+    }
+});
 
 document.querySelectorAll('.code-hint').forEach(hint => {
     hint.addEventListener('click', () => {
         document.getElementById('discount-input').value = hint.dataset.code;
     });
 });
-
-function applyDiscount() {
-    const code = document.getElementById('discount-input').value.trim().toUpperCase();
-    const msg  = document.getElementById('discount-msg');
-    const inp  = document.getElementById('discount-input');
-
-    if (!code) { showMsg(msg, 'Vui lòng nhập mã giảm giá.', 'error'); return; }
-    const def = DISCOUNT_CODES[code];
-    if (!def) {
-        showMsg(msg, '❌ Mã không tồn tại hoặc đã hết hạn.', 'error');
-        inp.classList.add('error');
-        return;
-    }
-    inp.classList.remove('error');
-
-    const seatTotal = selectedSeats.reduce((s, x) => s + x.price, 0);
-    const comboTotal = addedCombos.reduce((s, c) => s + c.price * c.qty, 0);
-    const base = seatTotal + comboTotal;
-    const amount = def.type === 'percent' ? Math.round(base * def.value / 100) : def.value;
-
-    appliedDiscount = { label: def.label, amount };
-    showMsg(msg, `✅ Áp dụng thành công! Giảm ${fmt(amount)}`, 'success');
-    renderOrder();
-}
-
 // ============================================================
 // COIN
 // ============================================================
@@ -605,7 +613,7 @@ function applyCoin() {
         return;
     }
     inp.classList.remove('error');
-    appliedCoin = val * 100; // 1 coin = 100đ
+    appliedCoin = val * 1000; // 1 coin = 1.000đ
     showMsg(msg, `✅ Đã dùng ${val} coin = ${fmt(appliedCoin)}`, 'success');
     renderOrder();
 }
@@ -824,10 +832,16 @@ function calculateAmount(discountData) {
     const comboTotal = addedCombos.reduce((s, c) => s + c.price * c.qty, 0);
     const base = seatTotal + comboTotal;
 
-    if (discountData.type === 'PERCENT') {
-        return Math.round(base * discountData.value / 100);
+    const type = discountData.discountType || 0;
+    const val = discountData.discountValue || 0;
+
+    if (type === 'fixed' || type === 'FIXED') {
+        return val || 0;
     }
-    return discountData.value; // FLAT amount
+    if (type === 'percent' || type === 'PERCENT') {
+        return Math.round(base * (val || 0) / 100);
+    }
+    return val || 0;
 }
 
 async function syncSeats(id) {

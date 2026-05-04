@@ -36,6 +36,7 @@ public class BookingController {
         Map<String, Object> result = new HashMap<>();
         result.put("invoiceId", invoice.getInvoiceId().toString());
         result.put("totalPrice", invoice.getTotalPrice());
+        result.put("finalPrice", invoice.getFinalPrice());
         result.put("status", invoice.getInvoiceStatus());
         return ResponseEntity.ok(result);
     }
@@ -76,6 +77,7 @@ public class BookingController {
             m.put("invoiceId",  inv.getInvoiceId().toString());
             m.put("status",     inv.getInvoiceStatus());
             m.put("finalPrice", inv.getFinalPrice());
+            m.put("ticketCode", inv.getTicketCode());
 
             List<Map<String, Object>> seats = new ArrayList<>();
             String movieTitle = null, showDate = null, startTime = null;

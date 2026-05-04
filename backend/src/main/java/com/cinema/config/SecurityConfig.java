@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -35,6 +36,19 @@ public class SecurityConfig {
     }
 
     @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers(
+                "/favicon.ico",
+                "/static/**",
+                "/resources/**",
+                "/css/**",
+                "/js/**",
+                "/images/**",
+                "/frontend/"
+        );
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 // 1. CẤU HÌNH CORS VÀ VÔ HIỆU HÓA CSRF
@@ -51,7 +65,7 @@ public class SecurityConfig {
                 // 2. CẤU HÌNH PHÂN QUYỀN (CHỈ DÙNG MỘT KHỐI DUY NHẤT)
                 .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers("/frontend/**", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/frontend/**", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers("/vnpay-return.html").permitAll()
 
                         .requestMatchers("/api/payment/vnpay-callback", "/api/payment/vnpay-verify", "/api/payment/vnpay-ipn").permitAll()
@@ -67,6 +81,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/profile/**").hasAnyAuthority("customer", "admin", "ROLE_customer", "ROLE_admin")
                         .requestMatchers("/api/comments").hasAnyAuthority("customer", "admin", "ROLE_customer", "ROLE_admin")
                         .requestMatchers("/api/invoices/**", "/api/payment/**", "/api/booking/**").hasAnyAuthority("customer", "ROLE_customer")
+                        .requestMatchers("/api/discounts/check").permitAll()
 
                         // CHỐT CHẶN CUỐI CÙNG: Các yêu cầu khác phải đăng nhập
                         .anyRequest().authenticated()

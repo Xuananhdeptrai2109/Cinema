@@ -10,6 +10,9 @@ public class BookingRequest {
     private List<Long> showtimeSeatIds;
     private List<ProductSelection> products;
 
+    private Integer usedCoin;
+    private String discountCode;
+
     @Data
     public static class ProductSelection {
         private Long productId;

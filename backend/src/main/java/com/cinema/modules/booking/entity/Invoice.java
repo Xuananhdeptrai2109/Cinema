@@ -22,6 +22,9 @@ public class Invoice {
     @Column(name = "invoice_id", columnDefinition = "BINARY(16)")
     private java.util.UUID invoiceId;
 
+    @Column(name = "ticket_code", length = 10)
+    private String ticketCode;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -34,6 +37,12 @@ public class Invoice {
 
     @Column(name = "invoice_status")
     private String invoiceStatus;
+
+    @Column(name = "discount_code", length = 50)
+    private String discountCode;
+
+    @Column(name = "used_coin")
+    private Integer usedCoin = 0;
 
     @Column(name = "payment_method")
     private String paymentMethod;
