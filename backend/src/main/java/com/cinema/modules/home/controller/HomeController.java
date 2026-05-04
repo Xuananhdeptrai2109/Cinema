@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/home")
-@CrossOrigin(origins = "*") // Cho phép file HTML bên ngoài gọi vào
+@CrossOrigin(origins = "*")
 public class HomeController {
 
     @Autowired
@@ -19,7 +19,6 @@ public class HomeController {
 
     @GetMapping("/init")
     public ResponseEntity<HomeResponse> getHomeInitialData() {
-        // TRẢ VỀ DỮ LIỆU (JSON), KHÔNG TRẢ VỀ FILE HTML
         return ResponseEntity.ok(homeService.getHomeData());
     }
 }

@@ -917,3 +917,27 @@ footer {
 }
 
 .user-dropdown a:hover { background: var(--primary); }
+
+#promotions-grid {
+    display: flex;
+    gap: 20px;
+    padding: 10px 0;
+    border: none !important;
+    outline: none !important;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+#promotions-grid::-webkit-scrollbar {
+    display: none;
+}
+
+#promotions-grid .promo-card {
+    flex: 0 0 calc(33.333% - 14px);
+    min-width: 300px;
+    border: none;
+    scroll-snap-align: start;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}

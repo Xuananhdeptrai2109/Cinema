@@ -211,36 +211,43 @@ function renderCinemaDetail(cinema) {
     `;
 }
 
-// --- 4. Luồng khởi chạy chính ---
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        // 1. Gọi API khởi tạo dữ liệu trang chủ
-        const response = await fetch('http://localhost:8080/api/home/init');
-        const homeData = await response.json();
+function renderPromotions(discounts) {
+    const grid = document.getElementById('promotions-grid');
+    if (!grid || !discounts || discounts.length === 0) return;
 
-        if (homeData) {
-            // 2. Render các thành phần địa điểm và rạp
-            if (homeData.locations && homeData.locations.length > 0) {
-                initCustomDropdown(homeData.locations);
-                // Mặc định hiển thị rạp của tỉnh thành đầu tiên trong danh sách
-                renderCinemaTabs(homeData.locations[0].cinemas);
-            }
-
-            // 3. Render danh sách Phim Đang Chiếu (Now Showing)
-            if (homeData.showingMovies) {
-                renderNowShowing(homeData.showingMovies);
-            }
-
-            // 4. Render danh sách Phim Sắp Chiếu (Coming Soon)
-            if (homeData.upcomingMovies) {
-                renderComingSoon(homeData.upcomingMovies);
-            }
-        }
-    } catch (err) {
-        console.error("Lỗi load dữ liệu trang chủ:", err);
-        // Hiển thị thông báo lỗi lên giao diện nếu cần
+    if (discounts.length > 3) {
+        grid.classList.add('scroll-horizontal');
+    } else {
+        grid.classList.remove('scroll-horizontal');
     }
-});
+
+    grid.innerHTML = discounts.map((d, i) => {
+        // Định dạng ngày hiển thị
+        const start = d.startDate ? new Date(d.startDate).toLocaleDateString('vi-VN') : 'Bắt đầu ngay';
+        const end = d.endDate ? new Date(d.endDate).toLocaleDateString('vi-VN') : 'Đến khi hết lượt';
+
+        // Hiển thị giá trị giảm[cite: 17]
+        const discountValueDisplay = d.discountType === 'percent'
+            ? `${d.discountValue}%`
+            : `${d.discountValue.toLocaleString()}đ`;
+
+        return `
+            <div class="promo-card fade-in" style="animation-delay: ${i * 0.1}s">
+                <div class="promo-img" style="background-image:url('https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?w=600&q=80')">
+                    <span class="promo-tag">${d.discountCode}</span>
+                </div>
+                <div class="promo-body">
+                    <div class="promo-date"><i class="fas fa-calendar-alt"></i> ${start} – ${end}</div>
+                    <div class="promo-title">${d.discountTitle}</div>
+                    <div class="promo-desc">${d.discountDescription}</div>
+                    <div class="promo-value" style="color: var(--primary); font-weight: bold; margin: 10px 0;">
+                        Giảm ngay: ${discountValueDisplay}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
 
 // ============================================================
 // UI INITIALIZATION FUNCTIONS (Đã xóa IIFE để gọi được hàm)
@@ -453,49 +460,50 @@ function applyMarquee() {
 // MAIN INITIALIZATION
 // ============================================================
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Chạy các UI tĩnh (giữ nguyên)
+    // UI STATIC INIT
     initStickyHeader();
     initMobileMenu();
     initBackToTop();
     initSmoothScroll();
-    initCinemaTabs();
-    // 2. Lấy dữ liệu từ Database
+
+    // AUTH CHECK
+    const storedUsername = localStorage.getItem('username');
+    const guestZone = document.getElementById('guest-zone');
+    const userZone = document.getElementById('user-zone');
+    if (storedUsername) {
+        if (guestZone) guestZone.style.display = 'none';
+        if (userZone) {
+            userZone.style.display = 'flex';
+            document.getElementById('display-username').textContent = storedUsername;
+        }
+    }
+
+    // FETCH DATA FROM DB
     try {
-        const data = await fetchHomeInitialData();
+        const data = await fetchHomeInitialData(); // Gọi qua API helper
 
         if (data) {
-            // Lấy toàn bộ dữ liệu từ API
-            const allShowing = data.showingMovies || [];
-            const allUpcoming = data.upcomingMovies || [];
+            // Render Hero Slider (3 phim đầu tiên)
+            renderHeroSlider(data.showingMovies ? data.showingMovies.slice(0, 3) : []);
+            // Render Movies (giới hạn 5 phim trên trang chủ)
+            renderNowShowing(data.showingMovies ? data.showingMovies.slice(0, 5) : []);
+            renderComingSoon(data.upcomingMovies ? data.upcomingMovies.slice(0, 5) : []);
 
-            // Lấy 3 phim đang chiếu để làm slide nổi bật
-            const sliderMovies = data.showingMovies ? data.showingMovies.slice(0, 3) : [];
-            renderHeroSlider(sliderMovies);
+            // Render Khuyến mãi (Trường 'promotions' từ HomeResponse)
+            if (data.promotions) { renderPromotions(data.promotions); }
 
-            // CHỈ HIỂN THỊ 5 PHIM TRÊN HOME
-            renderNowShowing(allShowing.slice(0, 5));
-            renderComingSoon(allUpcoming.slice(0, 5));
-
+            // Render Hệ thống rạp
             if (data.locations && data.locations.length > 0) {
-                // Khởi tạo dropdown thành phố
                 initCustomDropdown(data.locations);
-
-                // Hiển thị rạp của thành phố đầu tiên mặc định
                 renderCinemaTabs(data.locations[0].cinemas);
             }
 
             initScrollAnimations();
             applyMarquee();
-
-            // (Tùy chọn) Lưu toàn bộ dữ liệu vào sessionStorage
-            // để trang "Xem tất cả" có thể lấy ra dùng ngay mà không cần gọi API lần nữa
-            sessionStorage.setItem('allMovies', JSON.stringify(data));
         }
     } catch (err) {
-        console.error("Lỗi khởi tạo dữ liệu:", err);
+        console.error("Lỗi khởi tạo dữ liệu trang chủ:", err);
     }
-
-    console.log('%c🎬 CineMax Home - Only 5 movies displayed!', 'color:#E50914;font-size:14px;font-weight:bold');
 });
 
 document.addEventListener('DOMContentLoaded', () => {

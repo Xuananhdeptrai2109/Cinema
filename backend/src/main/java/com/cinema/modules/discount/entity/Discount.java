@@ -51,4 +51,10 @@ public class Discount {
 
     @Column(name = "current_usage", nullable = false)
     private Integer currentUsage = 0;
+
+    @Column(name = "valid_days")
+    private String validDays;
+
+    @Column(name = "use_limit_per_user")
+    private Integer UseLimitPerUser;
 }

@@ -5,13 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="53247214-d6fa-4b18-996f-e56af6044b7c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/user/dto/CoinRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/user/dto/VoucherRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/config/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/repository/InvoiceRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/booking/repository/InvoiceRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/user/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/user/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/js/main/profile.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/js/main/profile.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/controller/DiscountController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/controller/DiscountController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/entity/Discount.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/entity/Discount.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/repository/DiscountRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/repository/DiscountRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/response/DiscountResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/response/DiscountResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/service/DiscountService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/service/DiscountService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/service/DiscountServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/discount/service/DiscountServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/home/controller/HomeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/home/controller/HomeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/home/dto/CinemaLocationDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/cinema/modules/home/dto/SearchCriteriaDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/css/home.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/css/home.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/js/main/home.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/js/main/home.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/pages/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pages/home.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +99,7 @@
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Admin/Documents/WEB/Cinema/backend/src/main/resources&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Admin/Documents/WEB/Cinema&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,

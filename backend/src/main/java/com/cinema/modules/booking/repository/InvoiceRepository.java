@@ -13,4 +13,5 @@ public interface InvoiceRepository extends JpaRepository<Invoice, UUID> {
     List<Invoice> findByUser_UserIdOrderByCreatedDatetimeDesc(Long userId);
     List<Invoice> findByUserAndUsedCoinGreaterThanOrderByCreatedDatetimeDesc(User user, Integer usedCoin);
     List<Invoice> findByUserAndDiscountCodeIsNotNullOrderByCreatedDatetimeDesc(User user);
+    boolean existsByUserAndDiscountCode(User user, String discountCode);
 }
