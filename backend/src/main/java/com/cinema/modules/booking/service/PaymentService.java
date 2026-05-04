@@ -15,6 +15,7 @@ public class PaymentService {
     @Autowired private com.cinema.modules.booking.repository.BookingSeatRepository bookingSeatRepository;
     @Autowired private com.cinema.modules.seat.repository.StatusRepository statusRepository;
     @Autowired private com.cinema.modules.user.repository.UserRepository userRepository;
+    @Autowired private EmailService emailService;
 
     @Transactional
     public void markAsPaying(java.util.UUID invoiceId) {
@@ -62,6 +63,7 @@ public class PaymentService {
         });
 
         invoiceRepository.save(invoice);
+        emailService.sendTicketEmail(invoice);
     }
 
     @Transactional

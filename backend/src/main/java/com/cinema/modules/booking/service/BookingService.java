@@ -33,6 +33,7 @@ public class BookingService {
         Invoice invoice = Invoice.builder()
                 .invoiceId(java.util.UUID.randomUUID())
                 .user(user)
+                .emailAddress(user.getEmail())
                 .invoiceStatus("draft")
                 .discountCode(request.getDiscountCode()) // Lưu mã định dùng
                 .usedCoin(request.getUsedCoin() != null ? request.getUsedCoin() : 0) // Lưu coin định dùng[cite: 17]
