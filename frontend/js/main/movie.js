@@ -33,25 +33,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        // 1. Lấy chi tiết phim từ API
         const response = await fetch(`${API_BASE}/movies/${movieId}`);
         if (!response.ok) throw new Error('Không tìm thấy phim');
         currentMovie = await response.json();
 
-        // 2. Đổ dữ liệu phim vào giao diện
+        // 1. Hiển thị chi tiết phim (Hàm này sẽ tự xử lý ẩn/hiện vùng đánh giá)
         renderMovieDetail(currentMovie);
 
-        // 3. Lấy bình luận thực tế từ Database
-        fetchComments(movieId);
+        // 2. Kiểm tra trạng thái để tải bình luận[cite: 33]
+        const status = (currentMovie.status || "").toLowerCase();
+        if (status === 'showing') {
+            fetchComments(movieId);
+        } else {
+            allReviews = [];
+        }
 
-        // 4. Lấy phim liên quan (Dựa trên thể loại đầu tiên)
+        // 3. Phim liên quan[cite: 33]
         if (currentMovie.genreNames && currentMovie.genreNames.length > 0) {
             fetchRelatedMovies(currentMovie.genreNames[0]);
         }
 
-        // 5. Hiệu ứng cuộn
+        // 4. KÍCH HOẠT HIỆU ỨNG (Gộp từ khối cũ vào đây)[cite: 33]
         const obs = initMovieFadeIn();
         document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+        setTimeout(() => {
+            if (typeof applyMarquee === 'function') applyMarquee();
+        }, 150);
+
+        console.log('%c🎬 CineMax Movie page ready', 'color:#E50914;font-size:13px;font-weight:bold');
 
     } catch (error) {
         console.error("Lỗi khởi tạo:", error);
@@ -116,12 +126,6 @@ btnSubmit.addEventListener('click', async () => {
             imageUrl: base64Img      // Dữ liệu ảnh khổng lồ ở cuối
         };
 
-        // Kiểm tra log tại trình duyệt
-        console.log("DỮ LIỆU THỰC TẾ GỬI ĐI:", {
-            ...commentData,
-            imageUrl: commentData.imageUrl ? "Có ảnh (Base64...)" : "Không ảnh"
-        });
-
         // BƯỚC 5: Gửi lên Server
         const response = await fetch(`${API_BASE}/comments`, {
             method: 'POST',
@@ -168,9 +172,9 @@ function resetReviewForm() {
 function renderMovieDetail(movie) {
     if (!movie) return;
 
+    const status = (movie.status || "").toLowerCase();
     document.title = `${movie.title} – CineMax`;
 
-    // Cập nhật text & hình ảnh
     const breadcrumbTitle = document.getElementById('breadcrumb-movie-title');
     if (breadcrumbTitle) breadcrumbTitle.textContent = movie.title;
     document.getElementById('movie-title').textContent = movie.title;
@@ -182,14 +186,28 @@ function renderMovieDetail(movie) {
     const poster = document.getElementById('movie-poster');
     if (poster) poster.src = movie.posterLink;
 
-    // Hiển thị điểm star (Ví dụ: 4.7 từ DB)
+    // --- CẬP NHẬT LOGIC ẨN/HIỆN ĐÁNH GIÁ ---
     const avgScoreEl = document.querySelector('.avg-score');
-    if (avgScoreEl) avgScoreEl.textContent = movie.star ? movie.star.toFixed(1) : '0.0';
-
     const starContainer = document.getElementById('avg-stars');
-    if (starContainer) starContainer.innerHTML = buildStarHTML(movie.star || 0);
+    const fullReviewSection = document.querySelector('.review-section');
 
-    // Thông tin chi tiết (Meta Grid)
+    if (movie.status === 'coming_soon') {
+        // 1. Hiển thị trạng thái chờ thay vì điểm số
+        if (avgScoreEl) avgScoreEl.textContent = '---';
+        if (starContainer) starContainer.innerHTML = '<span style="color:var(--muted); font-size: 0.9rem;">Chưa có đánh giá</span>';
+
+        // 2. Thay thế Form nhập đánh giá bằng thông báo khóa
+        if (fullReviewSection) {
+            fullReviewSection.style.display = 'none';
+        }
+    } else {
+        // Hiển thị điểm star bình thường cho phim 'showing'
+        if (fullReviewSection) fullReviewSection.style.display = 'block';
+        if (avgScoreEl) avgScoreEl.textContent = movie.star ? movie.star.toFixed(1) : '0.0';
+        if (starContainer) starContainer.innerHTML = buildStarHTML(movie.star || 0);
+    }
+
+    // --- Cập nhật Meta Grid (Giữ nguyên) ---
     const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val || 'Đang cập nhật'; };
     setVal('movie-date', movie.releaseDate);
     setVal('movie-duration', `${movie.duration} phút`);
@@ -200,10 +218,20 @@ function renderMovieDetail(movie) {
     const actorsEl = document.getElementById('movie-actors');
     if (actorsEl && movie.performerNames) actorsEl.textContent = movie.performerNames.join(', ');
 
-    // Trailer
     const trailerIframe = document.getElementById('trailer-iframe');
     if (trailerIframe && movie.trailerLink) {
         trailerIframe.dataset.src = `https://www.youtube.com/embed/${extractVideoID(movie.trailerLink)}?autoplay=1`;
+    }
+
+    const btnTicket = document.querySelector('.btn-ticket-main');
+    if (btnTicket) {
+        if (status === 'coming_soon') {
+            btnTicket.innerHTML = '<i class="fas fa-bell"></i> Nhận thông báo';
+            btnTicket.style.background = '#444';
+            btnTicket.onclick = () => alert("Phim sắp chiếu, chúng tôi sẽ thông báo khi có lịch!");
+        } else {
+            btnTicket.onclick = () => window.location.href = `booking.html?id=${movie.id}`;
+        }
     }
 }
 
@@ -269,8 +297,6 @@ function extractVideoID(url) {
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : 'dQw4w9WgXcQ';
 }
-
-// ... Copy các hàm Modal, Star Picker, Review, FadeIn từ bản JS thuần của bạn vào đây ...
 
 function generateAvatar(name) {
     return name.trim().charAt(0).toUpperCase();
@@ -583,22 +609,3 @@ function initMovieFadeIn() {
     document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
     return obs;
 }
-
-// ============================================================
-// INIT
-// ============================================================
-document.addEventListener('DOMContentLoaded', () => {
-    renderReviews();
-    // renderRelated();
-
-    const obs = initMovieFadeIn();
-    // Re-observe after render
-    document.querySelectorAll('.fade-in:not(.visible)').forEach(el => obs.observe(el));
-
-    // Marquee for related cards
-    setTimeout(() => {
-        if (typeof applyMarquee === 'function') applyMarquee();
-    }, 150);
-
-    console.log('%c🎬 CineMax Movie page ready', 'color:#E50914;font-size:13px;font-weight:bold');
-});

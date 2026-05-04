@@ -941,3 +941,28 @@ footer {
     scroll-snap-align: start;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
+
+/* Thêm vào home.css */
+.btn-book {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Hiệu ứng đàn hồi */
+    cursor: pointer;
+}
+
+.btn-book:active {
+    transform: scale(0.95);
+}
+
+.btn-book i {
+    margin-right: 8px;
+    transition: transform 0.3s ease;
+}
+
+.btn-book.followed i {
+    animation: bookmarkBounce 0.4s ease;
+}
+
+@keyframes bookmarkBounce {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+    100% { transform: translateY(0); }
+}

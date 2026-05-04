@@ -549,3 +549,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+window.toggleFollowOverlay = function(btn) {
+    // 1. Tìm icon và text bên trong nút
+    const icon = btn.querySelector('i');
+
+    // 2. Kiểm tra trạng thái hiện tại (dựa trên class)
+    const isFollowed = btn.classList.toggle('followed');
+
+    if (isFollowed) {
+        // Trạng thái: Đang theo dõi
+        btn.style.background = 'var(--gold)';
+        btn.style.color = '#000';
+        btn.innerHTML = '<i class="fas fa-bookmark"></i> Đang theo dõi';
+
+        // Hiệu ứng "pop" nhẹ khi click
+        btn.style.transform = 'scale(1.1)';
+        setTimeout(() => btn.style.transform = 'scale(1)', 200);
+
+        // Lưu ý: Thực tế bạn nên gọi API tại đây để lưu vào Database
+        console.log("Đã thêm vào danh sách theo dõi");
+    } else {
+        // Trạng thái: Bỏ theo dõi
+        btn.style.background = 'rgba(255,215,0,.15)';
+        btn.style.color = 'var(--gold)';
+        btn.innerHTML = '<i class="far fa-bookmark"></i> Theo dõi';
+
+        btn.style.transform = 'scale(0.9)';
+        setTimeout(() => btn.style.transform = 'scale(1)', 200);
+    }
+};

@@ -32,16 +32,16 @@ public class CommentService {
 
     @Transactional
     public CommentResponse saveComment(String email, CommentRequest request) {
-        // LOG để kiểm tra ngay lập tức dữ liệu đầu vào
-        System.out.println("DEBUG - MovieID: " + request.getMovieId());
-        System.out.println("DEBUG - Content: " + request.getContent());
-        System.out.println("DEBUG - Star: " + request.getStarRating());
-
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User không tồn tại"));
 
         Movie movie = movieRepository.findById(request.getMovieId())
                 .orElseThrow(() -> new RuntimeException("Phim không tồn tại"));
+
+        // CHẶN: Chỉ cho phép đánh giá nếu trạng thái phim là "showing"
+        if (!"showing".equalsIgnoreCase(movie.getStatus())) {
+            throw new RuntimeException("Chương trình đánh giá chỉ áp dụng cho phim đang chiếu.");
+        }
 
         // 1. Khởi tạo và gán giá trị thủ công để đảm bảo không mất dữ liệu
         MovieComment comment = new MovieComment();
@@ -53,13 +53,7 @@ public class CommentService {
         comment.setCreatedAt(LocalDateTime.now());
 
         commentRepository.save(comment);
-
-        // Cập nhật trung bình sao cho phim
         updateMovieAverageStar(movie);
-
-        // 3. Tính toán lại điểm trung bình của Phim
-        updateMovieAverageStar(movie);
-
         return new CommentResponse(comment);
     }
 

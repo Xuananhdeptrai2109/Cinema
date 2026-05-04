@@ -29,7 +29,9 @@ public class DiscountController {
     @GetMapping("/check")
     public ResponseEntity<?> checkDiscount(@RequestParam String code) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User currentUser = userRepository.findByEmail(email).orElseThrow();
+//        User currentUser = userRepository.findByEmail(email).orElseThrow();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng với email: " + email));
 
         Optional<Discount> discountOpt = discountRepository.findByDiscountCode(code);
         if (discountOpt.isEmpty()) {

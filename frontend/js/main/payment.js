@@ -130,34 +130,50 @@ async function applyDiscountFromDB() {
     const code = codeInput.value.trim();
     const msgEl = document.getElementById('discount-msg');
 
+    // 1. Lấy Token từ localStorage (phải có Token thì Backend mới tìm được User)
+    const token = localStorage.getItem('token');
+
     if (!code) {
         showMsg(msgEl, "Vui lòng nhập mã giảm giá", "error");
         return;
     }
 
-    console.log("🚀 Đang gọi API kiểm tra mã:", code); // Dòng này để bạn check Console
+    if (!token) {
+        showMsg(msgEl, "❌ Vui lòng đăng nhập để dùng mã giảm giá", "error");
+        return;
+    }
+
+    console.log("🚀 Đang gọi API kiểm tra mã với Token:", code);
 
     try {
-        // Gọi đến đúng Endpoint của DiscountController bạn vừa tạo[cite: 14]
-        const response = await fetch(`${API_BASE}/discounts/check?code=${code}`);
+        // 2. Thêm Headers Authorization vào yêu cầu fetch
+        const response = await fetch(`${API_BASE}/discounts/check?code=${code}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`, // Gửi Token để fix lỗi NoSuchElementException
+                'Content-Type': 'application/json'
+            }
+        });
 
+        // 3. Xử lý các trạng thái lỗi từ Server
         if (!response.ok) {
-            // Nếu server trả về 404 hoặc 403, nó sẽ nhảy vào đây[cite: 14]
             const errorText = await response.text();
-            throw new Error(errorText || "Mã không hợp lệ");
+            // Nếu lỗi 403 hoặc 500 (NoSuchElement), thông báo sẽ hiển thị tại đây
+            throw new Error(errorText || "Mã không hợp lệ hoặc lỗi hệ thống");
         }
 
         const discountData = await response.json();
 
-        // Lưu thông tin vào biến toàn cục để createInvoice sử dụng[cite: 14]
+        // 4. Lưu thông tin giảm giá vào biến toàn cục
         appliedDiscount = {
             id: discountData.discountId,
             label: discountData.discountCode,
-            amount: calculateAmount(discountData) // Hàm này phải tính dựa trên discountValue từ DB[cite: 14]
+            // Đảm bảo hàm calculateAmount sử dụng đúng trường dữ liệu từ DB
+            amount: calculateAmount(discountData)
         };
 
         showMsg(msgEl, `✅ Giảm ${fmt(appliedDiscount.amount)}`, "success");
-        renderOrder(); // Vẽ lại bảng tổng tiền[cite: 14]
+        renderOrder(); // Cập nhật lại giao diện tổng tiền
 
     } catch (err) {
         console.error("❌ Lỗi applyDiscountFromDB:", err.message);
