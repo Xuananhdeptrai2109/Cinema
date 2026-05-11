@@ -16,6 +16,9 @@ public class Room {
     @Column(name = "room_name", nullable = false, length = 50)
     private String roomName;
 
+    @Column(name = "capacity")
+    private Integer capacity;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cinemas_id", nullable = false)
     private Cinema cinema;
@@ -23,4 +26,7 @@ public class Room {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "screening_format_id", nullable = false)
     private ScreeningFormat screeningFormat;
+
+    @Column(name = "status")
+    private String status = "active";
 }

@@ -1,0 +1,78 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-deep:    #0f0f14;
+  --bg-card:    #1a1a24;
+  --bg-raised:  #22222f;
+  --accent:     #E53935;
+  --accent-dim: rgba(229,57,53,0.12);
+  --text:       #e8e8f0;
+  --text-muted: #9090a8;
+  --border:     #2e2e3f;
+  --success:    #43a047;
+  --warning:    #fb8c00;
+  --info:       #1e88e5;
+}
+
+body {
+  background: var(--bg-deep);
+  color: var(--text);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3e3e54; }
+
+/* Antd overrides */
+.ant-layout { background: var(--bg-deep) !important; }
+.ant-layout-sider { background: var(--bg-deep) !important; border-right: 1px solid var(--border); }
+.ant-layout-header { background: var(--bg-card) !important; border-bottom: 1px solid var(--border); }
+.ant-card { background: var(--bg-card) !important; border-color: var(--border) !important; }
+.ant-table { background: var(--bg-card) !important; }
+.ant-table-thead > tr > th { background: var(--bg-raised) !important; color: var(--text-muted) !important; border-color: var(--border) !important; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+.ant-table-tbody > tr > td { border-color: var(--border) !important; color: var(--text) !important; }
+.ant-table-tbody > tr:hover > td { background: #2a2a38 !important; }
+.ant-pagination .ant-pagination-item { background: var(--bg-raised); border-color: var(--border); }
+.ant-pagination .ant-pagination-item a { color: var(--text-muted); }
+.ant-pagination .ant-pagination-item-active { background: var(--accent-dim); border-color: var(--accent); }
+.ant-pagination .ant-pagination-item-active a { color: var(--accent); }
+.ant-modal-content { background: var(--bg-card) !important; border: 1px solid var(--border); }
+.ant-modal-header { background: var(--bg-card) !important; border-bottom: 1px solid var(--border) !important; }
+.ant-modal-title { color: var(--text) !important; }
+.ant-form-item-label > label { color: var(--text-muted) !important; }
+.ant-input, .ant-input-number, .ant-select-selector, .ant-picker { background: var(--bg-raised) !important; border-color: var(--border) !important; color: var(--text) !important; }
+.ant-input::placeholder { color: var(--text-muted) !important; }
+.ant-select-selection-placeholder { color: var(--text-muted) !important; }
+.ant-input:focus, .ant-input-number:focus, .ant-select-focused .ant-select-selector { border-color: var(--accent) !important; box-shadow: 0 0 0 2px var(--accent-dim) !important; }
+.ant-input-number-input { color: var(--text) !important; }
+.ant-picker-input > input { color: var(--text) !important; }
+.ant-select-dropdown { background: var(--bg-raised) !important; border: 1px solid var(--border); }
+.ant-select-item { color: var(--text) !important; }
+.ant-select-item-option-selected { background: var(--accent-dim) !important; color: var(--accent) !important; }
+.ant-select-item-option-active { background: #2a2a38 !important; }
+.ant-picker-panel-container { background: var(--bg-raised) !important; border: 1px solid var(--border); }
+.ant-picker-cell-in-view { color: var(--text) !important; }
+.ant-statistic-title { color: var(--text-muted) !important; font-size: 12px !important; }
+.ant-statistic-content { color: var(--text) !important; }
+.ant-tag { border-radius: 4px !important; }
+
+/* Page fade-in */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter { animation: fadeUp 0.28s ease both; }
+
+/* Stat card shine */
+.stat-card { position: relative; overflow: hidden; }
+.stat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(229,57,53,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}

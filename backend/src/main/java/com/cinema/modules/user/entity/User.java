@@ -65,6 +65,10 @@ public class User implements UserDetails {
     @Column(name = "otp_expiry")
     private LocalDateTime otpExpiry;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private UserRole role = UserRole.customer;

@@ -44,7 +44,8 @@ public class SecurityConfig {
                 "/css/**",
                 "/js/**",
                 "/images/**",
-                "/frontend/"
+                "/frontend/",
+                "/api/admin/**"
         );
     }
 
@@ -54,7 +55,7 @@ public class SecurityConfig {
                 // 1. CẤU HÌNH CORS VÀ VÔ HIỆU HÓA CSRF
                 .cors(cors -> cors.configurationSource(request -> {
                     var config = new org.springframework.web.cors.CorsConfiguration();
-                    config.setAllowedOrigins(java.util.List.of("http://localhost:63342", "http://127.0.0.1:5500", "http://localhost:5500"));
+                    config.setAllowedOrigins(java.util.List.of("http://localhost:63342", "http://127.0.0.1:5500", "http://localhost:5500", "http://localhost:5173", "http://localhost:3001"));
                     config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     config.setAllowedHeaders(java.util.List.of("*"));
                     config.setAllowCredentials(true);
@@ -64,6 +65,7 @@ public class SecurityConfig {
 
                 // 2. CẤU HÌNH PHÂN QUYỀN (CHỈ DÙNG MỘT KHỐI DUY NHẤT)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/admin/**").permitAll()
 
                         .requestMatchers("/frontend/**", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers("/vnpay-return.html").permitAll()

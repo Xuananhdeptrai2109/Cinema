@@ -5,8 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 import java.util.List;
+
 
 @Entity
 @Table(name = "Product_type")
@@ -23,6 +26,7 @@ public class ProductType {
     @Column(name = "type_name", unique = true, nullable = false, length = 50)
     private String typeName;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "productType")
     private List<Product> products;
 }

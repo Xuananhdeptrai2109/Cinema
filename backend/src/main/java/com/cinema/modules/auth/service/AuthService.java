@@ -47,7 +47,14 @@ public class AuthService {
         User savedUser = authRepository.save(user);
 
         String token = jwtUtil.generateToken(user.getEmail());
-        return new AuthResponse(token, "Đăng kí thành công", savedUser.getUserId(), savedUser.getUserName());
+        return new AuthResponse(
+            token,
+            "Đăng kí thành công",
+            savedUser.getUserId(),
+            savedUser.getUserName(),
+            "customer"
+        );
+
     }
 
     // LOGIN
@@ -62,7 +69,16 @@ public class AuthService {
 
         String token = jwtUtil.generateToken(user.getEmail());
 
-        return new AuthResponse(token, "Đăng nhập thành công", user.getUserId(), user.getUserName());
+        String role = user.getAuthorities().iterator().next().getAuthority();
+
+        return new AuthResponse(
+            token,
+            "Đăng nhập thành công",
+            user.getUserId(),
+            user.getUserName(),
+            role
+        );
+
     }
 
     // GỬI OTP

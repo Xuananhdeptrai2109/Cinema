@@ -6,10 +6,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
+
 
 @Repository
 public interface GenreRepository extends JpaRepository<Genre, Long> {
     // Truy vấn lấy danh sách tên thể loại duy nhất
     @Query("SELECT DISTINCT g.genreName FROM Genre g")
     List<String> findAllGenreNames();
+
+    Optional<Genre> findByGenreName(String genreName);
 }

@@ -1,15 +1,22 @@
 package com.cinema.modules.movie.service;
 
+import com.cinema.modules.movie.dto.MovieRequest;
+import com.cinema.modules.movie.entity.Director;
 import com.cinema.modules.movie.entity.Genre;
 import com.cinema.modules.movie.entity.Movie;
 import com.cinema.modules.movie.entity.Performer;
+import com.cinema.modules.movie.repository.DirectorRepository;
+import com.cinema.modules.movie.repository.GenreRepository;
 import com.cinema.modules.movie.repository.MovieRepository;
+import com.cinema.modules.movie.repository.PerformerRepository;
 import com.cinema.modules.movie.response.MovieResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+
 
 import static java.util.stream.Collectors.toList;
 
@@ -17,6 +24,15 @@ import static java.util.stream.Collectors.toList;
 public class MovieServiceImpl implements MovieService {
     @Autowired
     private MovieRepository movieRepository;
+
+    @Autowired
+    private DirectorRepository directorRepository;
+
+    @Autowired
+    private GenreRepository genreRepository;
+
+    @Autowired
+    private PerformerRepository performerRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -101,4 +117,121 @@ public class MovieServiceImpl implements MovieService {
             return res;
         }).toList();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MovieResponse> getAllMovies() {
+        return movieRepository.findAll().stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+ 
+    @Override
+    @Transactional
+    public MovieResponse createMovie(MovieRequest request) {
+        Movie movie = buildMovieFromRequest(new Movie(), request);
+        Movie saved = movieRepository.save(movie);
+        return mapToResponse(saved);
+    }
+ 
+    @Override
+    @Transactional
+    public MovieResponse updateMovie(Long id, MovieRequest request) {
+        Movie movie = movieRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phim với ID: " + id));
+        buildMovieFromRequest(movie, request);
+        return mapToResponse(movieRepository.save(movie));
+    }
+ 
+    @Override
+    @Transactional
+    public void deleteMovie(Long id) {
+        if (!movieRepository.existsById(id)) {
+            throw new RuntimeException("Không tìm thấy phim với ID: " + id);
+        }
+        movieRepository.deleteById(id);
+    }
+ 
+    // ── Private helpers ────────────────────────────────────────────────────
+ 
+    private Movie buildMovieFromRequest(Movie movie, MovieRequest request) {
+        movie.setTitle(request.getTitle());
+        movie.setPosterLink(request.getPosterLink());
+        movie.setLanguage(request.getLanguage());
+        movie.setDescription(request.getDescription());
+        movie.setReleaseDate(request.getReleaseDate());
+        movie.setDuration(request.getDuration());
+        movie.setAgeRating(request.getAgeRating());
+        movie.setTrailerLink(request.getTrailerLink());
+        movie.setStatus(request.getStatus());
+        movie.setStar(request.getStar());
+ 
+        // Director: tìm theo tên, nếu không có thì tạo mới
+        if (request.getDirector() != null && !request.getDirector().isBlank()) {
+            Director director = directorRepository
+                    .findByDirectorName(request.getDirector())
+                    .orElseGet(() -> {
+                        Director d = new Director();
+                        d.setDirectorName(request.getDirector());
+                        return directorRepository.save(d);
+                    });
+            movie.setDirector(director);
+        }
+ 
+        // Genres
+        if (request.getGenreNames() != null) {
+            Set<Genre> genres = request.getGenreNames().stream()
+                    .map(name -> genreRepository.findByGenreName(name)
+                            .orElseGet(() -> {
+                                Genre g = new Genre();
+                                g.setGenreName(name);
+                                return genreRepository.save(g);
+                            }))
+                    .collect(java.util.stream.Collectors.toSet());
+            movie.setGenres(genres);
+        }
+ 
+        // Performers
+        if (request.getPerformerNames() != null) {
+            Set<Performer> performers = request.getPerformerNames().stream()
+                    .map(name -> performerRepository.findByPerformerName(name)
+                            .orElseGet(() -> {
+                                Performer p = new Performer();
+                                p.setPerformerName(name);
+                                return performerRepository.save(p);
+                            }))
+                    .collect(java.util.stream.Collectors.toSet());
+            movie.setPerformers(performers);
+        }
+ 
+        return movie;
+    }
+ 
+    private MovieResponse mapToResponse(Movie movie) {
+        MovieResponse res = new MovieResponse();
+        res.setId(movie.getId());
+        res.setTitle(movie.getTitle());
+        res.setPosterLink(movie.getPosterLink());
+        res.setLanguage(movie.getLanguage());
+        res.setDescription(movie.getDescription());
+        res.setReleaseDate(movie.getReleaseDate());
+        res.setDuration(movie.getDuration());
+        res.setAgeRating(movie.getAgeRating());
+        res.setTrailerLink(movie.getTrailerLink());
+        res.setStatus(movie.getStatus());
+        res.setStar(movie.getStar());
+        if (movie.getDirector() != null) {
+            res.setDirector(movie.getDirector().getDirectorName());
+        }
+        if (movie.getGenres() != null) {
+            res.setGenreNames(movie.getGenres().stream()
+                    .map(Genre::getGenreName).toList());
+        }
+        if (movie.getPerformers() != null) {
+            res.setPerformerNames(movie.getPerformers().stream()
+                    .map(Performer::getPerformerName).toList());
+        }
+        return res;
+    }
+
 }
